@@ -1,233 +1,247 @@
+
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { 
-  Bar, 
-  BarChart, 
-  CartesianGrid, 
-  Legend, 
-  Line, 
-  LineChart, 
-  Pie, 
-  PieChart, 
-  ResponsiveContainer, 
-  Tooltip, 
-  XAxis, 
-  YAxis 
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie } from "recharts";
 
-// Mock data for analytics
-const revenueData = [
-  { month: "Jan", revenue: 3000, students: 120 },
-  { month: "Feb", revenue: 3500, students: 145 },
-  { month: "Mar", revenue: 4200, students: 168 },
-  { month: "Apr", revenue: 4800, students: 192 },
-  { month: "May", revenue: 5500, students: 220 },
-  { month: "Jun", revenue: 6300, students: 252 },
-  { month: "Jul", revenue: 7100, students: 284 },
-  { month: "Aug", revenue: 7800, students: 312 },
-  { month: "Sep", revenue: 8500, students: 340 },
-  { month: "Oct", revenue: 9200, students: 368 },
-  { month: "Nov", revenue: 9900, students: 396 },
-  { month: "Dec", revenue: 10600, students: 424 },
+// Sample data
+const enrollmentData = [
+  { name: 'Jan', count: 4000 },
+  { name: 'Feb', count: 3000 },
+  { name: 'Mar', count: 2000 },
+  { name: 'Apr', count: 2780 },
+  { name: 'May', count: 1890 },
+  { name: 'Jun', count: 2390 },
+  { name: 'Jul', count: 3490 },
+];
+
+const completionData = [
+  { name: 'Jan', count: 2400 },
+  { name: 'Feb', count: 1398 },
+  { name: 'Mar', count: 9800 },
+  { name: 'Apr', count: 3908 },
+  { name: 'May', count: 4800 },
+  { name: 'Jun', count: 3800 },
+  { name: 'Jul', count: 4300 },
 ];
 
 const courseEngagementData = [
-  { name: "JavaScript Fundamentals", students: 932, completion: 78 },
-  { name: "Introduction to Web Design", students: 487, completion: 64 },
-  { name: "Advanced React Development", students: 654, completion: 52 },
-  { name: "UX Design Principles", students: 321, completion: 87 },
-  { name: "Python for Data Science", students: 876, completion: 71 },
+  { name: 'Web Development', students: 4000, hours: 2400 },
+  { name: 'Data Science', students: 3000, hours: 1398 },
+  { name: 'UX Design', students: 2000, hours: 9800 },
+  { name: 'Digital Marketing', students: 2780, hours: 3908 },
+  { name: 'Business Analytics', students: 1890, hours: 4800 },
+  { name: 'Mobile App Dev', students: 2390, hours: 3800 },
 ];
 
 const pieData = [
-  { name: "Development", value: 45 },
-  { name: "Design", value: 25 },
-  { name: "Marketing", value: 20 },
-  { name: "Data Science", value: 10 },
+  { name: 'Completed', value: 540 },
+  { name: 'In Progress', value: 620 },
+  { name: 'Not Started', value: 210 },
 ];
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-const Analytics = () => {
+const Analytics: React.FC = () => {
   return (
     <PageTransition>
-      <div className="flex flex-col gap-6 p-6 md:gap-8 md:p-8">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-          <p className="text-muted-foreground">
-            Measure and analyze your learning platform's performance
-          </p>
-        </div>
+      <div className="p-6">
+        <div className="flex flex-col space-y-6">
+          <div className="flex flex-col md:flex-row justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
+              <p className="text-muted-foreground">
+                Track student progress and course engagement metrics
+              </p>
+            </div>
+          </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
-          <Tabs defaultValue="overview" className="w-full sm:w-auto">
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="revenue">Revenue</TabsTrigger>
-              <TabsTrigger value="engagement">Engagement</TabsTrigger>
-              <TabsTrigger value="students">Students</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <div className="w-full sm:w-auto flex gap-2">
-            <Select defaultValue="90days">
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Select Period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="30days">Last 30 Days</SelectItem>
-                <SelectItem value="90days">Last 90 Days</SelectItem>
-                <SelectItem value="6months">Last 6 Months</SelectItem>
-                <SelectItem value="12months">Last 12 Months</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid gap-6">
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="grid w-full md:w-auto grid-cols-3 h-auto">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="courses">Courses</TabsTrigger>
+                <TabsTrigger value="students">Students</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview" className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Total Students
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">1,248</div>
+                      <p className="text-xs text-muted-foreground">
+                        +12% from last month
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Course Completions
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">540</div>
+                      <p className="text-xs text-muted-foreground">
+                        +8% from last month
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Average Engagement
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">4.2 hrs</div>
+                      <p className="text-xs text-muted-foreground">
+                        Per student weekly
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Enrollment Trend</CardTitle>
+                      <CardDescription>
+                        New students enrolled over time
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={enrollmentData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Line type="monotone" dataKey="count" stroke="#8884d8" activeDot={{ r: 8 }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Completion Rates</CardTitle>
+                      <CardDescription>
+                        Course completions by month
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={completionData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Line type="monotone" dataKey="count" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="courses" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Course Engagement</CardTitle>
+                    <CardDescription>
+                      Number of students and hours spent by course
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <BarChart data={courseEngagementData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="students" fill="#8884d8" name="Students" />
+                        <Bar dataKey="hours" fill="#82ca9d" name="Hours Spent" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="students" className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Student Progress</CardTitle>
+                      <CardDescription>
+                        Overall course completion status
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex justify-center">
+                      <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                          <Pie
+                            data={pieData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          >
+                            {pieData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Active Learning Hours</CardTitle>
+                      <CardDescription>
+                        Hours spent learning by day of week
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={[
+                          {name: 'Mon', hours: 4.2},
+                          {name: 'Tue', hours: 3.8},
+                          {name: 'Wed', hours: 5.1},
+                          {name: 'Thu', hours: 4.5},
+                          {name: 'Fri', hours: 3.2},
+                          {name: 'Sat', hours: 7.3},
+                          {name: 'Sun', hours: 6.4},
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="hours" fill="#8884d8" name="Hours" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl">$48,294</CardTitle>
-              <CardDescription>Total Revenue</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs text-muted-foreground">
-                <span className="text-green-600 font-medium">↑ 24%</span> from previous period
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl">2,834</CardTitle>
-              <CardDescription>Total Students</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs text-muted-foreground">
-                <span className="text-green-600 font-medium">↑ 12%</span> from previous period
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl">76%</CardTitle>
-              <CardDescription>Course Completion</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xs text-muted-foreground">
-                <span className="text-green-600 font-medium">↑ 8%</span> from previous period
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card className="col-span-full md:col-span-1">
-            <CardHeader>
-              <CardTitle>Revenue Overview</CardTitle>
-              <CardDescription>Monthly revenue and enrollment trends</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={revenueData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="month" />
-                    <YAxis yAxisId="left" />
-                    <YAxis yAxisId="right" orientation="right" />
-                    <Tooltip />
-                    <Legend />
-                    <Line 
-                      yAxisId="left"
-                      type="monotone" 
-                      dataKey="revenue" 
-                      stroke="#8884d8" 
-                      activeDot={{ r: 8 }} 
-                      strokeWidth={2}
-                    />
-                    <Line 
-                      yAxisId="right"
-                      type="monotone" 
-                      dataKey="students" 
-                      stroke="#82ca9d" 
-                      strokeWidth={2}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="col-span-full md:col-span-1">
-            <CardHeader>
-              <CardTitle>Category Distribution</CardTitle>
-              <CardDescription>Course breakdown by category</CardDescription>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center">
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {pieData.map((entry, index) => (
-                        <cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Course Engagement</CardTitle>
-            <CardDescription>Course performance metrics across your platform</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={courseEngagementData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
-                  barSize={40}
-                >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis 
-                    dataKey="name" 
-                    angle={-45} 
-                    textAnchor="end" 
-                    height={80}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="students" name="Enrolled Students" fill="#8884d8" />
-                  <Bar dataKey="completion" name="Completion Rate (%)" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </PageTransition>
   );

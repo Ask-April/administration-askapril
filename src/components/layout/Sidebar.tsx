@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -154,7 +153,6 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         </div>
       </aside>
       
-      {/* Overlay for mobile - closes sidebar when clicked */}
       {expanded && (
         <div
           className="md:hidden fixed inset-0 z-30 bg-background/80 backdrop-blur-sm"
@@ -166,4 +164,3 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 };
 
 export default Sidebar;
-
