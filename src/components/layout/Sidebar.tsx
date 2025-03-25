@@ -23,7 +23,7 @@ import {
   Radio,
   MessageSquare,
   PieChart,
-  WaveSquare,
+  LineChart,
   CheckCircle,
   ChevronDown,
 } from "lucide-react";
@@ -120,7 +120,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     ],
     "Analytics": [
       { name: "Overview", icon: <PieChart size={16} />, path: "/analytics/overview" },
-      { name: "Traffic", icon: <WaveSquare size={16} />, path: "/analytics/traffic" },
+      { name: "Traffic", icon: <LineChart size={16} />, path: "/analytics/traffic" },
       { name: "Conversions", icon: <CheckCircle size={16} />, path: "/analytics/conversions" },
     ],
   };
