@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 
 type SettingItemProps = {
@@ -18,6 +18,11 @@ const SettingItem = ({
   isChanged = false
 }: SettingItemProps) => {
   const [checked, setChecked] = useState(defaultChecked);
+  
+  // Update internal state when defaultChecked changes (e.g., when settings are loaded from API)
+  useEffect(() => {
+    setChecked(defaultChecked);
+  }, [defaultChecked]);
   
   const handleCheckedChange = (checked: boolean) => {
     setChecked(checked);

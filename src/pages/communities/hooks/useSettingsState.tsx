@@ -1,14 +1,48 @@
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { 
+  fetchCommunitySettings, 
+  updateCommunitySettings, 
+  CommunitySetting 
+} from "../services/communitySettingsService";
 
-export interface Setting {
-  id: string;
-  value: boolean;
-}
-
-export function useSettingsState(initialSettings: Setting[]) {
-  const [settings, setSettings] = useState<Setting[]>(initialSettings);
-  const [originalSettings] = useState<Setting[]>(initialSettings);
+export function useSettingsState(initialSettingsIds: string[]) {
+  const [settings, setSettings] = useState<CommunitySetting[]>([]);
+  const [originalSettings, setOriginalSettings] = useState<CommunitySetting[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  
+  // Fetch settings from Supabase
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedSettings = await fetchCommunitySettings();
+        
+        // Filter fetched settings to only include the ones we need based on initialSettingsIds
+        const filteredSettings = initialSettingsIds.map(id => {
+          const found = fetchedSettings.find(s => s.id === id);
+          return found || { id, value: false };
+        });
+        
+        setSettings(filteredSettings);
+        setOriginalSettings(JSON.parse(JSON.stringify(filteredSettings)));
+        setError(null);
+      } catch (err) {
+        console.error("Error loading settings:", err);
+        setError(err instanceof Error ? err : new Error(String(err)));
+        
+        // Fallback to default settings on error
+        const defaultSettings = initialSettingsIds.map(id => ({ id, value: false }));
+        setSettings(defaultSettings);
+        setOriginalSettings(JSON.parse(JSON.stringify(defaultSettings)));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadSettings();
+  }, [initialSettingsIds]);
   
   const updateSetting = useCallback((id: string, value: boolean) => {
     setSettings(prev => 
@@ -25,21 +59,41 @@ export function useSettingsState(initialSettings: Setting[]) {
   }, [settings, originalSettings]);
   
   const hasChanges = useCallback(() => {
-    return settings.some((setting, index) => 
-      setting.value !== originalSettings[index].value
-    );
+    return settings.some((setting) => {
+      const original = originalSettings.find(s => s.id === setting.id);
+      return setting.value !== original?.value;
+    });
   }, [settings, originalSettings]);
   
   const resetSettings = useCallback(() => {
-    setSettings([...originalSettings]);
+    setSettings(JSON.parse(JSON.stringify(originalSettings)));
   }, [originalSettings]);
   
-  const saveSettings = useCallback(() => {
-    // In a real app, this would save to backend
-    console.log("Saving settings:", settings);
-    // After save, the current settings become the original
-    return settings;
-  }, [settings]);
+  const saveSettings = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      
+      // Only update settings that have changed
+      const changedSettings = settings.filter(setting => {
+        const original = originalSettings.find(s => s.id === setting.id);
+        return setting.value !== original?.value;
+      });
+      
+      if (changedSettings.length > 0) {
+        await updateCommunitySettings(changedSettings);
+      }
+      
+      // Update original settings to reflect the new state
+      setOriginalSettings(JSON.parse(JSON.stringify(settings)));
+      return settings;
+    } catch (err) {
+      console.error("Error saving settings:", err);
+      setError(err instanceof Error ? err : new Error(String(err)));
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [settings, originalSettings]);
 
   return {
     settings,
@@ -47,6 +101,8 @@ export function useSettingsState(initialSettings: Setting[]) {
     isSettingChanged,
     hasChanges,
     resetSettings,
-    saveSettings
+    saveSettings,
+    isLoading,
+    error
   };
 }

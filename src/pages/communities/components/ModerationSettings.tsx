@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,30 +8,65 @@ import IconHeader from "./CardHeader";
 import { useSettingsState } from "../hooks/useSettingsState";
 import { useToast } from "@/hooks/use-toast";
 
+// Import the ThresholdSetting component
+import ThresholdSetting from "./ThresholdSetting";
+
 const ModerationSettings = () => {
   const { toast } = useToast();
   
-  const initialSettings = [
-    { id: "autoModerate", value: true },
-    { id: "requireApproval", value: false },
-    { id: "spamDetection", value: true },
-    { id: "reportThreshold", value: true }
+  const initialSettingsIds = [
+    "autoModerate",
+    "requireApproval",
+    "spamDetection",
+    "reportThreshold"
   ];
   
   const { 
+    settings,
     updateSetting, 
     isSettingChanged, 
     hasChanges, 
     resetSettings, 
-    saveSettings 
-  } = useSettingsState(initialSettings);
+    saveSettings,
+    isLoading
+  } = useSettingsState(initialSettingsIds);
 
-  const handleSave = () => {
-    saveSettings();
-    toast({
-      title: "Moderation settings saved",
-      description: "Your community moderation settings have been updated successfully.",
-    });
+  const handleSave = async () => {
+    try {
+      await saveSettings();
+      toast({
+        title: "Moderation settings saved",
+        description: "Your community moderation settings have been updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      toast({
+        title: "Error saving settings",
+        description: "There was a problem saving your changes. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <IconHeader 
+          icon={<Shield />}
+          title="Moderation Controls" 
+          description="Manage content moderation settings and tools"
+        />
+        <CardContent>
+          <div className="py-8 text-center text-muted-foreground">
+            Loading settings...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const getSetting = (id: string) => {
+    return settings.find(s => s.id === id) || { id, value: false };
   };
 
   return (
@@ -45,7 +81,7 @@ const ModerationSettings = () => {
           <SettingItem
             title="Auto-moderate offensive content"
             description="Automatically filter potentially harmful content"
-            defaultChecked={true}
+            defaultChecked={getSetting("autoModerate").value}
             onToggle={(checked) => updateSetting("autoModerate", checked)}
             isChanged={isSettingChanged("autoModerate")}
           />
@@ -53,7 +89,7 @@ const ModerationSettings = () => {
           <SettingItem
             title="Require post approval"
             description="New posts require moderator approval before publishing"
-            defaultChecked={false}
+            defaultChecked={getSetting("requireApproval").value}
             onToggle={(checked) => updateSetting("requireApproval", checked)}
             isChanged={isSettingChanged("requireApproval")}
           />
@@ -61,7 +97,7 @@ const ModerationSettings = () => {
           <SettingItem
             title="Enable spam detection"
             description="Automatically flag potential spam content"
-            defaultChecked={true}
+            defaultChecked={getSetting("spamDetection").value}
             onToggle={(checked) => updateSetting("spamDetection", checked)}
             isChanged={isSettingChanged("spamDetection")}
           />
@@ -95,28 +131,6 @@ const ModerationSettings = () => {
         </div>
       </CardContent>
     </Card>
-  );
-};
-
-// Keeping the ThresholdSetting component within the same file
-type ThresholdSettingProps = {
-  title: string;
-  description: string;
-  value: string;
-};
-
-const ThresholdSetting = ({ title, description, value }: ThresholdSettingProps) => {
-  return (
-    <div className="flex items-center justify-between">
-      <div>
-        <h3 className="font-medium">{title}</h3>
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </div>
-      <div className="flex items-center gap-2">
-        <span>{value}</span>
-        <Button variant="outline" size="sm">Change</Button>
-      </div>
-    </div>
   );
 };
 

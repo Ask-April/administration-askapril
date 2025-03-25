@@ -11,27 +11,59 @@ import { useToast } from "@/hooks/use-toast";
 const NotificationSettings = () => {
   const { toast } = useToast();
   
-  const initialSettings = [
-    { id: "emailDigests", value: true },
-    { id: "newDiscussions", value: true },
-    { id: "replyNotifications", value: true },
-    { id: "moderatorAlerts", value: true }
+  const initialSettingsIds = [
+    "emailDigests",
+    "newDiscussions",
+    "replyNotifications",
+    "moderatorAlerts"
   ];
   
   const { 
+    settings,
     updateSetting, 
     isSettingChanged, 
     hasChanges, 
     resetSettings, 
-    saveSettings 
-  } = useSettingsState(initialSettings);
+    saveSettings,
+    isLoading
+  } = useSettingsState(initialSettingsIds);
 
-  const handleSave = () => {
-    saveSettings();
-    toast({
-      title: "Notification settings saved",
-      description: "Your community notification preferences have been updated successfully.",
-    });
+  const handleSave = async () => {
+    try {
+      await saveSettings();
+      toast({
+        title: "Notification settings saved",
+        description: "Your community notification preferences have been updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      toast({
+        title: "Error saving settings",
+        description: "There was a problem saving your changes. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <IconHeader 
+          icon={<BellRing />}
+          title="Notification Settings" 
+          description="Configure how and when notifications are sent"
+        />
+        <CardContent>
+          <div className="py-8 text-center text-muted-foreground">
+            Loading settings...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const getSetting = (id: string) => {
+    return settings.find(s => s.id === id) || { id, value: false };
   };
 
   return (
@@ -46,7 +78,7 @@ const NotificationSettings = () => {
           <SettingItem
             title="Email digests"
             description="Send weekly email digests of community activity"
-            defaultChecked={true}
+            defaultChecked={getSetting("emailDigests").value}
             onToggle={(checked) => updateSetting("emailDigests", checked)}
             isChanged={isSettingChanged("emailDigests")}
           />
@@ -54,7 +86,7 @@ const NotificationSettings = () => {
           <SettingItem
             title="New discussion notifications"
             description="Notify members when new discussions are created"
-            defaultChecked={true}
+            defaultChecked={getSetting("newDiscussions").value}
             onToggle={(checked) => updateSetting("newDiscussions", checked)}
             isChanged={isSettingChanged("newDiscussions")}
           />
@@ -62,7 +94,7 @@ const NotificationSettings = () => {
           <SettingItem
             title="Reply notifications"
             description="Notify users when someone replies to their posts"
-            defaultChecked={true}
+            defaultChecked={getSetting("replyNotifications").value}
             onToggle={(checked) => updateSetting("replyNotifications", checked)}
             isChanged={isSettingChanged("replyNotifications")}
           />
@@ -70,7 +102,7 @@ const NotificationSettings = () => {
           <SettingItem
             title="Moderator alerts"
             description="Send alerts to moderators for flagged content"
-            defaultChecked={true}
+            defaultChecked={getSetting("moderatorAlerts").value}
             onToggle={(checked) => updateSetting("moderatorAlerts", checked)}
             isChanged={isSettingChanged("moderatorAlerts")}
           />

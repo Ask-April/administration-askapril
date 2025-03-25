@@ -11,27 +11,59 @@ import { useToast } from "@/hooks/use-toast";
 const GeneralSettings = () => {
   const { toast } = useToast();
   
-  const initialSettings = [
-    { id: "fileUploads", value: true },
-    { id: "communitySearch", value: true },
-    { id: "richText", value: true },
-    { id: "codeSnippets", value: true }
+  const initialSettingsIds = [
+    "fileUploads",
+    "communitySearch",
+    "richText",
+    "codeSnippets"
   ];
   
   const { 
+    settings,
     updateSetting, 
     isSettingChanged, 
     hasChanges, 
     resetSettings, 
-    saveSettings 
-  } = useSettingsState(initialSettings);
+    saveSettings,
+    isLoading
+  } = useSettingsState(initialSettingsIds);
 
-  const handleSave = () => {
-    saveSettings();
-    toast({
-      title: "Settings saved",
-      description: "Your community settings have been updated successfully.",
-    });
+  const handleSave = async () => {
+    try {
+      await saveSettings();
+      toast({
+        title: "Settings saved",
+        description: "Your community settings have been updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      toast({
+        title: "Error saving settings",
+        description: "There was a problem saving your changes. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <IconHeader 
+          icon={<Settings />}
+          title="Community Settings" 
+          description="Manage general settings for all communities"
+        />
+        <CardContent>
+          <div className="py-8 text-center text-muted-foreground">
+            Loading settings...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const getSetting = (id: string) => {
+    return settings.find(s => s.id === id) || { id, value: false };
   };
 
   return (
@@ -46,7 +78,7 @@ const GeneralSettings = () => {
           <SettingItem
             title="Allow file uploads in discussions"
             description="Let users attach files to their discussion posts"
-            defaultChecked={true}
+            defaultChecked={getSetting("fileUploads").value}
             onToggle={(checked) => updateSetting("fileUploads", checked)}
             isChanged={isSettingChanged("fileUploads")}
           />
@@ -54,7 +86,7 @@ const GeneralSettings = () => {
           <SettingItem
             title="Enable community search"
             description="Allow users to search content within communities"
-            defaultChecked={true}
+            defaultChecked={getSetting("communitySearch").value}
             onToggle={(checked) => updateSetting("communitySearch", checked)}
             isChanged={isSettingChanged("communitySearch")}
           />
@@ -62,7 +94,7 @@ const GeneralSettings = () => {
           <SettingItem
             title="Allow rich text formatting"
             description="Enable markdown and rich text in community posts"
-            defaultChecked={true}
+            defaultChecked={getSetting("richText").value}
             onToggle={(checked) => updateSetting("richText", checked)}
             isChanged={isSettingChanged("richText")}
           />
@@ -70,7 +102,7 @@ const GeneralSettings = () => {
           <SettingItem
             title="Enable code snippets"
             description="Allow users to share formatted code in discussions"
-            defaultChecked={true}
+            defaultChecked={getSetting("codeSnippets").value}
             onToggle={(checked) => updateSetting("codeSnippets", checked)}
             isChanged={isSettingChanged("codeSnippets")}
           />

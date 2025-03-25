@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,31 +7,64 @@ import SettingItem from "./SettingItem";
 import IconHeader from "./CardHeader";
 import { useSettingsState } from "../hooks/useSettingsState";
 import { useToast } from "@/hooks/use-toast";
+import ThresholdSetting from "./ThresholdSetting";
 
 const MembershipSettings = () => {
   const { toast } = useToast();
   
-  const initialSettings = [
-    { id: "openMembership", value: false },
-    { id: "requireApproval", value: true },
-    { id: "memberInvitation", value: true },
-    { id: "waitingPeriod", value: true }
+  const initialSettingsIds = [
+    "openMembership",
+    "requireMemberApproval",
+    "memberInvitation",
+    "waitingPeriod"
   ];
   
   const { 
+    settings,
     updateSetting, 
     isSettingChanged, 
     hasChanges, 
     resetSettings, 
-    saveSettings 
-  } = useSettingsState(initialSettings);
+    saveSettings,
+    isLoading
+  } = useSettingsState(initialSettingsIds);
 
-  const handleSave = () => {
-    saveSettings();
-    toast({
-      title: "Membership settings saved",
-      description: "Your community membership settings have been updated successfully.",
-    });
+  const handleSave = async () => {
+    try {
+      await saveSettings();
+      toast({
+        title: "Membership settings saved",
+        description: "Your community membership settings have been updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      toast({
+        title: "Error saving settings",
+        description: "There was a problem saving your changes. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <IconHeader 
+          icon={<UserPlus />}
+          title="Membership Controls" 
+          description="Manage how users join and participate in communities"
+        />
+        <CardContent>
+          <div className="py-8 text-center text-muted-foreground">
+            Loading settings...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const getSetting = (id: string) => {
+    return settings.find(s => s.id === id) || { id, value: false };
   };
 
   return (
@@ -45,7 +79,7 @@ const MembershipSettings = () => {
           <SettingItem
             title="Open membership"
             description="Allow anyone to join communities without approval"
-            defaultChecked={false}
+            defaultChecked={getSetting("openMembership").value}
             onToggle={(checked) => updateSetting("openMembership", checked)}
             isChanged={isSettingChanged("openMembership")}
           />
@@ -53,15 +87,15 @@ const MembershipSettings = () => {
           <SettingItem
             title="Require membership approval"
             description="New members must be approved by moderators"
-            defaultChecked={true}
-            onToggle={(checked) => updateSetting("requireApproval", checked)}
-            isChanged={isSettingChanged("requireApproval")}
+            defaultChecked={getSetting("requireMemberApproval").value}
+            onToggle={(checked) => updateSetting("requireMemberApproval", checked)}
+            isChanged={isSettingChanged("requireMemberApproval")}
           />
           
           <SettingItem
             title="Allow invitation by members"
             description="Existing members can invite others to join"
-            defaultChecked={true}
+            defaultChecked={getSetting("memberInvitation").value}
             onToggle={(checked) => updateSetting("memberInvitation", checked)}
             isChanged={isSettingChanged("memberInvitation")}
           />
@@ -95,27 +129,6 @@ const MembershipSettings = () => {
         </div>
       </CardContent>
     </Card>
-  );
-};
-
-type ThresholdSettingProps = {
-  title: string;
-  description: string;
-  value: string;
-};
-
-const ThresholdSetting = ({ title, description, value }: ThresholdSettingProps) => {
-  return (
-    <div className="flex items-center justify-between">
-      <div>
-        <h3 className="font-medium">{title}</h3>
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </div>
-      <div className="flex items-center gap-2">
-        <span>{value}</span>
-        <Button variant="outline" size="sm">Change</Button>
-      </div>
-    </div>
   );
 };
 

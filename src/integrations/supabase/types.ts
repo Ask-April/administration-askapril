@@ -289,6 +289,33 @@ export type Database = {
           },
         ]
       }
+      community_settings: {
+        Row: {
+          community_id: string
+          created_at: string | null
+          id: string
+          setting_id: string
+          updated_at: string | null
+          value: boolean
+        }
+        Insert: {
+          community_id: string
+          created_at?: string | null
+          id?: string
+          setting_id: string
+          updated_at?: string | null
+          value: boolean
+        }
+        Update: {
+          community_id?: string
+          created_at?: string | null
+          id?: string
+          setting_id?: string
+          updated_at?: string | null
+          value?: boolean
+        }
+        Relationships: []
+      }
       contact: {
         Row: {
           contact_id: number
@@ -313,6 +340,48 @@ export type Database = {
           site_id?: number | null
           source?: string | null
           status?: string | null
+        }
+        Relationships: []
+      }
+      content_reports: {
+        Row: {
+          community_id: string
+          content_excerpt: string
+          content_id: string
+          content_type: string
+          created_at: string | null
+          id: string
+          reason: string
+          reporter_id: string
+          severity: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          community_id: string
+          content_excerpt: string
+          content_id: string
+          content_type: string
+          created_at?: string | null
+          id?: string
+          reason: string
+          reporter_id: string
+          severity: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          community_id?: string
+          content_excerpt?: string
+          content_id?: string
+          content_type?: string
+          created_at?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string
+          severity?: string
+          status?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
