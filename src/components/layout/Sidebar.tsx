@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -27,7 +28,32 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 
   const toggleSidebar = () => {
     setExpanded(!expanded);
+    // Update the layout padding when sidebar state changes
+    const mainContent = document.querySelector('div.flex-1.flex.flex-col');
+    if (mainContent) {
+      if (!expanded) {
+        mainContent.classList.remove('pl-[78px]');
+        mainContent.classList.add('pl-64');
+      } else {
+        mainContent.classList.remove('pl-64');
+        mainContent.classList.add('pl-[78px]');
+      }
+    }
   };
+
+  // Set initial padding based on sidebar state
+  useEffect(() => {
+    const mainContent = document.querySelector('div.flex-1.flex.flex-col');
+    if (mainContent) {
+      if (expanded) {
+        mainContent.classList.remove('pl-[78px]');
+        mainContent.classList.add('pl-64');
+      } else {
+        mainContent.classList.remove('pl-64');
+        mainContent.classList.add('pl-[78px]');
+      }
+    }
+  }, []);
 
   const navItems = [
     { name: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/" },
