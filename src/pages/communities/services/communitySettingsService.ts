@@ -15,6 +15,7 @@ export interface CommunitySetting {
   value: boolean;
 }
 
+// Fixed community ID for demo purposes
 const COMMUNITY_ID = '00000000-0000-0000-0000-000000000001';
 
 export const fetchCommunitySettings = async (): Promise<CommunitySetting[]> => {
