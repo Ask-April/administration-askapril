@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -9,7 +10,6 @@ import {
   LayoutDashboard,
   Settings,
   Users,
-  Video,
   User,
   Package,
   List,
@@ -149,7 +149,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                 <img 
                   src="/lovable-uploads/d69fe8cc-396d-4df5-9d0f-2f686f1cbea9.png" 
                   alt="AskApril.AI Logo" 
-                  className="h-8 w-auto" 
+                  className="h-10 w-auto" 
                 />
               </motion.div>
             ) : (
@@ -164,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                 <img 
                   src="/lovable-uploads/d69fe8cc-396d-4df5-9d0f-2f686f1cbea9.png" 
                   alt="AskApril.AI Logo" 
-                  className="h-8 w-auto" 
+                  className="h-10 w-auto" 
                 />
               </motion.div>
             )}
