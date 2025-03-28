@@ -61,11 +61,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     onChange("");
   };
 
+  const triggerFileInput = () => {
+    document.getElementById('image-upload')?.click();
+  };
+
   return (
-    <div className="flex flex-col items-center space-y-2">
+    <div className="flex flex-col items-center h-full">
       <div 
-        className="relative w-full aspect-video bg-muted border rounded-md overflow-hidden"
-        style={{ maxWidth: "400px" }}
+        className="relative w-full aspect-video bg-muted border rounded-md overflow-hidden cursor-pointer"
+        onClick={triggerFileInput}
       >
         {value ? (
           <>
@@ -79,13 +83,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
               variant="destructive"
               size="icon"
               className="absolute top-2 right-2 rounded-full"
-              onClick={handleRemove}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemove();
+              }}
             >
               <X className="h-4 w-4" />
             </Button>
           </>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center p-4 cursor-pointer" onClick={() => document.getElementById('image-upload')?.click()}>
+          <div className="w-full h-full flex flex-col items-center justify-center p-4">
             <ImagePlus className="h-10 w-10 text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground text-center">
               {isUploading ? "Uploading..." : "Click to upload course image"}
@@ -103,19 +110,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
         disabled={isUploading}
       />
       
-      {error && <p className="text-destructive text-sm">{error}</p>}
-      
-      {!value && !isUploading && (
-        <Button 
-          type="button" 
-          variant="outline" 
-          size="sm"
-          onClick={() => document.getElementById('image-upload')?.click()}
-        >
-          <ImagePlus className="mr-2 h-4 w-4" />
-          Browse image
-        </Button>
-      )}
+      {error && <p className="text-destructive text-sm mt-2">{error}</p>}
     </div>
   );
 };
