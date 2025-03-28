@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Bell, Search, Settings, User } from "lucide-react";
+import { Bell, Search, Settings, User, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar: React.FC = () => {
+  const { user, signOut } = useAuth();
+
+  // Get user initials for avatar fallback
+  const getUserInitials = () => {
+    if (!user?.email) return "U";
+    const email = user.email;
+    return email.substring(0, 2).toUpperCase();
+  };
+
   return (
-    <header className="bg-background border-b border-border h-16 fixed top-0 right-0 left-0 z-30 transition-all duration-300 flex items-center px-4 sm:px-6">
+    <header className="bg-background border-b border-border h-16 fixed top-0 right-0 left-0 z-30 transition-all duration-300 flex items-center px-4 sm:px-6 pl-[78px]">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
           <div className="hidden sm:block w-72">
@@ -46,20 +56,29 @@ const Navbar: React.FC = () => {
               <Button variant="ghost" className="rounded-full p-px h-9 w-9">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder.svg" alt="User" />
-                  <AvatarFallback className="bg-primary/10 text-accent">AD</AvatarFallback>
+                  <AvatarFallback className="bg-primary/10 text-accent">{getUserInitials()}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel className="font-normal text-sm text-muted-foreground">
+                {user?.email}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Log out</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => signOut()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
