@@ -5,6 +5,7 @@ import Layout from "./components/layout/Layout";
 import Dashboard from "./components/dashboard/Dashboard";
 import Courses from "./pages/Courses";
 import Overview from "./pages/courses/Overview";
+import CreateCourse from "./pages/courses/CreateCourse";
 import Broadcasts from "./pages/Broadcasts";
 import Communities from "./pages/Communities";
 import Analytics from "./pages/Analytics";
@@ -31,6 +32,7 @@ function App() {
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/courses" element={<Courses />} />
                   <Route path="/courses/overview" element={<Overview />} />
+                  <Route path="/courses/create" element={<CreateCourse />} />
                   <Route path="/courses/edit/:id" element={<EditCourse />} />
                   <Route path="/broadcasts" element={<Broadcasts />} />
                   <Route path="/communities" element={<Communities />} />
