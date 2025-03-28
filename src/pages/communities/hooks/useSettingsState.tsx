@@ -25,9 +25,11 @@ export const useSettingsState = (communityId: string | string[]) => {
   const { data: fetchedSettings, isLoading } = useQuery({
     queryKey: ["community-settings", communityIdString],
     queryFn: () => communitySettingsService.getSettings(communityIdString),
-    onSuccess: (data) => {
-      setSettings(data);
-      originalSettings.current = JSON.parse(JSON.stringify(data)); // Deep copy for comparison
+    meta: {
+      onSuccess: (data: CommunitySetting[]) => {
+        setSettings(data);
+        originalSettings.current = JSON.parse(JSON.stringify(data)); // Deep copy for comparison
+      }
     }
   });
 
