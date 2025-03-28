@@ -149,7 +149,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                 <img 
                   src="/lovable-uploads/d69fe8cc-396d-4df5-9d0f-2f686f1cbea9.png" 
                   alt="AskApril.AI Logo" 
-                  className="h-10 w-auto" 
+                  className="h-14 w-auto" 
                 />
               </motion.div>
             ) : (
@@ -164,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                 <img 
                   src="/lovable-uploads/d69fe8cc-396d-4df5-9d0f-2f686f1cbea9.png" 
                   alt="AskApril.AI Logo" 
-                  className="h-10 w-auto" 
+                  className="h-12 w-auto" 
                 />
               </motion.div>
             )}
