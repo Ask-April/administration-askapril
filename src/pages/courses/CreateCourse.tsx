@@ -27,6 +27,9 @@ const CreateCourse = () => {
     status: "draft" as const,
   });
   
+  const [createdCourseId, setCreatedCourseId] = useState<string | null>(null);
+  const [curriculumSections, setCurriculumSections] = useState<any[]>([]);
+  
   const steps = [
     { id: "info", label: "Basic Info" },
     { id: "curriculum", label: "Curriculum" },
@@ -38,10 +41,40 @@ const CreateCourse = () => {
   
   const handleNext = async () => {
     if (currentStep === "info") {
-      setCurrentStep("curriculum");
+      try {
+        // Only create the course when moving from info to curriculum
+        if (!createdCourseId) {
+          const course = await courseService.createCourse({
+            title: courseData.title,
+            description: courseData.description,
+            category: courseData.category,
+            image: courseData.image,
+            duration: courseData.duration || "0 hours",
+            status: courseData.status,
+            lessons: courseData.lessons,
+            students: 0,
+          });
+          
+          setCreatedCourseId(course.id);
+          toast.success("Course information saved!");
+        }
+        setCurrentStep("curriculum");
+      } catch (error) {
+        console.error("Error creating course:", error);
+        toast.error("Failed to save course information. Please try again.");
+      }
     }
     else if (currentStep === "curriculum") {
-      setCurrentStep("pricing");
+      try {
+        if (createdCourseId && curriculumSections.length > 0) {
+          await courseService.saveCurriculum(createdCourseId, curriculumSections);
+          toast.success("Curriculum saved successfully!");
+        }
+        setCurrentStep("pricing");
+      } catch (error) {
+        console.error("Error saving curriculum:", error);
+        toast.error("Failed to save curriculum. Please try again.");
+      }
     }
     else if (currentStep === "pricing") {
       setCurrentStep("settings");
@@ -59,23 +92,17 @@ const CreateCourse = () => {
   
   const handleFinish = async () => {
     try {
-      // Create the course
-      const course = await courseService.createCourse({
-        title: courseData.title,
-        description: courseData.description,
-        category: courseData.category,
-        image: courseData.image,
-        duration: courseData.duration,
-        status: courseData.status,
-        lessons: courseData.lessons,
-        students: 0,
-      });
+      if (createdCourseId) {
+        await courseService.updateCourse(createdCourseId, {
+          status: "published"
+        });
+      }
       
       toast.success("Course created successfully!");
       navigate("/courses/overview");
     } catch (error) {
-      console.error("Error creating course:", error);
-      toast.error("Failed to create course. Please try again.");
+      console.error("Error finalizing course:", error);
+      toast.error("Failed to finalize course. Please try again.");
     }
   };
   
@@ -85,6 +112,13 @@ const CreateCourse = () => {
 
   const updateCourseData = (data: Partial<typeof courseData>) => {
     setCourseData(prev => ({ ...prev, ...data }));
+  };
+  
+  const handleUpdateCurriculum = (sections: any[]) => {
+    setCurriculumSections(sections);
+    // Update the total lesson count
+    const totalLessons = sections.reduce((count, section) => count + section.lessons.length, 0);
+    updateCourseData({ lessons: totalLessons });
   };
 
   const renderStepContent = () => {
@@ -97,7 +131,9 @@ const CreateCourse = () => {
       case "curriculum":
         return <CourseCurriculum 
                  courseData={courseData} 
-                 updateCourseData={updateCourseData} 
+                 updateCourseData={updateCourseData}
+                 courseId={createdCourseId || ""}
+                 onUpdateSections={handleUpdateCurriculum}
                />;
       case "pricing":
         return <div className="py-8 text-center text-muted-foreground">Pricing options will be available in the future</div>;

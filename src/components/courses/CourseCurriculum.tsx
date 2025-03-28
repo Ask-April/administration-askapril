@@ -1,15 +1,18 @@
 
 import React, { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, FileText, Video, Book, Download, File, Code, Radio, HelpCircle, ClipboardList, FileAudio2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AddLessonDialog from "./AddLessonDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface Section {
   id: string;
   title: string;
   lessons: Lesson[];
+  position: number;
 }
 
 interface Lesson {
@@ -20,6 +23,9 @@ interface Lesson {
   isDraft?: boolean;
   isCompulsory?: boolean;
   enableDiscussion?: boolean;
+  content?: string;
+  contentUrl?: string;
+  position?: number;
 }
 
 interface CourseCurriculumProps {
@@ -41,9 +47,10 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
 }) => {
   const [sections, setSections] = useState<Section[]>([
     {
-      id: "1",
+      id: Date.now().toString(),
       title: "Introduction",
-      lessons: []
+      lessons: [],
+      position: 0
     }
   ]);
   const [newSectionTitle, setNewSectionTitle] = useState("");
@@ -59,15 +66,14 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
     
-    setSections([
-      ...sections,
-      {
-        id: Date.now().toString(),
-        title: newSectionTitle,
-        lessons: []
-      }
-    ]);
+    const newSection = {
+      id: Date.now().toString(),
+      title: newSectionTitle,
+      lessons: [],
+      position: sections.length
+    };
     
+    setSections([...sections, newSection]);
     setNewSectionTitle("");
   };
 
@@ -83,13 +89,20 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   const handleAddLesson = (lesson: Lesson) => {
     if (!currentSection) return;
     
+    // Add position to the lesson
+    const lessonWithPosition = {
+      ...lesson,
+      position: currentSection.lessons.length
+    };
+    
     setSections(sections.map(section => 
       section.id === currentSection.id 
-        ? { ...section, lessons: [...section.lessons, lesson] }
+        ? { ...section, lessons: [...section.lessons, lessonWithPosition] }
         : section
     ));
     
     setIsAddLessonDialogOpen(false);
+    toast.success(`Lesson "${lesson.title}" added successfully`);
   };
 
   const handleDeleteLesson = (sectionId: string, lessonId: string) => {
@@ -98,6 +111,35 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
         ? { ...section, lessons: section.lessons.filter(lesson => lesson.id !== lessonId) }
         : section
     ));
+  };
+
+  const getIconForLessonType = (type?: string) => {
+    switch (type) {
+      case "video":
+        return <Video className="h-4 w-4 mr-1.5" />;
+      case "audio":
+        return <FileAudio2 className="h-4 w-4 mr-1.5" />;
+      case "e-book":
+        return <Book className="h-4 w-4 mr-1.5" />;
+      case "powerpoint":
+        return <FileText className="h-4 w-4 mr-1.5" />;
+      case "pdf":
+        return <File className="h-4 w-4 mr-1.5" />;
+      case "text":
+        return <FileText className="h-4 w-4 mr-1.5" />;
+      case "custom-code":
+        return <Code className="h-4 w-4 mr-1.5" />;
+      case "downloads":
+        return <Download className="h-4 w-4 mr-1.5" />;
+      case "quiz":
+        return <HelpCircle className="h-4 w-4 mr-1.5" />;
+      case "survey":
+        return <ClipboardList className="h-4 w-4 mr-1.5" />;
+      case "live":
+        return <Radio className="h-4 w-4 mr-1.5" />;
+      default:
+        return <FileText className="h-4 w-4 mr-1.5" />;
+    }
   };
 
   return (
@@ -127,13 +169,17 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
               <div className="space-y-2 pl-4 border-l-2 border-muted">
                 {section.lessons.map(lesson => (
                   <div key={lesson.id} className="flex justify-between items-center py-2 px-3 bg-muted/50 rounded-md group/lesson">
-                    <div>
+                    <div className="flex items-center">
+                      {getIconForLessonType(lesson.type)}
                       <span className="text-sm">{lesson.title}</span>
                       {lesson.isPreview && (
                         <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">Preview</span>
                       )}
                       {lesson.isDraft && (
                         <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">Draft</span>
+                      )}
+                      {lesson.isCompulsory && (
+                        <span className="ml-2 text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded-full">Required</span>
                       )}
                     </div>
                     <Button

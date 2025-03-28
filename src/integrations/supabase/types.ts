@@ -124,34 +124,52 @@ export type Database = {
       course_lessons: {
         Row: {
           content: string | null
+          content_url: string | null
           created_at: string
           duration: number | null
+          enable_discussion: boolean | null
           id: string
+          is_compulsory: boolean | null
+          is_draft: boolean | null
+          is_preview: boolean | null
           position: number
           section_id: string
           title: string
+          type: string | null
           updated_at: string
           video_url: string | null
         }
         Insert: {
           content?: string | null
+          content_url?: string | null
           created_at?: string
           duration?: number | null
+          enable_discussion?: boolean | null
           id?: string
+          is_compulsory?: boolean | null
+          is_draft?: boolean | null
+          is_preview?: boolean | null
           position?: number
           section_id: string
           title: string
+          type?: string | null
           updated_at?: string
           video_url?: string | null
         }
         Update: {
           content?: string | null
+          content_url?: string | null
           created_at?: string
           duration?: number | null
+          enable_discussion?: boolean | null
           id?: string
+          is_compulsory?: boolean | null
+          is_draft?: boolean | null
+          is_preview?: boolean | null
           position?: number
           section_id?: string
           title?: string
+          type?: string | null
           updated_at?: string
           video_url?: string | null
         }
