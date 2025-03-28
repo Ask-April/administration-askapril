@@ -1,33 +1,48 @@
 
-import { supabase } from '@/integrations/supabase/client';
-import { courseService } from '@/services/courseService';
+import { courseService } from "@/services/courseService";
+import { NextApiRequest, NextApiResponse } from "next";
 
 /**
- * This is a simple API endpoint example that can be used to fetch courses
- * It's not using Next.js, just a regular exported function
+ * Example API endpoint for serving course data to the frontend
+ * 
+ * Note: This is just an example - in practice, your frontend would likely
+ * connect directly to Supabase using the shared configuration.
  */
-export const getCourses = async () => {
-  return await courseService.getPublicCourses();
-};
-
-export const getCourseById = async (id: string) => {
-  return await courseService.getCourseById(id);
-};
-
-// This shows how you could implement a frontend-safe way to get courses
-// without exposing the Supabase client directly in the frontend
-export const getPublishedCoursesByCategory = async (category: string) => {
-  try {
-    const { data, error } = await supabase
-      .from('courses')
-      .select('*')
-      .eq('status', 'published')
-      .eq('category', category);
-      
-    if (error) throw error;
-    return data;
-  } catch (error) {
-    console.error('Error fetching courses by category:', error);
-    throw error;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Set CORS headers to allow requests from your frontend domain
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Replace with your frontend domain in production
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
-};
+  
+  try {
+    if (req.method === 'GET') {
+      const category = req.query.category as string | undefined;
+      const id = req.query.id as string | undefined;
+      
+      if (id) {
+        // Get a specific course
+        const course = await courseService.getCourseById(id);
+        return res.status(200).json(course);
+      } else if (category) {
+        // Get courses by category
+        const courses = await courseService.getCoursesByCategory(category);
+        return res.status(200).json(courses);
+      } else {
+        // Get all public courses
+        const courses = await courseService.getPublicCourses();
+        return res.status(200).json(courses);
+      }
+    }
+    
+    // Return 405 Method Not Allowed for non-GET requests
+    return res.status(405).json({ message: 'Method not allowed' });
+  } catch (error) {
+    console.error('API error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
