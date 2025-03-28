@@ -32,7 +32,7 @@ interface CourseCurriculumProps {
     lessons: number;
     status: "draft" | "published";
   };
-  updateCourseData: (data: Partial<typeof courseData>) => void;
+  updateCourseData: (data: Partial<CourseCurriculumProps["courseData"]>) => void;
 }
 
 const CourseCurriculum: React.FC<CourseCurriculumProps> = ({ 

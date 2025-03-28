@@ -48,7 +48,7 @@ interface CourseInfoFormProps {
     duration: string;
     status: "draft" | "published";
   };
-  updateCourseData: (data: Partial<typeof courseData>) => void;
+  updateCourseData: (data: Partial<CourseInfoFormProps["courseData"]>) => void;
 }
 
 const CourseInfoForm: React.FC<CourseInfoFormProps> = ({ 

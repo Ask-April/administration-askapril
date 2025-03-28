@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import CourseInfoForm from "@/components/courses/CourseInfoForm";
 import CourseCurriculum from "@/components/courses/CourseCurriculum";
 import StepProgress from "@/components/courses/StepProgress";
+import { courseService } from "@/services/courseService";
+import { toast } from "sonner";
 
 type Step = "info" | "curriculum" | "pricing" | "settings";
 
@@ -34,11 +36,19 @@ const CreateCourse = () => {
 
   const currentStepIndex = steps.findIndex(step => step.id === currentStep);
   
-  const handleNext = () => {
-    if (currentStep === "info") setCurrentStep("curriculum");
-    else if (currentStep === "curriculum") setCurrentStep("pricing");
-    else if (currentStep === "pricing") setCurrentStep("settings");
-    else if (currentStep === "settings") handleFinish();
+  const handleNext = async () => {
+    if (currentStep === "info") {
+      setCurrentStep("curriculum");
+    }
+    else if (currentStep === "curriculum") {
+      setCurrentStep("pricing");
+    }
+    else if (currentStep === "pricing") {
+      setCurrentStep("settings");
+    }
+    else if (currentStep === "settings") {
+      await handleFinish();
+    }
   };
   
   const handlePrevious = () => {
@@ -47,8 +57,26 @@ const CreateCourse = () => {
     else if (currentStep === "settings") setCurrentStep("pricing");
   };
   
-  const handleFinish = () => {
-    navigate("/courses/overview");
+  const handleFinish = async () => {
+    try {
+      // Create the course
+      const course = await courseService.createCourse({
+        title: courseData.title,
+        description: courseData.description,
+        category: courseData.category,
+        image: courseData.image,
+        duration: courseData.duration,
+        status: courseData.status,
+        lessons: courseData.lessons,
+        students: 0,
+      });
+      
+      toast.success("Course created successfully!");
+      navigate("/courses/overview");
+    } catch (error) {
+      console.error("Error creating course:", error);
+      toast.error("Failed to create course. Please try again.");
+    }
   };
   
   const handleCancel = () => {
