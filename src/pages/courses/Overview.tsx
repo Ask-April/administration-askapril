@@ -1,83 +1,45 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BookPlus } from "lucide-react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import CourseCard from "@/components/courses/CourseCard";
+import { supabase } from "@/integrations/supabase/client";
+import { Tables } from "@/integrations/supabase/types";
 
-// Initial courses data
-const coursesData = [
-  {
-    id: "1",
-    title: "Introduction to Web Design",
-    description: "Learn the fundamentals of web design including HTML, CSS, and responsive design principles.",
-    image: "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    category: "Design",
-    duration: "6 hours",
-    students: 487,
-    lessons: 10,
-    status: "published" as const,
-  },
-  {
-    id: "2",
-    title: "JavaScript Fundamentals",
-    description: "A comprehensive course on JavaScript fundamentals for web development.",
-    image: "https://images.unsplash.com/photo-1592609931095-54a2168ae893?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    category: "Development",
-    duration: "8 hours",
-    students: 932,
-    lessons: 12,
-    status: "published" as const,
-  },
-  {
-    id: "3",
-    title: "Advanced React Development",
-    description: "Master advanced React concepts including hooks, context, and performance optimization.",
-    image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    category: "Development",
-    duration: "10 hours",
-    students: 654,
-    lessons: 15,
-    status: "published" as const,
-  },
-  {
-    id: "4",
-    title: "UX Design Principles",
-    description: "Learn the core principles of user experience design and how to apply them.",
-    image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    category: "Design",
-    duration: "7 hours",
-    students: 321,
-    lessons: 8,
-    status: "published" as const,
-  },
-  {
-    id: "5",
-    title: "Python for Data Science",
-    description: "Learn Python programming with a focus on data analysis and visualization.",
-    image: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    category: "Data Science",
-    duration: "12 hours",
-    students: 876,
-    lessons: 18,
-    status: "published" as const,
-  },
-  {
-    id: "6",
-    title: "Digital Marketing Fundamentals",
-    description: "A comprehensive introduction to digital marketing strategies and tactics.",
-    image: "https://images.unsplash.com/photo-1432888622747-4eb9a8f5a07a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-    category: "Marketing",
-    duration: "5 hours",
-    students: 542,
-    lessons: 9,
-    status: "published" as const,
-  },
-];
+type Course = Tables<"courses">;
 
 const Overview = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        // Fetch courses from the database
+        const { data, error } = await supabase
+          .from('courses')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) {
+          console.error("Error fetching courses:", error);
+          return;
+        }
+        
+        setCourses(data || []);
+      } catch (error) {
+        console.error("Unexpected error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchCourses();
+  }, []);
+
   return (
     <PageTransition>
       <div className="container px-4 py-6">
@@ -98,7 +60,9 @@ const Overview = () => {
               <CardDescription>Total active courses in your platform</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">24</p>
+              <p className="text-4xl font-bold">
+                {courses.filter(course => course.status === 'published').length}
+              </p>
             </CardContent>
           </Card>
           <Card>
@@ -107,7 +71,9 @@ const Overview = () => {
               <CardDescription>Number of enrolled students</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">1,284</p>
+              <p className="text-4xl font-bold">
+                {courses.reduce((sum, course) => sum + (course.students || 0), 0)}
+              </p>
             </CardContent>
           </Card>
           <Card>
@@ -123,23 +89,40 @@ const Overview = () => {
         
         <div className="mb-6">
           <h2 className="text-2xl font-bold mb-4">All Courses</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {coursesData.map((course) => (
-              <CourseCard
-                key={course.id}
-                id={course.id}
-                title={course.title}
-                description={course.description}
-                image={course.image}
-                category={course.category}
-                duration={course.duration}
-                students={course.students}
-                lessons={course.lessons}
-                status={course.status}
-                onClick={() => console.log(`Previewing course: ${course.id}`)}
-              />
-            ))}
-          </div>
+          
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <p className="text-muted-foreground">Loading courses...</p>
+            </div>
+          ) : courses.length === 0 ? (
+            <div className="text-center py-12 border border-dashed rounded-lg">
+              <p className="text-muted-foreground mb-4">No courses found</p>
+              <Button asChild>
+                <Link to="/courses/create">
+                  <BookPlus className="mr-2 h-4 w-4" />
+                  Create Your First Course
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {courses.map((course) => (
+                <CourseCard
+                  key={course.id}
+                  id={course.id}
+                  title={course.title}
+                  description={course.description || ""}
+                  image={course.image || ""}
+                  category={course.category}
+                  duration={course.duration}
+                  students={course.students}
+                  lessons={course.lessons}
+                  status={course.status as "draft" | "published"}
+                  onClick={() => console.log(`Previewing course: ${course.id}`)}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </PageTransition>

@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Form,
   FormControl,
@@ -44,12 +45,14 @@ const formSchema = z.object({
   lessons: z.coerce.number().min(1, {
     message: "Course must have at least 1 lesson.",
   }),
+  status: z.enum(["draft", "published"]).default("draft"),
 });
 
 type CourseFormValues = z.infer<typeof formSchema>;
 
 const CreateCourse = () => {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(formSchema),
@@ -60,13 +63,43 @@ const CreateCourse = () => {
       image: "",
       duration: "",
       lessons: 1,
+      status: "draft",
     },
   });
 
-  function onSubmit(values: CourseFormValues) {
-    console.log(values);
-    toast.success("Course created successfully!");
-    navigate("/courses/overview");
+  async function onSubmit(values: CourseFormValues) {
+    try {
+      setIsSubmitting(true);
+      
+      // Insert the course into the database
+      const { data, error } = await supabase
+        .from('courses')
+        .insert({
+          title: values.title,
+          description: values.description,
+          category: values.category,
+          image: values.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+          duration: values.duration,
+          lessons: values.lessons,
+          status: values.status,
+          students: 0,
+        })
+        .select();
+      
+      if (error) {
+        console.error("Error creating course:", error);
+        toast.error("Failed to create course. Please try again.");
+        return;
+      }
+      
+      toast.success("Course created successfully!");
+      navigate("/courses/overview");
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -194,6 +227,30 @@ const CreateCourse = () => {
                     )}
                   />
                 </div>
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="draft">Draft</SelectItem>
+                          <SelectItem value="published">Published</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex justify-end space-x-2">
                   <Button 
                     type="button" 
@@ -202,7 +259,12 @@ const CreateCourse = () => {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit">Create Course</Button>
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Creating..." : "Create Course"}
+                  </Button>
                 </div>
               </form>
             </Form>
