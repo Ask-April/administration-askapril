@@ -8,20 +8,23 @@ export interface CourseSection {
   id: string;
   title: string;
   course_id: string;
-  order: number;
+  position: number; // Changed from 'order' to match the database schema
 }
 
 export interface CourseLesson {
   id: string;
   title: string;
   section_id: string;
-  type: string;
+  type?: string; // Made optional since it might not exist in the database
   content_url?: string;
-  is_preview: boolean;
-  is_draft: boolean;
-  is_compulsory: boolean;
-  enable_discussion: boolean;
-  order: number;
+  content?: string;
+  video_url?: string;
+  duration?: number;
+  position: number; // Changed from 'order' to match database schema
+  is_preview?: boolean;
+  is_draft?: boolean;
+  is_compulsory?: boolean;
+  enable_discussion?: boolean;
 }
 
 /**
@@ -128,7 +131,7 @@ export const courseService = {
       throw error;
     }
     
-    return data as CourseSection;
+    return data as unknown as CourseSection;
   },
   
   /**
@@ -151,7 +154,7 @@ export const courseService = {
       throw error;
     }
     
-    return data as CourseLesson;
+    return data as unknown as CourseLesson;
   },
   
   /**
