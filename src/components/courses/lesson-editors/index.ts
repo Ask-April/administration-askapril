@@ -9,4 +9,5 @@ export { default as QuizEditor } from './QuizEditor';
 export { default as SurveyEditor } from './SurveyEditor';
 export { default as LiveSessionEditor } from './LiveSessionEditor';
 export { default as LessonTypeSelector } from './LessonTypeSelector';
+export { default as ContentEditor } from './ContentEditor';
 export { lessonTypes } from './LessonTypeSelector';
