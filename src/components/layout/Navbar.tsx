@@ -13,15 +13,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
+import { Profile } from "@/hooks/use-require-auth";
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  profile: Profile | null;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ profile }) => {
   const { user, signOut } = useAuth();
 
   // Get user initials for avatar fallback
   const getUserInitials = () => {
-    if (!user?.email) return "U";
-    const email = user.email;
-    return email.substring(0, 2).toUpperCase();
+    if (profile?.display_name) {
+      return profile.display_name.substring(0, 2).toUpperCase();
+    }
+    if (user?.email) {
+      return user.email.substring(0, 2).toUpperCase();
+    }
+    return "U";
   };
 
   return (
@@ -55,7 +64,7 @@ const Navbar: React.FC = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="rounded-full p-px h-9 w-9">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg" alt="User" />
+                  <AvatarImage src={profile?.avatar_url || ""} alt={profile?.display_name || "User"} />
                   <AvatarFallback className="bg-primary/10 text-accent">{getUserInitials()}</AvatarFallback>
                 </Avatar>
               </Button>
@@ -63,7 +72,7 @@ const Navbar: React.FC = () => {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuLabel className="font-normal text-sm text-muted-foreground">
-                {user?.email}
+                {profile?.display_name || user?.email}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
