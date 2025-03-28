@@ -1,25 +1,12 @@
 
 import React, { useState, useRef } from "react";
-import { 
-  Book, Video, FileText, Download, File, Code, Radio, 
-  HelpCircle, ClipboardList, FileAudio2, Upload, Link, Mic, 
-  Camera, Bold, Italic, Underline, Strikethrough, Heading1, 
-  Heading2, List, ListOrdered
-} from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+import { LessonTypeSelector, ContentEditor, lessonTypes } from "./lesson-editors";
 import { supabase } from "@/integrations/supabase/client";
-
-interface LessonType {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-}
 
 interface AddLessonDialogProps {
   isOpen: boolean;
@@ -37,64 +24,6 @@ interface AddLessonDialogProps {
   }) => void;
 }
 
-const lessonTypes: LessonType[] = [
-  {
-    id: "video",
-    name: "Video",
-    icon: <Video className="h-5 w-5" />
-  },
-  {
-    id: "audio",
-    name: "Audio",
-    icon: <FileAudio2 className="h-5 w-5" />
-  },
-  {
-    id: "e-book",
-    name: "E-book",
-    icon: <Book className="h-5 w-5" />
-  },
-  {
-    id: "powerpoint",
-    name: "PowerPoint",
-    icon: <FileText className="h-5 w-5" />
-  },
-  {
-    id: "pdf",
-    name: "PDF",
-    icon: <File className="h-5 w-5" />
-  },
-  {
-    id: "text",
-    name: "Rich Text",
-    icon: <FileText className="h-5 w-5" />
-  },
-  {
-    id: "custom-code",
-    name: "Custom Code",
-    icon: <Code className="h-5 w-5" />
-  },
-  {
-    id: "downloads",
-    name: "Downloads",
-    icon: <Download className="h-5 w-5" />
-  },
-  {
-    id: "quiz",
-    name: "Quiz",
-    icon: <HelpCircle className="h-5 w-5" />
-  },
-  {
-    id: "survey",
-    name: "Survey",
-    icon: <ClipboardList className="h-5 w-5" />
-  },
-  {
-    id: "live",
-    name: "Live",
-    icon: <Radio className="h-5 w-5" />
-  }
-];
-
 const AddLessonDialog: React.FC<AddLessonDialogProps> = ({
   isOpen,
   onClose,
@@ -106,7 +35,6 @@ const AddLessonDialog: React.FC<AddLessonDialogProps> = ({
   const [setAsDraft, setSetAsDraft] = useState(false);
   const [setAsCompulsory, setSetAsCompulsory] = useState(false);
   const [enableDiscussion, setEnableDiscussion] = useState(false);
-  const [contentMethod, setContentMethod] = useState<string>("url");
   const [contentUrl, setContentUrl] = useState("");
   const [content, setContent] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -162,7 +90,6 @@ const AddLessonDialog: React.FC<AddLessonDialogProps> = ({
     setSetAsDraft(false);
     setSetAsCompulsory(false);
     setEnableDiscussion(false);
-    setContentMethod("url");
     setContentUrl("");
     setContent("");
     setFile(null);
@@ -194,214 +121,6 @@ const AddLessonDialog: React.FC<AddLessonDialogProps> = ({
         return "course_resources";
       default:
         return "course_resources";
-    }
-  };
-  
-  const renderContentOptions = () => {
-    if (!selectedType) return null;
-    
-    switch (selectedType) {
-      case "video":
-        return (
-          <Tabs defaultValue="url" value={contentMethod} onValueChange={setContentMethod} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="url">URL</TabsTrigger>
-              <TabsTrigger value="upload">Upload</TabsTrigger>
-              <TabsTrigger value="camera">Record</TabsTrigger>
-            </TabsList>
-            <TabsContent value="url" className="space-y-2">
-              <div>
-                <Label htmlFor="video-url">Video URL (YouTube, Vimeo, etc.)</Label>
-                <Input 
-                  id="video-url" 
-                  placeholder="https://..." 
-                  value={contentUrl}
-                  onChange={(e) => setContentUrl(e.target.value)}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="upload" className="space-y-2">
-              <div>
-                <Label htmlFor="video-file">Upload Video</Label>
-                <Input 
-                  id="video-file" 
-                  type="file" 
-                  ref={fileInputRef}
-                  accept="video/*"
-                  onChange={handleFileChange}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="camera" className="space-y-2">
-              <div className="text-center p-4 border-2 border-dashed rounded-md">
-                <Camera className="w-10 h-10 mx-auto text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">Record from camera feature coming soon</p>
-              </div>
-            </TabsContent>
-          </Tabs>
-        );
-        
-      case "audio":
-        return (
-          <Tabs defaultValue="url" value={contentMethod} onValueChange={setContentMethod} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="url">URL</TabsTrigger>
-              <TabsTrigger value="upload">Upload</TabsTrigger>
-              <TabsTrigger value="record">Record</TabsTrigger>
-            </TabsList>
-            <TabsContent value="url" className="space-y-2">
-              <div>
-                <Label htmlFor="audio-url">Audio URL</Label>
-                <Input 
-                  id="audio-url" 
-                  placeholder="https://..." 
-                  value={contentUrl}
-                  onChange={(e) => setContentUrl(e.target.value)}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="upload" className="space-y-2">
-              <div>
-                <Label htmlFor="audio-file">Upload Audio</Label>
-                <Input 
-                  id="audio-file" 
-                  type="file" 
-                  ref={fileInputRef}
-                  accept="audio/*"
-                  onChange={handleFileChange}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="record" className="space-y-2">
-              <div className="text-center p-4 border-2 border-dashed rounded-md">
-                <Mic className="w-10 h-10 mx-auto text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">Record audio feature coming soon</p>
-              </div>
-            </TabsContent>
-          </Tabs>
-        );
-        
-      case "e-book":
-      case "powerpoint":
-      case "pdf":
-        return (
-          <div className="space-y-2">
-            <Label htmlFor="document-file">Upload Document</Label>
-            <Input 
-              id="document-file" 
-              type="file" 
-              ref={fileInputRef}
-              accept={
-                selectedType === "e-book" ? ".epub,.mobi,.azw" : 
-                selectedType === "powerpoint" ? ".ppt,.pptx" : 
-                ".pdf"
-              }
-              onChange={handleFileChange}
-            />
-          </div>
-        );
-        
-      case "text":
-        return (
-          <div className="space-y-2">
-            <div className="flex items-center space-x-1 mb-2">
-              <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <Bold className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <Italic className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <Underline className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <Strikethrough className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <Heading1 className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <Heading2 className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <List className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <ListOrdered className="h-4 w-4" />
-              </Button>
-            </div>
-            <Textarea
-              placeholder="Enter rich text content here..."
-              rows={6}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          </div>
-        );
-        
-      case "custom-code":
-        return (
-          <div className="space-y-2">
-            <Textarea
-              placeholder="Enter or paste code here..."
-              rows={6}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="font-mono"
-            />
-          </div>
-        );
-        
-      case "downloads":
-        return (
-          <div className="space-y-2">
-            <Label htmlFor="download-file">Upload File for Download</Label>
-            <Input 
-              id="download-file" 
-              type="file" 
-              ref={fileInputRef}
-              onChange={handleFileChange}
-            />
-          </div>
-        );
-        
-      case "quiz":
-        return (
-          <div className="space-y-2">
-            <div className="text-center p-4 border-2 border-dashed rounded-md">
-              <HelpCircle className="w-10 h-10 mx-auto text-muted-foreground" />
-              <p className="mt-2 text-sm text-muted-foreground">Quiz builder coming soon</p>
-              <p className="text-xs text-muted-foreground">You'll be able to add questions after creating this lesson</p>
-            </div>
-          </div>
-        );
-        
-      case "survey":
-        return (
-          <div className="space-y-2">
-            <div className="text-center p-4 border-2 border-dashed rounded-md">
-              <ClipboardList className="w-10 h-10 mx-auto text-muted-foreground" />
-              <p className="mt-2 text-sm text-muted-foreground">Survey builder coming soon</p>
-              <p className="text-xs text-muted-foreground">You'll be able to add questions after creating this lesson</p>
-            </div>
-          </div>
-        );
-        
-      case "live":
-        return (
-          <div className="space-y-2">
-            <Label htmlFor="live-url">Live Session URL</Label>
-            <Input 
-              id="live-url" 
-              placeholder="https://zoom.us/j/..." 
-              value={contentUrl}
-              onChange={(e) => setContentUrl(e.target.value)}
-            />
-          </div>
-        );
-        
-      default:
-        return null;
     }
   };
 
@@ -446,31 +165,21 @@ const AddLessonDialog: React.FC<AddLessonDialogProps> = ({
             </div>
           </div>
           
-          <div className="space-y-2">
-            <Label>Lesson Type</Label>
-            <div className="grid grid-cols-3 gap-3">
-              {lessonTypes.map(type => (
-                <Button 
-                  key={type.id} 
-                  type="button" 
-                  variant="outline" 
-                  className={`h-auto flex-col py-3 ${selectedType === type.id ? 'border-primary bg-primary/10' : ''}`} 
-                  onClick={() => setSelectedType(type.id)}
-                >
-                  <div className="mb-1">{type.icon}</div>
-                  <span className="text-xs">{type.name}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
+          <LessonTypeSelector 
+            selectedType={selectedType} 
+            onSelectType={setSelectedType} 
+          />
           
           {selectedType && (
-            <div className="space-y-2">
-              <Label>Lesson Content</Label>
-              <div className="p-4 bg-muted/30 rounded-md">
-                {renderContentOptions()}
-              </div>
-            </div>
+            <ContentEditor
+              selectedType={selectedType}
+              contentUrl={contentUrl}
+              onContentUrlChange={setContentUrl}
+              content={content}
+              onContentChange={setContent}
+              onFileChange={handleFileChange}
+              fileInputRef={fileInputRef}
+            />
           )}
         </div>
         
