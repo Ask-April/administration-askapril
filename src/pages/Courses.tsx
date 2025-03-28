@@ -1,7 +1,8 @@
 
-import React from "react";
+import React, { useState } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import CourseCard from "@/components/courses/CourseCard";
+import CreateCourseDialog, { CourseFormValues } from "@/components/courses/CreateCourseDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -24,7 +25,8 @@ import {
   SlidersHorizontal
 } from "lucide-react";
 
-const coursesData = [
+// Initial courses data
+const initialCoursesData = [
   {
     id: "1",
     title: "Introduction to Web Design",
@@ -94,6 +96,48 @@ const coursesData = [
 ];
 
 const Courses = () => {
+  const [coursesData, setCoursesData] = useState(initialCoursesData);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
+
+  const handleCreateCourse = (formData: CourseFormValues) => {
+    const newCourse = {
+      id: `${coursesData.length + 1}`,
+      title: formData.title,
+      description: formData.description,
+      image: formData.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      category: formData.category,
+      duration: formData.duration,
+      students: 0,
+      lessons: formData.lessons,
+      status: "published" as const,
+    };
+    
+    setCoursesData([newCourse, ...coursesData]);
+  };
+
+  // Filter courses based on search query and filter type
+  const filteredCourses = coursesData.filter((course) => {
+    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         course.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (filterType === "all") return matchesSearch;
+    if (filterType === "published") return matchesSearch && course.status === "published";
+    if (filterType === "draft") return matchesSearch && course.status === "draft";
+    
+    return matchesSearch;
+  });
+
+  // Sort courses based on sort option
+  const sortedCourses = [...filteredCourses].sort((a, b) => {
+    if (sortBy === "newest") return parseInt(b.id) - parseInt(a.id);
+    if (sortBy === "oldest") return parseInt(a.id) - parseInt(b.id);
+    if (sortBy === "popular") return b.students - a.students;
+    if (sortBy === "a-z") return a.title.localeCompare(b.title);
+    return 0;
+  });
+
   return (
     <PageTransition>
       <div className="flex flex-col gap-6 p-6 md:gap-8 md:p-8">
@@ -112,6 +156,8 @@ const Courses = () => {
                 type="search"
                 placeholder="Search courses..."
                 className="pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <DropdownMenu>
@@ -122,10 +168,9 @@ const Courses = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>All Courses</DropdownMenuItem>
-                <DropdownMenuItem>Published</DropdownMenuItem>
-                <DropdownMenuItem>Drafts</DropdownMenuItem>
-                <DropdownMenuItem>Archived</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterType("all")}>All Courses</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterType("published")}>Published</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterType("draft")}>Drafts</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="outline" className="h-10 w-10 px-0" size="icon">
@@ -134,7 +179,10 @@ const Courses = () => {
             </Button>
           </div>
           <div className="flex items-center gap-2">
-            <Select defaultValue="newest">
+            <Select 
+              defaultValue={sortBy}
+              onValueChange={(value) => setSortBy(value)}
+            >
               <SelectTrigger className="w-[160px]">
                 <SelectValue placeholder="Sort By" />
               </SelectTrigger>
@@ -145,7 +193,7 @@ const Courses = () => {
                 <SelectItem value="a-z">Alphabetical A-Z</SelectItem>
               </SelectContent>
             </Select>
-            <Button className="gap-1">
+            <Button className="gap-1" onClick={() => document.getElementById('create-course-trigger')?.click()}>
               <Plus className="h-4 w-4" />
               <span>Add Course</span>
             </Button>
@@ -153,7 +201,11 @@ const Courses = () => {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {coursesData.map((course) => (
+          <div id="create-course-trigger" className="h-full">
+            <CreateCourseDialog onCourseCreated={handleCreateCourse} />
+          </div>
+          
+          {sortedCourses.map((course) => (
             <CourseCard
               key={course.id}
               id={course.id}
