@@ -1,11 +1,9 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Trash2, FileText, Video, Book, Download, File, Code, Radio, HelpCircle, ClipboardList, FileAudio2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AddLessonDialog from "./AddLessonDialog";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface Section {
@@ -39,11 +37,15 @@ interface CourseCurriculumProps {
     status: "draft" | "published";
   };
   updateCourseData: (data: Partial<CourseCurriculumProps["courseData"]>) => void;
+  courseId: string;
+  onUpdateSections: (sections: Section[]) => void;
 }
 
 const CourseCurriculum: React.FC<CourseCurriculumProps> = ({ 
   courseData, 
-  updateCourseData 
+  updateCourseData,
+  courseId,
+  onUpdateSections
 }) => {
   const [sections, setSections] = useState<Section[]>([
     {
@@ -57,11 +59,11 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   const [currentSection, setCurrentSection] = useState<Section | null>(null);
   const [isAddLessonDialogOpen, setIsAddLessonDialogOpen] = useState(false);
 
-  // Update total lesson count when sections/lessons change
-  React.useEffect(() => {
+  useEffect(() => {
     const totalLessons = sections.reduce((count, section) => count + section.lessons.length, 0);
     updateCourseData({ lessons: totalLessons });
-  }, [sections, updateCourseData]);
+    onUpdateSections(sections);
+  }, [sections, updateCourseData, onUpdateSections]);
 
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
@@ -89,7 +91,6 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   const handleAddLesson = (lesson: Lesson) => {
     if (!currentSection) return;
     
-    // Add position to the lesson
     const lessonWithPosition = {
       ...lesson,
       position: currentSection.lessons.length

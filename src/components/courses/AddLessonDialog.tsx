@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import { 
   Book, Video, FileText, Download, File, Code, Radio, 
   HelpCircle, ClipboardList, FileAudio2, Upload, Link, Mic, 
-  Camera, Bold, Italic, Underline, StrikeThrough, Heading1, 
+  Camera, Bold, Italic, Underline, Strikethrough, Heading1, 
   Heading2, List, ListOrdered
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
@@ -315,7 +315,7 @@ const AddLessonDialog: React.FC<AddLessonDialogProps> = ({
                 <Underline className="h-4 w-4" />
               </Button>
               <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
-                <StrikeThrough className="h-4 w-4" />
+                <Strikethrough className="h-4 w-4" />
               </Button>
               <Button type="button" variant="outline" size="sm" className="h-8 w-8 p-0">
                 <Heading1 className="h-4 w-4" />
