@@ -8,12 +8,14 @@ import { Button } from "@/components/ui/button";
 import CourseCard from "@/components/courses/CourseCard";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
+import { useNavigate } from "react-router-dom";
 
 type Course = Tables<"courses">;
 
 const Overview = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchCourses = async () => {
@@ -118,7 +120,7 @@ const Overview = () => {
                   students={course.students}
                   lessons={course.lessons}
                   status={course.status as "draft" | "published"}
-                  onClick={() => console.log(`Previewing course: ${course.id}`)}
+                  onClick={() => navigate(`/courses/edit/${course.id}`)}
                 />
               ))}
             </div>

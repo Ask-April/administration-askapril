@@ -4,9 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Tables } from "@/integrations/supabase/types";
 
-export type Profile = Tables<"profiles">;
+// Define the Profile type manually since it's not in the auto-generated types
+export interface Profile {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export const useRequireAuth = (redirectTo = "/auth/signin") => {
   const { user, loading } = useAuth();
@@ -38,7 +45,7 @@ export const useRequireAuth = (redirectTo = "/auth/signin") => {
           console.error("Error fetching profile:", error);
           toast.error("Failed to load your profile");
         } else {
-          setProfile(data);
+          setProfile(data as Profile);
         }
       } catch (error) {
         console.error("Unexpected error:", error);

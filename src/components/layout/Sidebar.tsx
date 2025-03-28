@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -31,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SidebarProps {
   className?: string;
@@ -40,6 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const [expanded, setExpanded] = useState(true);
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const { user } = useAuth();
 
   const toggleSidebar = () => {
     setExpanded(!expanded);
@@ -145,10 +146,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                 transition={{ duration: 0.2 }}
                 className="flex items-center gap-2"
               >
-                <div className="h-8 w-8 rounded-full bg-sidebar-primary flex items-center justify-center">
-                  <div className="text-white font-semibold">Z</div>
-                </div>
-                <span className="font-semibold text-lg">Zenler</span>
+                <img 
+                  src="/lovable-uploads/d69fe8cc-396d-4df5-9d0f-2f686f1cbea9.png" 
+                  alt="AskApril.AI Logo" 
+                  className="h-8 w-auto" 
+                />
               </motion.div>
             ) : (
               <motion.div
@@ -159,9 +161,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                 transition={{ duration: 0.2 }}
                 className="mx-auto"
               >
-                <div className="h-8 w-8 rounded-full bg-sidebar-primary flex items-center justify-center">
-                  <div className="text-white font-semibold">Z</div>
-                </div>
+                <img 
+                  src="/lovable-uploads/d69fe8cc-396d-4df5-9d0f-2f686f1cbea9.png" 
+                  alt="AskApril.AI Logo" 
+                  className="h-8 w-auto" 
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -295,8 +299,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                   transition={{ duration: 0.2 }}
                   className="flex flex-col overflow-hidden"
                 >
-                  <span className="text-sm font-medium">Admin User</span>
-                  <span className="text-xs text-sidebar-foreground/70">admin@zenler.com</span>
+                  <span className="text-sm font-medium">User</span>
+                  <span className="text-xs text-sidebar-foreground/70">{user?.email}</span>
                 </motion.div>
               )}
             </AnimatePresence>
