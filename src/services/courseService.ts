@@ -4,6 +4,26 @@ import { Tables } from "@/integrations/supabase/types";
 
 export type Course = Tables<"courses">;
 
+export interface CourseSection {
+  id: string;
+  title: string;
+  course_id: string;
+  order: number;
+}
+
+export interface CourseLesson {
+  id: string;
+  title: string;
+  section_id: string;
+  type: string;
+  content_url?: string;
+  is_preview: boolean;
+  is_draft: boolean;
+  is_compulsory: boolean;
+  enable_discussion: boolean;
+  order: number;
+}
+
 /**
  * Service for interacting with courses data in Supabase
  * This can be used by this project or imported into another project
@@ -86,6 +106,52 @@ export const courseService = {
     }
     
     return data as Course;
+  },
+  
+  /**
+   * Create a course section
+   */
+  createSection: async (sectionData: Omit<CourseSection, 'id'>) => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      throw new Error("Authentication required to create a section");
+    }
+    
+    const { data, error } = await supabase
+      .from('course_sections')
+      .insert(sectionData)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error("Error creating section:", error);
+      throw error;
+    }
+    
+    return data as CourseSection;
+  },
+  
+  /**
+   * Create a course lesson
+   */
+  createLesson: async (lessonData: Omit<CourseLesson, 'id'>) => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      throw new Error("Authentication required to create a lesson");
+    }
+    
+    const { data, error } = await supabase
+      .from('course_lessons')
+      .insert(lessonData)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error("Error creating lesson:", error);
+      throw error;
+    }
+    
+    return data as CourseLesson;
   },
   
   /**
