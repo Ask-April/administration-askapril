@@ -75,6 +75,15 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
     try {
       setIsSubmitting(true);
       
+      // Check authentication status before inserting
+      const { data: authData, error: authError } = await supabase.auth.getSession();
+      
+      if (authError || !authData.session) {
+        toast.error("You must be signed in to create a course.");
+        console.error("Authentication error:", authError);
+        return;
+      }
+      
       // Insert the course into the database
       const { data, error } = await supabase
         .from('courses')
