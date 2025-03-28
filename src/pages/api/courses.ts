@@ -1,48 +1,54 @@
 
-import { courseService } from "@/services/courseService";
-import { NextApiRequest, NextApiResponse } from "next";
+import { supabase } from "@/integrations/supabase/client";
+import { Tables } from "@/integrations/supabase/types";
 
-/**
- * Example API endpoint for serving course data to the frontend
- * 
- * Note: This is just an example - in practice, your frontend would likely
- * connect directly to Supabase using the shared configuration.
- */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Set CORS headers to allow requests from your frontend domain
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Replace with your frontend domain in production
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  try {
-    if (req.method === 'GET') {
-      const category = req.query.category as string | undefined;
-      const id = req.query.id as string | undefined;
-      
-      if (id) {
-        // Get a specific course
-        const course = await courseService.getCourseById(id);
-        return res.status(200).json(course);
-      } else if (category) {
-        // Get courses by category
-        const courses = await courseService.getCoursesByCategory(category);
-        return res.status(200).json(courses);
-      } else {
-        // Get all public courses
-        const courses = await courseService.getPublicCourses();
-        return res.status(200).json(courses);
-      }
-    }
+// Define types
+export type Course = Tables<"courses">;
+
+// Get all courses
+export async function getCourses() {
+  const { data, error } = await supabase
+    .from('courses')
+    .select('*')
+    .order('created_at', { ascending: false });
     
-    // Return 405 Method Not Allowed for non-GET requests
-    return res.status(405).json({ message: 'Method not allowed' });
-  } catch (error) {
-    console.error('API error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+  if (error) {
+    throw new Error(`Error fetching courses: ${error.message}`);
   }
+  
+  return data || [];
+}
+
+// Get a single course by ID
+export async function getCourseById(id: string) {
+  const { data, error } = await supabase
+    .from('courses')
+    .select('*')
+    .eq('id', id)
+    .single();
+    
+  if (error) {
+    throw new Error(`Error fetching course: ${error.message}`);
+  }
+  
+  return data;
+}
+
+// Update a course
+export async function updateCourse(id: string, courseData: Partial<Course>) {
+  const { data, error } = await supabase
+    .from('courses')
+    .update({
+      ...courseData,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id)
+    .select()
+    .single();
+    
+  if (error) {
+    throw new Error(`Error updating course: ${error.message}`);
+  }
+  
+  return data;
 }

@@ -1,7 +1,8 @@
+
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/layout/Layout";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./components/dashboard/Dashboard";
 import Courses from "./pages/Courses";
 import Overview from "./pages/courses/Overview";
 import Broadcasts from "./pages/Broadcasts";

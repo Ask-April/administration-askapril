@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import PageTransition from "@/components/layout/PageTransition";
@@ -130,7 +129,6 @@ const EditCourse = () => {
     <PageTransition>
       <CoursePageHeader
         title={course.title}
-        description="Edit your course details and settings"
         actions={
           <>
             <Button 
