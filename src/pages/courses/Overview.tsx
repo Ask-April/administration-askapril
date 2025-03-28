@@ -84,7 +84,7 @@ const Overview = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Courses Overview</h1>
           <Button asChild>
-            <Link to="/courses">
+            <Link to="/courses/create">
               <BookPlus className="mr-2 h-4 w-4" />
               Create New Course
             </Link>
