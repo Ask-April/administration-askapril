@@ -1,5 +1,9 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { CommunitySetting } from "../hooks/useSettingsState";
+
+// Fixed community ID for demo purposes
+const COMMUNITY_ID = '00000000-0000-0000-0000-000000000001';
 
 export interface CommunitySettingResponse {
   id: string;
@@ -10,47 +14,91 @@ export interface CommunitySettingResponse {
   created_at: string;
 }
 
-export interface CommunitySetting {
-  id: string;
-  value: boolean;
-}
-
-// Fixed community ID for demo purposes
-const COMMUNITY_ID = '00000000-0000-0000-0000-000000000001';
-
-export const fetchCommunitySettings = async (): Promise<CommunitySetting[]> => {
+const getSettings = async (communityId: string): Promise<CommunitySetting[]> => {
   try {
-    const { data, error } = await supabase
-      .from('community_settings')
+    // First get the settings definitions
+    const { data: settingsData, error: settingsError } = await supabase
+      .from('settings')
       .select('*')
-      .eq('community_id', COMMUNITY_ID);
+      .order('category');
 
-    if (error) {
-      console.error('Error fetching settings:', error);
-      throw error;
+    if (settingsError) {
+      console.error('Error fetching settings definitions:', settingsError);
+      throw settingsError;
     }
 
-    return (data as CommunitySettingResponse[]).map(setting => ({
-      id: setting.setting_id,
-      value: setting.value
-    }));
+    // Then get the community-specific values
+    const { data: communitySettingsData, error: communitySettingsError } = await supabase
+      .from('community_settings')
+      .select('*')
+      .eq('community_id', communityId);
+
+    if (communitySettingsError) {
+      console.error('Error fetching community settings:', communitySettingsError);
+      throw communitySettingsError;
+    }
+
+    // Map the settings with their values
+    return (settingsData || []).map(setting => {
+      const communitySetting = (communitySettingsData || []).find(
+        cs => cs.setting_id === setting.id
+      );
+      
+      return {
+        id: setting.id,
+        name: setting.name,
+        description: setting.description,
+        category: setting.category,
+        value: communitySetting ? communitySetting.value : false
+      };
+    });
   } catch (error) {
     console.error('Failed to fetch community settings:', error);
     throw error;
   }
 };
 
-export const updateCommunitySetting = async (settingId: string, value: boolean): Promise<void> => {
+const updateSetting = async (communityId: string, settingId: string, value: boolean): Promise<void> => {
   try {
-    const { error } = await supabase
+    // Check if setting exists for this community
+    const { data: existingSetting, error: checkError } = await supabase
       .from('community_settings')
-      .update({ value, updated_at: new Date().toISOString() })
-      .eq('community_id', COMMUNITY_ID)
-      .eq('setting_id', settingId);
+      .select('*')
+      .eq('community_id', communityId)
+      .eq('setting_id', settingId)
+      .maybeSingle();
 
-    if (error) {
-      console.error('Error updating setting:', error);
-      throw error;
+    if (checkError) {
+      console.error('Error checking setting:', checkError);
+      throw checkError;
+    }
+
+    if (existingSetting) {
+      // Update existing setting
+      const { error: updateError } = await supabase
+        .from('community_settings')
+        .update({ value, updated_at: new Date().toISOString() })
+        .eq('community_id', communityId)
+        .eq('setting_id', settingId);
+
+      if (updateError) {
+        console.error('Error updating setting:', updateError);
+        throw updateError;
+      }
+    } else {
+      // Insert new setting
+      const { error: insertError } = await supabase
+        .from('community_settings')
+        .insert({
+          community_id: communityId,
+          setting_id: settingId,
+          value
+        });
+
+      if (insertError) {
+        console.error('Error inserting setting:', insertError);
+        throw insertError;
+      }
     }
   } catch (error) {
     console.error(`Failed to update setting ${settingId}:`, error);
@@ -58,16 +106,8 @@ export const updateCommunitySetting = async (settingId: string, value: boolean):
   }
 };
 
-export const updateCommunitySettings = async (settings: CommunitySetting[]): Promise<void> => {
-  try {
-    // Using Promise.all to perform all updates concurrently
-    await Promise.all(
-      settings.map(setting => 
-        updateCommunitySetting(setting.id, setting.value)
-      )
-    );
-  } catch (error) {
-    console.error('Failed to update community settings:', error);
-    throw error;
-  }
+// Export as an object with methods
+export const communitySettingsService = {
+  getSettings,
+  updateSetting
 };
