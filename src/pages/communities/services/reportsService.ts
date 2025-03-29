@@ -7,9 +7,9 @@ export interface ContentReport {
   reporter_id: string;
   content_type: string;
   content_id: string;
-  content_excerpt: string;
+  content_excerpt?: string;
   reason: string;
-  severity: 'low' | 'medium' | 'high';
+  severity?: 'low' | 'medium' | 'high';
   status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
   created_at: string;
   updated_at: string;

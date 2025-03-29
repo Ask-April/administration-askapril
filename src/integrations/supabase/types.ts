@@ -289,6 +289,48 @@ export type Database = {
           },
         ]
       }
+      community_settings: {
+        Row: {
+          community_id: string
+          created_at: string | null
+          id: string
+          setting_id: string
+          updated_at: string | null
+          value: boolean | null
+        }
+        Insert: {
+          community_id: string
+          created_at?: string | null
+          id?: string
+          setting_id: string
+          updated_at?: string | null
+          value?: boolean | null
+        }
+        Update: {
+          community_id?: string
+          created_at?: string | null
+          id?: string
+          setting_id?: string
+          updated_at?: string | null
+          value?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_settings_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "community"
+            referencedColumns: ["community_id"]
+          },
+          {
+            foreignKeyName: "community_settings_setting_id_fkey"
+            columns: ["setting_id"]
+            isOneToOne: false
+            referencedRelation: "settings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact: {
         Row: {
           contact_id: string
@@ -315,6 +357,59 @@ export type Database = {
           status?: string | null
         }
         Relationships: []
+      }
+      content_reports: {
+        Row: {
+          community_id: string
+          content_id: string
+          content_type: string
+          created_at: string | null
+          details: string | null
+          id: string
+          reason: string
+          reporter_id: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          community_id: string
+          content_id: string
+          content_type: string
+          created_at?: string | null
+          details?: string | null
+          id?: string
+          reason: string
+          reporter_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          community_id?: string
+          content_id?: string
+          content_type?: string
+          created_at?: string | null
+          details?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_reports_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "community"
+            referencedColumns: ["community_id"]
+          },
+        ]
       }
       coupon: {
         Row: {
@@ -370,6 +465,68 @@ export type Database = {
         }
         Relationships: []
       }
+      course_lessons: {
+        Row: {
+          content: string | null
+          content_url: string | null
+          created_at: string | null
+          duration: number | null
+          enable_discussion: boolean | null
+          id: string
+          is_compulsory: boolean | null
+          is_draft: boolean | null
+          is_preview: boolean | null
+          position: number
+          section_id: string
+          title: string
+          type: string | null
+          updated_at: string | null
+          video_url: string | null
+        }
+        Insert: {
+          content?: string | null
+          content_url?: string | null
+          created_at?: string | null
+          duration?: number | null
+          enable_discussion?: boolean | null
+          id?: string
+          is_compulsory?: boolean | null
+          is_draft?: boolean | null
+          is_preview?: boolean | null
+          position: number
+          section_id: string
+          title: string
+          type?: string | null
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          content?: string | null
+          content_url?: string | null
+          created_at?: string | null
+          duration?: number | null
+          enable_discussion?: boolean | null
+          id?: string
+          is_compulsory?: boolean | null
+          is_draft?: boolean | null
+          is_preview?: boolean | null
+          position?: number
+          section_id?: string
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_lessons_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "course_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_module: {
         Row: {
           course_id: string | null
@@ -399,27 +556,83 @@ export type Database = {
           },
         ]
       }
-      courses: {
+      course_sections: {
         Row: {
           course_id: string
-          description: string | null
-          site_id: string
-          status: string | null
-          title: string | null
+          created_at: string | null
+          id: string
+          position: number
+          title: string
+          updated_at: string | null
         }
         Insert: {
-          course_id?: string
-          description?: string | null
-          site_id: string
-          status?: string | null
-          title?: string | null
+          course_id: string
+          created_at?: string | null
+          id?: string
+          position: number
+          title: string
+          updated_at?: string | null
         }
         Update: {
           course_id?: string
+          created_at?: string | null
+          id?: string
+          position?: number
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_sections_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["course_id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          category: string | null
+          course_id: string
+          created_at: string | null
+          description: string | null
+          duration: string | null
+          image: string | null
+          lessons: number | null
+          site_id: string
+          status: string | null
+          students: number | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          course_id?: string
+          created_at?: string | null
           description?: string | null
+          duration?: string | null
+          image?: string | null
+          lessons?: number | null
+          site_id: string
+          status?: string | null
+          students?: number | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          course_id?: string
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          image?: string | null
+          lessons?: number | null
           site_id?: string
           status?: string | null
+          students?: number | null
           title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1272,6 +1485,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       question_option: {
         Row: {
           is_correct: boolean | null
@@ -1561,6 +1801,33 @@ export type Database = {
           },
         ]
       }
+      settings: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       subscription: {
         Row: {
           end_date: string | null
@@ -1606,6 +1873,56 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      user_interactions: {
+        Row: {
+          call_transcript: string | null
+          caller: string
+          conversation_topic: string | null
+          followup_needed: boolean | null
+          next_followupdate: string | null
+          notes: Json | null
+          phone_call_duration: string
+          phone_number: string
+          previous_call_id: string | null
+          user: string | null
+          what_to_talk_about: string | null
+        }
+        Insert: {
+          call_transcript?: string | null
+          caller: string
+          conversation_topic?: string | null
+          followup_needed?: boolean | null
+          next_followupdate?: string | null
+          notes?: Json | null
+          phone_call_duration: string
+          phone_number: string
+          previous_call_id?: string | null
+          user?: string | null
+          what_to_talk_about?: string | null
+        }
+        Update: {
+          call_transcript?: string | null
+          caller?: string
+          conversation_topic?: string | null
+          followup_needed?: boolean | null
+          next_followupdate?: string | null
+          notes?: Json | null
+          phone_call_duration?: string
+          phone_number?: string
+          previous_call_id?: string | null
+          user?: string | null
+          what_to_talk_about?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phonecalls_previouscallid_fkey"
+            columns: ["previous_call_id"]
+            isOneToOne: false
+            referencedRelation: "user_interactions"
+            referencedColumns: ["caller"]
           },
         ]
       }

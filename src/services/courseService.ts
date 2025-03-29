@@ -1,29 +1,46 @@
-import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
 
-export type Course = Tables<"courses">;
+import { supabase } from "@/integrations/supabase/client";
+
+export interface Course {
+  course_id: string;
+  title: string | null;
+  description: string | null;
+  category: string | null;
+  image: string | null;
+  duration: string | null;
+  lessons: number | null;
+  status: string | null;
+  students: number | null;
+  site_id: string;
+  created_at: string | null;
+  updated_at: string | null;
+}
 
 export interface CourseSection {
   id: string;
   title: string;
   course_id: string;
-  position: number; // Changed from 'order' to match the database schema
+  position: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface CourseLesson {
   id: string;
   title: string;
   section_id: string;
-  type?: string; // Made optional since it might not exist in the database
-  content_url?: string;
+  type?: string;
   content?: string;
+  content_url?: string;
   video_url?: string;
   duration?: number;
-  position: number; // Changed from 'order' to match database schema
+  position: number;
   is_preview?: boolean;
   is_draft?: boolean;
   is_compulsory?: boolean;
   enable_discussion?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 /**
@@ -56,7 +73,7 @@ export const courseService = {
     const { data, error } = await supabase
       .from('courses')
       .select('*')
-      .eq('id', id)
+      .eq('course_id', id)
       .single();
     
     if (error) {
@@ -89,7 +106,7 @@ export const courseService = {
   /**
    * Create a new course (admin/teacher only)
    */
-  createCourse: async (courseData: Omit<Course, 'id' | 'created_at' | 'updated_at'>) => {
+  createCourse: async (courseData: Partial<Omit<Course, 'course_id' | 'created_at' | 'updated_at'>>) => {
     // Check authentication first
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session) {
@@ -113,7 +130,7 @@ export const courseService = {
   /**
    * Create a course section
    */
-  createSection: async (sectionData: Omit<CourseSection, 'id'>) => {
+  createSection: async (sectionData: Omit<CourseSection, 'id' | 'created_at' | 'updated_at'>) => {
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session) {
       throw new Error("Authentication required to create a section");
@@ -130,13 +147,13 @@ export const courseService = {
       throw error;
     }
     
-    return data as unknown as CourseSection;
+    return data as CourseSection;
   },
   
   /**
    * Create a course lesson
    */
-  createLesson: async (lessonData: Omit<CourseLesson, 'id'>) => {
+  createLesson: async (lessonData: Omit<CourseLesson, 'id' | 'created_at' | 'updated_at'>) => {
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session) {
       throw new Error("Authentication required to create a lesson");
@@ -166,7 +183,7 @@ export const courseService = {
       throw error;
     }
     
-    return data as unknown as CourseLesson;
+    return data as CourseLesson;
   },
   
   /**
@@ -214,7 +231,7 @@ export const courseService = {
   /**
    * Update an existing course (admin/teacher only)
    */
-  updateCourse: async (id: string, courseData: Partial<Omit<Course, 'id' | 'created_at' | 'updated_at'>>) => {
+  updateCourse: async (id: string, courseData: Partial<Omit<Course, 'course_id' | 'created_at' | 'updated_at'>>) => {
     // Check authentication first
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session) {
@@ -224,7 +241,7 @@ export const courseService = {
     const { data, error } = await supabase
       .from('courses')
       .update(courseData)
-      .eq('id', id)
+      .eq('course_id', id)
       .select()
       .single();
     
@@ -249,7 +266,7 @@ export const courseService = {
     const { error } = await supabase
       .from('courses')
       .delete()
-      .eq('id', id);
+      .eq('course_id', id);
     
     if (error) {
       console.error(`Error deleting course with id ${id}:`, error);
