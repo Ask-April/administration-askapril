@@ -28,6 +28,7 @@ export const useProfile = (user: User | null) => {
       }
 
       try {
+        // First check if the profile exists
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
@@ -35,8 +36,31 @@ export const useProfile = (user: User | null) => {
           .single();
         
         if (error) {
-          console.error("Error fetching profile:", error);
-          toast.error("Failed to load your profile");
+          if (error.code === 'PGRST116') {
+            // Profile doesn't exist, create one
+            const newProfile = {
+              id: user.id,
+              display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+              avatar_url: user.user_metadata?.avatar_url || null,
+              bio: null
+            };
+            
+            const { data: createdProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert(newProfile)
+              .select()
+              .single();
+              
+            if (createError) {
+              console.error("Error creating profile:", createError);
+              toast.error("Failed to create your profile");
+            } else {
+              setProfile(createdProfile as Profile);
+            }
+          } else {
+            console.error("Error fetching profile:", error);
+            toast.error("Failed to load your profile");
+          }
         } else {
           setProfile(data as Profile);
         }

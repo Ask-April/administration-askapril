@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Course {
@@ -113,9 +112,15 @@ export const courseService = {
       throw new Error("Authentication required to create a course");
     }
     
+    // Generate a random site_id if not provided
+    const dataWithSiteId = {
+      ...courseData,
+      site_id: courseData.site_id || crypto.randomUUID()
+    };
+    
     const { data, error } = await supabase
       .from('courses')
-      .insert(courseData)
+      .insert(dataWithSiteId)
       .select()
       .single();
     
