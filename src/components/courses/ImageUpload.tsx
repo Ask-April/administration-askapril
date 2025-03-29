@@ -1,9 +1,9 @@
 
 import React, { useState } from "react";
 import { ImagePlus, X, Upload, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { v4 as uuidv4 } from "uuid";
+import { uploadImage } from "@/utils/supabaseStorage";
+import { toast } from "sonner";
 
 interface ImageUploadProps {
   value: string;
@@ -31,56 +31,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     try {
       console.log("Starting image upload...");
       
-      // Create a unique filename with UUID
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${uuidv4()}.${fileExt}`;
-      const filePath = `public/${fileName}`;
+      // Upload the file using our utility function
+      const publicUrl = await uploadImage(file, 'course-images');
       
-      console.log("Uploading to path:", filePath);
-      
-      // Check if the bucket exists, create it if not
-      const { data: buckets } = await supabase.storage.listBuckets();
-      const bucketExists = buckets?.some(bucket => bucket.name === 'course-images');
-      
-      if (!bucketExists) {
-        console.log("Bucket doesn't exist, attempting to create it");
-        const { error: createError } = await supabase.storage.createBucket('course-images', {
-          public: true
-        });
-        
-        if (createError) {
-          console.error("Error creating bucket:", createError);
-          throw createError;
-        }
-      }
-      
-      // Upload file to Supabase Storage
-      const { data, error: uploadError } = await supabase.storage
-        .from('course-images')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true
-        });
-      
-      if (uploadError) {
-        console.error("Upload error:", uploadError);
-        throw uploadError;
-      }
-      
-      console.log("Upload successful:", data);
-      
-      // Get the public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('course-images')
-        .getPublicUrl(filePath);
-      
-      console.log("Public URL:", publicUrl);
+      console.log("Upload complete. Public URL:", publicUrl);
       
       // Update the form
       onChange(publicUrl);
+      toast.success("Image uploaded successfully!");
     } catch (error) {
       console.error("Error uploading image:", error);
       setError("Failed to upload image. Please try again.");
+      toast.error("Failed to upload image. Please try again.");
     } finally {
       setIsUploading(false);
     }

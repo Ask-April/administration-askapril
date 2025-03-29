@@ -3,27 +3,15 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const uploadImage = async (file: File, bucket: string, path: string = ''): Promise<string> => {
   try {
-    // Make sure the bucket exists
-    const { data: buckets } = await supabase.storage.listBuckets();
-    const bucketExists = buckets?.some(b => b.name === bucket);
-    
-    if (!bucketExists) {
-      console.log(`Creating bucket: ${bucket}`);
-      const { error } = await supabase.storage.createBucket(bucket, {
-        public: true
-      });
-      
-      if (error) {
-        console.error('Error creating bucket:', error);
-        throw error;
-      }
-    }
+    console.log(`Starting upload to bucket: ${bucket}, path: ${path || 'root'}`);
     
     // Generate a unique file path
     const fileExt = file.name.split('.').pop();
     const fullPath = path 
       ? `${path}/${crypto.randomUUID()}.${fileExt}`
       : `${crypto.randomUUID()}.${fileExt}`;
+    
+    console.log(`Generated file path: ${fullPath}`);
     
     // Upload the file
     const { data, error } = await supabase.storage
@@ -38,10 +26,14 @@ export const uploadImage = async (file: File, bucket: string, path: string = '')
       throw error;
     }
     
+    console.log('File uploaded successfully:', data);
+    
     // Get the public URL
     const { data: { publicUrl } } = supabase.storage
       .from(bucket)
       .getPublicUrl(fullPath);
+    
+    console.log('Generated public URL:', publicUrl);
     
     return publicUrl;
   } catch (error) {
