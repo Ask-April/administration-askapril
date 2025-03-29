@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Session, User } from "@supabase/supabase-js";
+import { Session, User, AuthError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,22 +11,26 @@ export const useAuthMethods = () => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log("Signing in with email:", email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        console.error("Sign in error from Supabase:", error);
         toast({
           title: "Sign in failed",
           description: error.message,
           variant: "destructive",
         });
+      } else {
+        console.log("Sign in successful:", data.user?.id);
       }
 
       return { data, error };
     } catch (error) {
-      console.error("Sign in error:", error);
+      console.error("Unexpected sign in error:", error);
       toast({
         title: "Sign in failed",
         description: "An unexpected error occurred",
@@ -35,7 +38,7 @@ export const useAuthMethods = () => {
       });
       return { 
         data: null, 
-        error: new Error("An unexpected error occurred") 
+        error: new Error("An unexpected error occurred") as AuthError
       };
     }
   };

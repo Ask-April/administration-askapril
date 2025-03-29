@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ const SignIn = () => {
   const navigate = useNavigate();
 
   // If already logged in, redirect to dashboard
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       navigate("/");
     }
@@ -27,10 +28,23 @@ const SignIn = () => {
     setIsSubmitting(true);
 
     try {
-      const { error } = await signIn(email, password);
-      if (!error) {
+      console.log("Attempting to sign in with:", email);
+      const { data, error } = await signIn(email, password);
+      
+      if (error) {
+        console.error("Sign in error:", error);
+        toast.error(error.message || "Failed to sign in");
+      } else if (data?.user) {
+        console.log("Sign in successful, redirecting...");
+        toast.success("Sign in successful!");
         navigate("/");
+      } else {
+        console.warn("Sign in returned no error but no user", data);
+        toast.error("Something went wrong. Please try again.");
       }
+    } catch (err) {
+      console.error("Unexpected error during sign in:", err);
+      toast.error("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
