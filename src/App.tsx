@@ -14,6 +14,13 @@ import EditCourse from "./pages/courses/EditCourse";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import { useProtectedRoute } from "./hooks/auth/use-protected-route";
+import Bundles from "./pages/courses/Bundles";
+import Categories from "./pages/courses/Categories";
+import Assignments from "./pages/courses/Assignments";
+import Coupons from "./pages/courses/Coupons";
+import People from "./pages/courses/People";
+import MediaLibrary from "./pages/courses/MediaLibrary";
+import Reports from "./pages/courses/Reports";
 
 function App() {
   const ProtectedRoute = useProtectedRoute();
@@ -34,6 +41,13 @@ function App() {
                   <Route path="/courses/overview" element={<Overview />} />
                   <Route path="/courses/create" element={<CreateCourse />} />
                   <Route path="/courses/edit/:id" element={<EditCourse />} />
+                  <Route path="/courses/bundles" element={<Bundles />} />
+                  <Route path="/courses/categories" element={<Categories />} />
+                  <Route path="/courses/assignments" element={<Assignments />} />
+                  <Route path="/courses/coupons" element={<Coupons />} />
+                  <Route path="/courses/people" element={<People />} />
+                  <Route path="/courses/media" element={<MediaLibrary />} />
+                  <Route path="/courses/reports" element={<Reports />} />
                   <Route path="/broadcasts" element={<Broadcasts />} />
                   <Route path="/communities" element={<Communities />} />
                   <Route path="/analytics" element={<Analytics />} />
