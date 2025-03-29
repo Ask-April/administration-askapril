@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -44,6 +43,8 @@ const CreateCourse = () => {
       try {
         // Only create the course when moving from info to curriculum
         if (!createdCourseId) {
+          console.log("Creating course with data:", courseData);
+          
           const course = await courseService.createCourse({
             title: courseData.title,
             description: courseData.description,
@@ -55,7 +56,8 @@ const CreateCourse = () => {
             students: 0,
           });
           
-          setCreatedCourseId(course.course_id); // Use course_id instead of id
+          console.log("Course created successfully:", course);
+          setCreatedCourseId(course.course_id);
           toast.success("Course information saved!");
         }
         setCurrentStep("curriculum");

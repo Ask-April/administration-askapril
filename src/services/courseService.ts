@@ -42,6 +42,17 @@ export interface CourseLesson {
   updated_at?: string;
 }
 
+type CreateCourseData = {
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  duration: string;
+  status: "draft" | "published";
+  lessons: number;
+  students: number;
+};
+
 /**
  * Service for interacting with courses data in Supabase
  * This can be used by this project or imported into another project
@@ -105,31 +116,33 @@ export const courseService = {
   /**
    * Create a new course (admin/teacher only)
    */
-  createCourse: async (courseData: Partial<Omit<Course, 'course_id' | 'created_at' | 'updated_at'>>) => {
-    // Check authentication first
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (!sessionData.session) {
-      throw new Error("Authentication required to create a course");
-    }
+  createCourse: async (courseData: CreateCourseData) => {
+    console.log("CourseService - Creating course with data:", courseData);
     
-    // Generate a random site_id if not provided
-    const dataWithSiteId = {
+    // Generate a site_id since it's required
+    const site_id = crypto.randomUUID();
+    
+    const sanitizedData = {
       ...courseData,
-      site_id: courseData.site_id || crypto.randomUUID()
+      image: courseData.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+      site_id: site_id,
     };
+    
+    console.log("CourseService - Sanitized data:", sanitizedData);
     
     const { data, error } = await supabase
       .from('courses')
-      .insert(dataWithSiteId)
-      .select()
+      .insert(sanitizedData)
+      .select('*')
       .single();
     
     if (error) {
-      console.error("Error creating course:", error);
+      console.error("CourseService - Error creating course:", error);
       throw error;
     }
     
-    return data as Course;
+    console.log("CourseService - Course created successfully:", data);
+    return data;
   },
   
   /**
@@ -284,80 +297,61 @@ export const courseService = {
   /**
    * Save complete curriculum (sections and lessons)
    */
-  saveCurriculum: async (courseId: string, sections: {
-    id: string;
-    title: string;
-    position: number;
-    lessons: {
-      id: string;
-      title: string;
-      type?: string;
-      content?: string;
-      contentUrl?: string;
-      position: number;
-      isPreview?: boolean;
-      isDraft?: boolean;
-      isCompulsory?: boolean;
-      enableDiscussion?: boolean;
-    }[];
-  }[]) => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (!sessionData.session) {
-      throw new Error("Authentication required to save curriculum");
-    }
+  saveCurriculum: async (courseId: string, sections: any[]) => {
+    console.log("CourseService - Saving curriculum for course:", courseId, sections);
     
-    // Create transactions for all operations
-    const createSections = async () => {
-      for (const section of sections) {
-        // Create or update section
-        const { data: sectionData, error: sectionError } = await supabase
-          .from('course_sections')
+    // First, save all sections
+    for (const section of sections) {
+      const { error: sectionError } = await supabase
+        .from('course_sections')
+        .upsert({
+          id: section.id || undefined,
+          course_id: courseId,
+          title: section.title,
+          position: section.position
+        }, { onConflict: 'id' });
+      
+      if (sectionError) {
+        console.error("CourseService - Error saving section:", sectionError);
+        throw sectionError;
+      }
+      
+      // Then save all lessons for this section
+      for (const lesson of section.lessons) {
+        const { error: lessonError } = await supabase
+          .from('course_lessons')
           .upsert({
-            id: section.id,
-            title: section.title,
-            course_id: courseId,
-            position: section.position
-          })
-          .select()
-          .single();
+            id: lesson.id || undefined,
+            section_id: section.id,
+            title: lesson.title,
+            type: lesson.type || 'video',
+            position: lesson.position,
+            content: lesson.content || '',
+            duration: lesson.duration || 0,
+            is_draft: lesson.isDraft || false
+          }, { onConflict: 'id' });
         
-        if (sectionError) {
-          console.error("Error saving section:", sectionError);
-          throw sectionError;
-        }
-        
-        // Now handle lessons for this section
-        for (const lesson of section.lessons) {
-          const { error: lessonError } = await supabase
-            .from('course_lessons')
-            .upsert({
-              id: lesson.id,
-              title: lesson.title,
-              section_id: sectionData.id,
-              type: lesson.type,
-              content: lesson.content,
-              content_url: lesson.contentUrl,
-              position: lesson.position,
-              is_preview: lesson.isPreview,
-              is_draft: lesson.isDraft,
-              is_compulsory: lesson.isCompulsory,
-              enable_discussion: lesson.enableDiscussion
-            });
-          
-          if (lessonError) {
-            console.error("Error saving lesson:", lessonError);
-            throw lessonError;
-          }
+        if (lessonError) {
+          console.error("CourseService - Error saving lesson:", lessonError);
+          throw lessonError;
         }
       }
-    };
-    
-    try {
-      await createSections();
-      return true;
-    } catch (error) {
-      console.error("Error saving curriculum:", error);
-      throw error;
     }
+    
+    // Update total lessons count in the course
+    const totalLessons = sections.reduce((count, section) => count + section.lessons.length, 0);
+    
+    const { error: updateError } = await supabase
+      .from('courses')
+      .update({ lessons: totalLessons })
+      .eq('course_id', courseId);
+    
+    if (updateError) {
+      console.error("CourseService - Error updating lesson count:", updateError);
+      throw updateError;
+    }
+    
+    console.log("CourseService - Curriculum saved successfully");
+    return { success: true };
   }
 };

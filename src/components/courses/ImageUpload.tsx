@@ -1,8 +1,9 @@
 
 import React, { useState } from "react";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, X, Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { v4 as uuidv4 } from "uuid";
 
 interface ImageUploadProps {
   value: string;
@@ -28,24 +29,52 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     setIsUploading(true);
     
     try {
-      // Create a unique filename
+      console.log("Starting image upload...");
+      
+      // Create a unique filename with UUID
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `public/${fileName}`;
+      
+      console.log("Uploading to path:", filePath);
+      
+      // Check if the bucket exists, create it if not
+      const { data: buckets } = await supabase.storage.listBuckets();
+      const bucketExists = buckets?.some(bucket => bucket.name === 'course-images');
+      
+      if (!bucketExists) {
+        console.log("Bucket doesn't exist, attempting to create it");
+        const { error: createError } = await supabase.storage.createBucket('course-images', {
+          public: true
+        });
+        
+        if (createError) {
+          console.error("Error creating bucket:", createError);
+          throw createError;
+        }
+      }
       
       // Upload file to Supabase Storage
       const { data, error: uploadError } = await supabase.storage
         .from('course-images')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
       
       if (uploadError) {
+        console.error("Upload error:", uploadError);
         throw uploadError;
       }
+      
+      console.log("Upload successful:", data);
       
       // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('course-images')
         .getPublicUrl(filePath);
+      
+      console.log("Public URL:", publicUrl);
       
       // Update the form
       onChange(publicUrl);
@@ -93,10 +122,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
           </>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center p-4">
-            <ImagePlus className="h-10 w-10 text-muted-foreground mb-2" />
-            <p className="text-sm text-muted-foreground text-center">
-              {isUploading ? "Uploading..." : "Click to upload course image"}
-            </p>
+            {isUploading ? (
+              <>
+                <Loader2 className="h-10 w-10 text-primary animate-spin mb-2" />
+                <p className="text-sm text-muted-foreground text-center">Uploading...</p>
+              </>
+            ) : (
+              <>
+                <Upload className="h-10 w-10 text-muted-foreground mb-2" />
+                <p className="text-sm text-muted-foreground text-center">
+                  Click to upload course image
+                </p>
+                <p className="text-xs text-muted-foreground text-center mt-1">
+                  (max 5MB)
+                </p>
+              </>
+            )}
           </div>
         )}
       </div>
