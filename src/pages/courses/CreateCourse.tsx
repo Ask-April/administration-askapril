@@ -55,7 +55,7 @@ const CreateCourse = () => {
             students: 0,
           });
           
-          setCreatedCourseId(course.id);
+          setCreatedCourseId(course.course_id); // Use course_id instead of id
           toast.success("Course information saved!");
         }
         setCurrentStep("curriculum");

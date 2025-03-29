@@ -84,6 +84,9 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
         return;
       }
       
+      // Generate a site_id since it's required
+      const site_id = crypto.randomUUID();
+      
       // Insert the course into the database
       const { data, error } = await supabase
         .from('courses')
@@ -96,6 +99,7 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
           lessons: values.lessons,
           status: values.status,
           students: 0,
+          site_id: site_id, // Add the required site_id
         })
         .select();
       
