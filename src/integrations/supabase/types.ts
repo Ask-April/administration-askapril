@@ -958,6 +958,30 @@ export type Database = {
           },
         ]
       }
+      leads: {
+        Row: {
+          email: string | null
+          first_name: string | null
+          joined_on: string | null
+          last_name: string | null
+          status: string | null
+        }
+        Insert: {
+          email?: string | null
+          first_name?: string | null
+          joined_on?: string | null
+          last_name?: string | null
+          status?: string | null
+        }
+        Update: {
+          email?: string | null
+          first_name?: string | null
+          joined_on?: string | null
+          last_name?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       lesson_comment: {
         Row: {
           comment_id: string
