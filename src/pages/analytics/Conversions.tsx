@@ -1,58 +1,69 @@
 
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, DollarSign, ArrowUpRight, ArrowDownRight, BarChart, LineChart, TrendingUp } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  LineChart, 
+  BarChart, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  Target, 
+  DollarSign,
+  CheckCircle 
+} from "lucide-react";
 
 const Conversions = () => {
   const stats = [
     { 
       title: "Conversion Rate", 
-      value: "8.4%", 
-      change: "+1.2%",
-      trend: "up"
+      value: "5.8%", 
+      change: "+1.2%", 
+      trend: "up",
+      description: "Site-wide conversion rate"
     },
     { 
-      title: "Total Conversions", 
-      value: "2,384", 
-      change: "+15%",
-      trend: "up"
+      title: "Revenue per Visitor", 
+      value: "$2.46", 
+      change: "+$0.32", 
+      trend: "up",
+      description: "Average revenue per visitor"
     },
     { 
-      title: "Revenue", 
-      value: "$42,580", 
-      change: "+24%",
-      trend: "up"
+      title: "Cart Abandonment", 
+      value: "68.3%", 
+      change: "-2.5%", 
+      trend: "up",
+      description: "Shopping cart abandonment rate"
     },
     { 
-      title: "Avg. Order Value", 
-      value: "$178.50", 
-      change: "+$12.75",
-      trend: "up"
+      title: "Lead-to-Customer", 
+      value: "12.4%", 
+      change: "-0.8%", 
+      trend: "down",
+      description: "Lead to customer conversion rate"
     },
   ];
 
   const funnels = [
     { 
-      name: "Website Visitor to Lead", 
+      name: "Course Registration", 
       stages: [
-        { name: "Website Visit", value: 28495, percentage: 100 },
-        { name: "Course View", value: 14872, percentage: 52 },
-        { name: "Lead Form", value: 5218, percentage: 18 },
-        { name: "Lead Capture", value: 2384, percentage: 8 }
-      ],
-      conversion: "8.4%"
+        { name: "Landing Page View", count: 8426, rate: "100%" },
+        { name: "Course Preview", count: 4215, rate: "50.0%" },
+        { name: "Add to Cart", count: 1845, rate: "21.9%" },
+        { name: "Checkout Started", count: 1208, rate: "14.3%" },
+        { name: "Purchase Completed", count: 782, rate: "9.3%" },
+      ]
     },
     { 
-      name: "Lead to Sale", 
+      name: "Lead Capture", 
       stages: [
-        { name: "Lead", value: 2384, percentage: 100 },
-        { name: "Email Opened", value: 1863, percentage: 78 },
-        { name: "Course Preview", value: 1125, percentage: 47 },
-        { name: "Purchase", value: 542, percentage: 23 }
-      ],
-      conversion: "22.7%"
+        { name: "Form View", count: 12453, rate: "100%" },
+        { name: "Form Started", count: 5842, rate: "46.9%" },
+        { name: "Form Submitted", count: 3216, rate: "25.8%" },
+        { name: "Email Confirmed", count: 2845, rate: "22.8%" },
+      ]
     }
   ];
 
@@ -61,216 +72,206 @@ const Conversions = () => {
       <div className="container px-4 py-6">
         <h1 className="text-3xl font-bold mb-6">Conversion Analytics</h1>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <Card key={index}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   {stat.title}
+                  {stat.trend === "up" ? (
+                    <Badge className={`bg-${stat.title === "Cart Abandonment" ? "red" : "green"}-100 text-${stat.title === "Cart Abandonment" ? "red" : "green"}-800 hover:bg-${stat.title === "Cart Abandonment" ? "red" : "green"}-100`}>
+                      <ArrowUpRight className="h-3 w-3 mr-1" />
+                      {stat.change}
+                    </Badge>
+                  ) : (
+                    <Badge className={`bg-${stat.title === "Lead-to-Customer" ? "red" : "green"}-100 text-${stat.title === "Lead-to-Customer" ? "red" : "green"}-800 hover:bg-${stat.title === "Lead-to-Customer" ? "red" : "green"}-100`}>
+                      <ArrowDownRight className="h-3 w-3 mr-1" />
+                      {stat.change}
+                    </Badge>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
-                <p className={`flex items-center gap-1 text-xs mt-1 ${
-                  stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {stat.trend === 'up' ? (
-                    <ArrowUpRight className="h-3 w-3" />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3" />
-                  )}
-                  <span>{stat.change} from last month</span>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stat.description}
                 </p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <Tabs defaultValue="overview" className="mb-8">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="funnels">Conversion Funnels</TabsTrigger>
-            <TabsTrigger value="courses">Course Performance</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview" className="mt-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-4">
-                  <div className="bg-primary/10 p-2 rounded-full">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle>Conversion Overview</CardTitle>
-                    <CardDescription>
-                      Conversion performance over the last 30 days
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
-                  <p className="text-muted-foreground">Conversion trends chart</p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="funnels" className="mt-6">
-            <div className="grid gap-6">
-              {funnels.map((funnel, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="bg-primary/10 p-2 rounded-full">
-                          <CheckCircle className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <CardTitle>{funnel.name}</CardTitle>
-                          <CardDescription>
-                            Overall conversion rate: {funnel.conversion}
-                          </CardDescription>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-8">
-                      <div className="flex items-center justify-between relative">
-                        {funnel.stages.map((stage, stageIndex) => (
-                          <div key={stageIndex} className="text-center z-10 px-2">
-                            <div className="font-medium">{stage.value.toLocaleString()}</div>
-                            <div className="text-sm">{stage.percentage}%</div>
-                            <div className="text-xs text-muted-foreground mt-1">{stage.name}</div>
-                          </div>
-                        ))}
-                        <div className="absolute top-3 left-0 right-0 h-1 bg-muted" />
-                        <div className="absolute top-3 left-0 h-1 bg-primary" style={{ width: `${funnel.stages[funnel.stages.length - 1].percentage}%` }} />
-                      </div>
-                      
-                      <div className="h-48 flex items-center justify-center bg-muted/50 rounded-md">
-                        <p className="text-muted-foreground">Funnel visualization</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="courses" className="mt-6">
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-4">
-                    <div className="bg-primary/10 p-2 rounded-full">
-                      <BarChart className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle>Course Conversion Rates</CardTitle>
-                      <CardDescription>
-                        Conversion rate by course
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
-                    <p className="text-muted-foreground">Course conversion chart</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-4">
-                    <div className="bg-primary/10 p-2 rounded-full">
-                      <DollarSign className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle>Revenue by Course</CardTitle>
-                      <CardDescription>
-                        Revenue generated from each course
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
-                    <p className="text-muted-foreground">Revenue by course chart</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 mb-8 md:grid-cols-2">
           <Card>
-            <CardHeader>
-              <div className="flex items-center gap-4">
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <LineChart className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <CardTitle>Conversion by Traffic Source</CardTitle>
-                  <CardDescription>How different traffic sources convert</CardDescription>
-                </div>
+            <CardHeader className="flex flex-row items-center gap-4">
+              <div className="bg-primary/10 p-2 rounded-full">
+                <Target className="h-6 w-6 text-primary" />
               </div>
+              <CardTitle>Conversion Goals</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">
-                <div className="grid grid-cols-4 p-3 font-medium text-sm border-b">
-                  <div className="col-span-2">Source</div>
-                  <div>Visits</div>
-                  <div>Conversion</div>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="font-medium">Course Purchases</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">9.3%</span>
+                      <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                        <ArrowUpRight className="h-3 w-3 mr-1" />
+                        +1.2%
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
+                    <div className="bg-green-500 h-full rounded-full" style={{ width: "78%" }}></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">78% of target (12%) achieved</div>
                 </div>
-                <div className="divide-y">
-                  <SourceRow source="Google" visits={12458} conversion="9.8%" />
-                  <SourceRow source="Direct" visits={5672} conversion="12.3%" />
-                  <SourceRow source="Social Media" visits={4321} conversion="7.5%" />
-                  <SourceRow source="Referrals" visits={3562} conversion="14.2%" />
-                  <SourceRow source="Email" visits={2481} conversion="18.6%" />
-                  <SourceRow source="Other" visits={1244} conversion="5.2%" />
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-blue-500" />
+                      <span className="font-medium">Lead Generation</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">25.8%</span>
+                      <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                        <ArrowUpRight className="h-3 w-3 mr-1" />
+                        +3.6%
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
+                    <div className="bg-blue-500 h-full rounded-full" style={{ width: "86%" }}></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">86% of target (30%) achieved</div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-amber-500" />
+                      <span className="font-medium">Newsletter Signups</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">16.4%</span>
+                      <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+                        <ArrowUpRight className="h-3 w-3 mr-1" />
+                        +2.1%
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
+                    <div className="bg-amber-500 h-full rounded-full" style={{ width: "54%" }}></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">54% of target (30%) achieved</div>
                 </div>
               </div>
             </CardContent>
           </Card>
-
+          
           <Card>
-            <CardHeader>
-              <div className="flex items-center gap-4">
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <CheckCircle className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <CardTitle>Conversion by Device</CardTitle>
-                  <CardDescription>Conversion rates across different devices</CardDescription>
-                </div>
+            <CardHeader className="flex flex-row items-center gap-4">
+              <div className="bg-primary/10 p-2 rounded-full">
+                <DollarSign className="h-6 w-6 text-primary" />
               </div>
+              <CardTitle>Revenue Performance</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 flex items-center justify-center bg-muted/50 rounded-md">
-                <p className="text-muted-foreground">Device conversion chart</p>
+              <div className="space-y-6">
+                <div className="space-y-1">
+                  <div className="flex justify-between font-medium">
+                    <span>Total Revenue</span>
+                    <span>$128,452</span>
+                  </div>
+                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
+                    <div className="bg-green-500 h-full rounded-full" style={{ width: "85%" }}></div>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>85% of $150k target</span>
+                    <span>+12.4% from last month</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between font-medium">
+                    <span>Average Order Value</span>
+                    <span>$62.30</span>
+                  </div>
+                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
+                    <div className="bg-blue-500 h-full rounded-full" style={{ width: "78%" }}></div>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>78% of $80 target</span>
+                    <span>+8.2% from last month</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between font-medium">
+                    <span>Lifetime Value</span>
+                    <span>$384.50</span>
+                  </div>
+                  <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
+                    <div className="bg-purple-500 h-full rounded-full" style={{ width: "64%" }}></div>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>64% of $600 target</span>
+                    <span>+5.7% from last month</span>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        <div className="grid gap-6">
+          {funnels.map((funnel, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <CardTitle>{funnel.name} Funnel</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative pt-10">
+                  <div className="absolute top-0 left-0 right-0 flex justify-between text-sm font-medium px-8">
+                    <span>Stage</span>
+                    <span>Visitors</span>
+                    <span>Conversion Rate</span>
+                  </div>
+                  <div className="space-y-4">
+                    {funnel.stages.map((stage, stageIndex) => (
+                      <div key={stageIndex} className="flex items-center">
+                        <div className="w-1/3 flex gap-2 items-center">
+                          <div className={`h-8 w-2 rounded-full bg-${["green", "blue", "purple", "amber", "pink"][stageIndex % 5]}-500`}></div>
+                          <span className="font-medium">{stage.name}</span>
+                        </div>
+                        <div className="w-1/3 text-center">{stage.count.toLocaleString()}</div>
+                        <div className="w-1/3 text-right">
+                          {stageIndex === 0 ? (
+                            <span>{stage.rate}</span>
+                          ) : (
+                            <div className="flex items-center justify-end gap-2">
+                              <span>{stage.rate}</span>
+                              <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                                {((stage.count / funnel.stages[stageIndex - 1].count) * 100).toFixed(1)}%
+                              </Badge>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </PageTransition>
-  );
-};
-
-const SourceRow = ({ source, visits, conversion }: { source: string; visits: number; conversion: string }) => {
-  return (
-    <div className="grid grid-cols-4 p-3 text-sm items-center">
-      <div className="col-span-2">
-        <p className="font-medium">{source}</p>
-      </div>
-      <div>{visits.toLocaleString()}</div>
-      <div>{conversion}</div>
-    </div>
   );
 };
 

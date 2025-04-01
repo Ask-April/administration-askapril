@@ -23,6 +23,11 @@ import {
   PieChart,
   LineChart,
   CheckCircle,
+  Tag,
+  FileInput,
+  MapPin,
+  BellRing,
+  ArrowUpRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -97,13 +102,16 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       { name: "Reports", icon: <ChartBar size={16} />, path: "/courses/reports" },
     ],
     "Leads": [
-      { name: "Leads", icon: <UserPlus size={16} />, path: "/leads/all" },
-      { name: "All Funnels", icon: <Filter size={16} />, path: "/leads/funnels" },
+      { name: "All Leads", icon: <UserPlus size={16} />, path: "/leads/all" },
+      { name: "Lead Forms", icon: <FileInput size={16} />, path: "/leads/forms" },
+      { name: "Lead Sources", icon: <MapPin size={16} />, path: "/leads/sources" },
+      { name: "Lead Tags", icon: <Tag size={16} />, path: "/leads/tags" },
     ],
     "Broadcasts": [
       { name: "All Broadcasts", icon: <Radio size={16} />, path: "/broadcasts/all" },
       { name: "Subscribers", icon: <Users size={16} />, path: "/broadcasts/subscribers" },
       { name: "Analytics", icon: <ChartBar size={16} />, path: "/broadcasts/analytics" },
+      { name: "Settings", icon: <Settings size={16} />, path: "/broadcasts/settings" },
     ],
     "Communities": [
       { name: "All Communities", icon: <Users size={16} />, path: "/communities/all" },
@@ -114,7 +122,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     ],
     "Analytics": [
       { name: "Overview", icon: <PieChart size={16} />, path: "/analytics/overview" },
-      { name: "Traffic", icon: <LineChart size={16} />, path: "/analytics/traffic" },
+      { name: "Traffic", icon: <ArrowUpRight size={16} />, path: "/analytics/traffic" },
       { name: "Conversions", icon: <CheckCircle size={16} />, path: "/analytics/conversions" },
     ],
   };

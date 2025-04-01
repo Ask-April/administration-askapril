@@ -1,39 +1,16 @@
 
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUpRight, ArrowDownRight, BarChart, LineChart, PieChart, Users } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PieChart, LineChart, BarChart } from "lucide-react";
 
-const Overview = () => {
+const AnalyticsOverview = () => {
   const stats = [
-    { 
-      title: "Total Students", 
-      value: "4,385", 
-      change: "+12%",
-      trend: "up",
-      icon: <Users className="h-4 w-4" />
-    },
-    { 
-      title: "Course Enrollments", 
-      value: "12,456", 
-      change: "+24%",
-      trend: "up",
-      icon: <BarChart className="h-4 w-4" />
-    },
-    { 
-      title: "Completion Rate", 
-      value: "68%", 
-      change: "-3%",
-      trend: "down",
-      icon: <PieChart className="h-4 w-4" />
-    },
-    { 
-      title: "Average Rating", 
-      value: "4.7/5", 
-      change: "+0.2",
-      trend: "up",
-      icon: <LineChart className="h-4 w-4" />
-    },
+    { title: "Total Visitors", value: "24,532", change: "+12% from last month" },
+    { title: "Page Views", value: "102,854", change: "+8.4% from last month" },
+    { title: "Conversion Rate", value: "5.2%", change: "+1.1% from last month" },
+    { title: "Avg. Session Duration", value: "3m 42s", change: "+14s from last month" },
   ];
 
   return (
@@ -41,100 +18,130 @@ const Overview = () => {
       <div className="container px-4 py-6">
         <h1 className="text-3xl font-bold mb-6">Analytics Overview</h1>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <Card key={index}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <div className="bg-primary/10 p-2 rounded-full">
-                  {stat.icon}
-                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
-                <p className={`flex items-center gap-1 text-xs mt-1 ${
-                  stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {stat.trend === 'up' ? (
-                    <ArrowUpRight className="h-3 w-3" />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3" />
-                  )}
-                  <span>{stat.change} from last month</span>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stat.change}
                 </p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Platform Growth</CardTitle>
-              <CardDescription>Students and course enrollments over time</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
-                <p className="text-muted-foreground">Growth trend chart</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue</CardTitle>
-              <CardDescription>Monthly revenue breakdown</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
-                <p className="text-muted-foreground">Revenue chart</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Distribution</CardTitle>
-              <CardDescription>Enrollments by category</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 flex items-center justify-center bg-muted/50 rounded-md">
-                <p className="text-muted-foreground">Category distribution chart</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>User Demographics</CardTitle>
-              <CardDescription>Student age and location</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 flex items-center justify-center bg-muted/50 rounded-md">
-                <p className="text-muted-foreground">Demographics chart</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Device Usage</CardTitle>
-              <CardDescription>Platform access by device type</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 flex items-center justify-center bg-muted/50 rounded-md">
-                <p className="text-muted-foreground">Device usage chart</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <Tabs defaultValue="visitors" className="mb-6">
+          <TabsList>
+            <TabsTrigger value="visitors">Visitors</TabsTrigger>
+            <TabsTrigger value="engagement">Engagement</TabsTrigger>
+            <TabsTrigger value="courses">Courses</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="visitors" className="mt-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <LineChart className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Visitor Trends</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
+                    <p className="text-muted-foreground">Visitor trends chart</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <PieChart className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Traffic Sources</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
+                    <p className="text-muted-foreground">Traffic sources chart</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="engagement" className="mt-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <BarChart className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Page Performance</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
+                    <p className="text-muted-foreground">Page performance chart</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <LineChart className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>User Engagement</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
+                    <p className="text-muted-foreground">User engagement chart</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="courses" className="mt-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <BarChart className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Course Popularity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
+                    <p className="text-muted-foreground">Course popularity chart</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <PieChart className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Completion Rates</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80 flex items-center justify-center bg-muted/50 rounded-md">
+                    <p className="text-muted-foreground">Completion rates chart</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </PageTransition>
   );
 };
 
-export default Overview;
+export default AnalyticsOverview;
