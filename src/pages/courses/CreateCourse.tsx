@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -8,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import CourseInfoForm from "@/components/courses/CourseInfoForm";
 import CourseCurriculum from "@/components/courses/CourseCurriculum";
 import StepProgress from "@/components/courses/StepProgress";
-import { courseService } from "@/services/courseService";
+import { courseService } from "@/services/course";
 import { toast } from "sonner";
 
 type Step = "info" | "curriculum" | "pricing" | "settings";
