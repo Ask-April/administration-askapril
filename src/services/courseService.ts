@@ -302,10 +302,18 @@ export const courseService = {
     
     // First, save all sections
     for (const section of sections) {
+      // Ensure we're using a valid UUID for section id
+      if (!section.id || typeof section.id !== 'string' || !section.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+        console.error("Invalid section ID format:", section.id);
+        throw new Error("Invalid section ID format: must be a valid UUID");
+      }
+      
+      console.log("Saving section:", section);
+      
       const { error: sectionError } = await supabase
         .from('course_sections')
         .upsert({
-          id: section.id || undefined,
+          id: section.id,
           course_id: courseId,
           title: section.title,
           position: section.position
@@ -318,10 +326,18 @@ export const courseService = {
       
       // Then save all lessons for this section
       for (const lesson of section.lessons) {
+        // Ensure we're using a valid UUID for lesson id
+        if (!lesson.id || typeof lesson.id !== 'string' || !lesson.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+          console.error("Invalid lesson ID format:", lesson.id);
+          throw new Error("Invalid lesson ID format: must be a valid UUID");
+        }
+        
+        console.log("Saving lesson:", lesson);
+        
         const { error: lessonError } = await supabase
           .from('course_lessons')
           .upsert({
-            id: lesson.id || undefined,
+            id: lesson.id,
             section_id: section.id,
             title: lesson.title,
             type: lesson.type || 'video',

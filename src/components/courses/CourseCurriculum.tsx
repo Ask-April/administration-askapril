@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AddLessonDialog from "./AddLessonDialog";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 
 interface Section {
   id: string;
@@ -49,7 +50,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
 }) => {
   const [sections, setSections] = useState<Section[]>([
     {
-      id: Date.now().toString(),
+      id: uuidv4(),
       title: "Introduction",
       lessons: [],
       position: 0
@@ -63,13 +64,13 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
     const totalLessons = sections.reduce((count, section) => count + section.lessons.length, 0);
     updateCourseData({ lessons: totalLessons });
     onUpdateSections(sections);
-  }, [sections, updateCourseData, onUpdateSections]);
+  }, [sections]);
 
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
     
     const newSection = {
-      id: Date.now().toString(),
+      id: uuidv4(),
       title: newSectionTitle,
       lessons: [],
       position: sections.length
@@ -93,6 +94,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
     
     const lessonWithPosition = {
       ...lesson,
+      id: lesson.id || uuidv4(),
       position: currentSection.lessons.length
     };
     
