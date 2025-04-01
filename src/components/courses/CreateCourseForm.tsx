@@ -24,6 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import ImageUpload from "./ImageUpload";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   title: z.string().min(3, {
@@ -74,6 +75,7 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
   async function onSubmit(values: CourseFormValues) {
     try {
       setIsSubmitting(true);
+      console.log("Submitting course form with values:", values);
       
       // Check authentication status before inserting
       const { data: authData, error: authError } = await supabase.auth.getSession();
@@ -86,6 +88,8 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
       
       // Generate a site_id since it's required
       const site_id = crypto.randomUUID();
+      
+      console.log("Creating course with site_id:", site_id);
       
       // Insert the course into the database
       const { data, error } = await supabase
@@ -105,15 +109,16 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
       
       if (error) {
         console.error("Error creating course:", error);
-        toast.error("Failed to create course. Please try again.");
+        toast.error("Failed to create course: " + error.message);
         return;
       }
       
+      console.log("Course created successfully:", data);
       toast.success("Course created successfully!");
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Unexpected error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred: " + (error.message || "Please try again"));
     } finally {
       setIsSubmitting(false);
     }
@@ -267,7 +272,12 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
             type="submit" 
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Creating..." : "Create Course"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : "Create Course"}
           </Button>
         </div>
       </form>

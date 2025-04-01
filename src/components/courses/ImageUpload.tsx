@@ -21,6 +21,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     const file = files[0];
     if (file.size > 5 * 1024 * 1024) {
       setError("File size should be less than 5MB");
+      toast.error("File size should be less than 5MB");
       return;
     }
     
@@ -29,7 +30,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     setIsUploading(true);
     
     try {
-      console.log("Starting image upload...");
+      console.log("Starting image upload for file:", file.name);
       
       // Upload the file using our utility function
       const publicUrl = await uploadImage(file, 'course-images');

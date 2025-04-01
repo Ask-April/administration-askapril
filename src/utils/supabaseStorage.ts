@@ -13,6 +13,12 @@ export const uploadImage = async (file: File, bucket: string, path: string = '')
     
     console.log(`Generated file path: ${fullPath}`);
     
+    // Check for authenticated user
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) {
+      console.warn('No authenticated user found for upload. This may cause permission issues.');
+    }
+    
     // Upload the file
     const { data, error } = await supabase.storage
       .from(bucket)
@@ -46,21 +52,31 @@ export const deleteImage = async (url: string): Promise<boolean> => {
   try {
     // Parse the URL to get the bucket and path
     const urlObj = new URL(url);
-    const path = urlObj.pathname.split('/').slice(2).join('/');
+    const pathParts = urlObj.pathname.split('/');
     
-    if (!path) {
-      console.error('Invalid storage URL');
+    // Format for Supabase storage URLs: /storage/v1/object/public/[bucket]/[path]
+    if (pathParts.length < 4) {
+      console.error('Invalid storage URL format');
       return false;
     }
     
-    // Extract bucket name from the pathname
-    const bucketPath = urlObj.pathname.split('/');
-    const bucket = bucketPath[1]; // Should be at index 1 (/storage/bucket-name/...)
-    
-    if (!bucket) {
+    // Extract bucket (should be at index 4 in /storage/v1/object/public/bucket/...)
+    const bucketIndex = pathParts.findIndex(part => part === 'public') + 1;
+    if (bucketIndex < 1 || bucketIndex >= pathParts.length) {
       console.error('Could not determine bucket from URL');
       return false;
     }
+    
+    const bucket = pathParts[bucketIndex];
+    // Path is everything after the bucket name
+    const path = pathParts.slice(bucketIndex + 1).join('/');
+    
+    if (!bucket || !path) {
+      console.error('Could not extract bucket or path from URL:', { url, bucket, path });
+      return false;
+    }
+    
+    console.log('Deleting file from storage:', { bucket, path });
     
     const { error } = await supabase.storage
       .from(bucket)
@@ -71,6 +87,7 @@ export const deleteImage = async (url: string): Promise<boolean> => {
       return false;
     }
     
+    console.log('File deleted successfully');
     return true;
   } catch (error) {
     console.error('Error in deleteImage:', error);
