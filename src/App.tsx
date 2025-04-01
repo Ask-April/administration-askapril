@@ -27,6 +27,7 @@ import AllLeads from "./pages/leads/AllLeads";
 import LeadForms from "./pages/leads/LeadForms";
 import LeadSources from "./pages/leads/LeadSources";
 import LeadTags from "./pages/leads/LeadTags";
+import Funnels from "./pages/leads/Funnels";
 
 // Broadcast pages
 import AllBroadcasts from "./pages/broadcasts/AllBroadcasts";
@@ -81,6 +82,7 @@ function App() {
                   <Route path="/leads/forms" element={<LeadForms />} />
                   <Route path="/leads/sources" element={<LeadSources />} />
                   <Route path="/leads/tags" element={<LeadTags />} />
+                  <Route path="/leads/funnels" element={<Funnels />} />
                   
                   {/* Broadcasts routes */}
                   <Route path="/broadcasts" element={<Broadcasts />} />
