@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CoursePageHeader from "@/components/courses/CoursePageHeader";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Save, Trash2 } from "lucide-react";
 import PageTransition from "@/components/layout/PageTransition";
 import { toast } from "sonner";
 import { useCourseById } from "@/hooks/useCourses";
-import { EmptyState } from "@/components/ui/loading-states";
+import { EmptyState, LoadingSkeleton } from "@/components/ui/loading-states";
 import { updateCourse } from "@/pages/api/courses";
 
 const EditCourse = () => {
@@ -20,11 +20,11 @@ const EditCourse = () => {
   // Fetch the course data using our useCourseById hook
   const { data: course, isLoading, error } = useCourseById(id);
   
-  // Local state for edited course data
+  // Local state for edited course data - initialize as null
   const [editedCourse, setEditedCourse] = useState<any>(null);
   
   // Update local state when the data is loaded
-  React.useEffect(() => {
+  useEffect(() => {
     if (course) {
       setEditedCourse(course);
     }
@@ -59,7 +59,7 @@ const EditCourse = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <LoadingSkeleton />
       </div>
     );
   }
@@ -74,11 +74,20 @@ const EditCourse = () => {
     );
   }
 
+  // Only render the form if editedCourse is available
+  if (!editedCourse) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <LoadingSkeleton />
+      </div>
+    );
+  }
+
   return (
     <PageTransition>
       <div className="container px-4 py-6">
         <CoursePageHeader 
-          title={`Edit Course: ${editedCourse.title}`} 
+          title={`Edit Course: ${editedCourse.title || 'Untitled Course'}`} 
           backPath="/courses/overview"
           actions={
             <div className="flex gap-2">
