@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CoursePageHeader from "@/components/courses/CoursePageHeader";
 import { Button } from "@/components/ui/button";
@@ -8,50 +8,55 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, Trash2 } from "lucide-react";
 import PageTransition from "@/components/layout/PageTransition";
 import { toast } from "sonner";
-
-// Mock function to get course by ID
-const getCourseById = (id: string) => {
-  // In a real app, this would fetch from an API
-  return {
-    id,
-    title: `Course ${id}`,
-    description: "This is a sample course description. It provides an overview of what students will learn in this course.",
-    image: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80",
-    status: "published",
-    price: 99.99,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  };
-};
+import { useCourseById } from "@/hooks/useCourses";
+import { EmptyState } from "@/components/ui/loading-states";
+import { updateCourse } from "@/pages/api/courses";
 
 const EditCourse = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [course, setCourse] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("general");
-
-  useEffect(() => {
-    if (id) {
-      // Simulate API call
-      setTimeout(() => {
-        const courseData = getCourseById(id);
-        setCourse(courseData);
-        setLoading(false);
-      }, 500);
+  
+  // Fetch the course data using our useCourseById hook
+  const { data: course, isLoading, error } = useCourseById(id);
+  
+  // Local state for edited course data
+  const [editedCourse, setEditedCourse] = useState<any>(null);
+  
+  // Update local state when the data is loaded
+  React.useEffect(() => {
+    if (course) {
+      setEditedCourse(course);
     }
-  }, [id]);
-
-  const handleSave = () => {
-    toast.success("Course saved successfully!");
+  }, [course]);
+  
+  const handleSave = async () => {
+    try {
+      if (id && editedCourse) {
+        // Call the updateCourse API function
+        await updateCourse(id, {
+          title: editedCourse.title,
+          description: editedCourse.description,
+          status: editedCourse.status,
+          // Add other fields as needed
+        });
+        
+        toast.success("Course saved successfully!");
+      }
+    } catch (error) {
+      console.error("Error saving course:", error);
+      toast.error("Failed to save course. Please try again.");
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
+    // For now, just show a toast and navigate away
+    // In a real implementation, you would call an API to delete the course
     toast.error("Course deleted!");
     navigate('/courses/overview');
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -59,15 +64,13 @@ const EditCourse = () => {
     );
   }
 
-  if (!course) {
+  if (error || !course) {
     return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <h3 className="text-xl font-semibold mb-2">Course Not Found</h3>
-        <p className="text-muted-foreground mb-4">The course you're looking for doesn't exist or has been removed.</p>
-        <Button onClick={() => navigate('/courses/overview')}>
-          Back to Courses
-        </Button>
-      </div>
+      <EmptyState 
+        title="Course Not Found" 
+        description="The course you're looking for doesn't exist or has been removed."
+        action={<Button onClick={() => navigate('/courses/overview')}>Back to Courses</Button>}
+      />
     );
   }
 
@@ -75,7 +78,7 @@ const EditCourse = () => {
     <PageTransition>
       <div className="container px-4 py-6">
         <CoursePageHeader 
-          title={`Edit Course: ${course.title}`} 
+          title={`Edit Course: ${editedCourse.title}`} 
           backPath="/courses/overview"
           actions={
             <div className="flex gap-2">
@@ -113,8 +116,8 @@ const EditCourse = () => {
                         <input 
                           type="text" 
                           className="w-full p-2 border rounded-md" 
-                          value={course.title}
-                          onChange={(e) => setCourse({...course, title: e.target.value})}
+                          value={editedCourse.title || ''}
+                          onChange={(e) => setEditedCourse({...editedCourse, title: e.target.value})}
                         />
                       </div>
                       
@@ -122,8 +125,28 @@ const EditCourse = () => {
                         <label className="block text-sm font-medium mb-1">Description</label>
                         <textarea 
                           className="w-full p-2 border rounded-md min-h-[100px]" 
-                          value={course.description}
-                          onChange={(e) => setCourse({...course, description: e.target.value})}
+                          value={editedCourse.description || ''}
+                          onChange={(e) => setEditedCourse({...editedCourse, description: e.target.value})}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Category</label>
+                        <input 
+                          type="text" 
+                          className="w-full p-2 border rounded-md" 
+                          value={editedCourse.category || ''}
+                          onChange={(e) => setEditedCourse({...editedCourse, category: e.target.value})}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Image URL</label>
+                        <input 
+                          type="text" 
+                          className="w-full p-2 border rounded-md" 
+                          value={editedCourse.image || ''}
+                          onChange={(e) => setEditedCourse({...editedCourse, image: e.target.value})}
                         />
                       </div>
                     </div>
@@ -152,12 +175,13 @@ const EditCourse = () => {
                 <p className="text-muted-foreground mb-4">Set pricing options for your course.</p>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Price ($)</label>
+                  <label className="block text-sm font-medium mb-1">Duration</label>
                   <input 
-                    type="number" 
+                    type="text" 
                     className="w-full p-2 border rounded-md" 
-                    value={course.price}
-                    onChange={(e) => setCourse({...course, price: parseFloat(e.target.value)})}
+                    value={editedCourse.duration || ''}
+                    onChange={(e) => setEditedCourse({...editedCourse, duration: e.target.value})}
+                    placeholder="e.g., 8 hours"
                   />
                 </div>
               </CardContent>
@@ -174,13 +198,33 @@ const EditCourse = () => {
                   <label className="block text-sm font-medium mb-1">Status</label>
                   <select 
                     className="w-full p-2 border rounded-md"
-                    value={course.status}
-                    onChange={(e) => setCourse({...course, status: e.target.value})}
+                    value={editedCourse.status || 'draft'}
+                    onChange={(e) => setEditedCourse({...editedCourse, status: e.target.value})}
                   >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                     <option value="archived">Archived</option>
                   </select>
+                </div>
+                
+                <div className="mt-4">
+                  <label className="block text-sm font-medium mb-1">Number of Lessons</label>
+                  <input 
+                    type="number" 
+                    className="w-full p-2 border rounded-md" 
+                    value={editedCourse.lessons || 0}
+                    onChange={(e) => setEditedCourse({...editedCourse, lessons: parseInt(e.target.value, 10)})}
+                  />
+                </div>
+                
+                <div className="mt-4">
+                  <label className="block text-sm font-medium mb-1">Students</label>
+                  <input 
+                    type="number" 
+                    className="w-full p-2 border rounded-md" 
+                    value={editedCourse.students || 0}
+                    onChange={(e) => setEditedCourse({...editedCourse, students: parseInt(e.target.value, 10)})}
+                  />
                 </div>
               </CardContent>
             </Card>
