@@ -18,7 +18,7 @@ const EditCourse = () => {
   const [activeTab, setActiveTab] = useState("general");
   
   // Fetch the course data using our useCourseById hook
-  const { data: course, isLoading, error } = useCourseById(id);
+  const { data: course, isLoading, error, isError } = useCourseById(id);
   
   // Local state for edited course data - initialize as null
   const [editedCourse, setEditedCourse] = useState<any>(null);
@@ -26,7 +26,16 @@ const EditCourse = () => {
   // Update local state when the data is loaded
   useEffect(() => {
     if (course) {
-      setEditedCourse(course);
+      setEditedCourse({
+        title: course.title || '',
+        description: course.description || '',
+        category: course.category || '',
+        image: course.image || '',
+        duration: course.duration || '',
+        status: course.status || 'draft',
+        lessons: course.lessons || 0,
+        students: course.students || 0
+      });
     }
   }, [course]);
   
@@ -38,7 +47,11 @@ const EditCourse = () => {
           title: editedCourse.title,
           description: editedCourse.description,
           status: editedCourse.status,
-          // Add other fields as needed
+          category: editedCourse.category,
+          image: editedCourse.image,
+          duration: editedCourse.duration,
+          lessons: editedCourse.lessons,
+          students: editedCourse.students
         });
         
         toast.success("Course saved successfully!");
@@ -64,7 +77,7 @@ const EditCourse = () => {
     );
   }
 
-  if (error || !course) {
+  if (isError || !id) {
     return (
       <EmptyState 
         title="Course Not Found" 
@@ -222,7 +235,7 @@ const EditCourse = () => {
                     type="number" 
                     className="w-full p-2 border rounded-md" 
                     value={editedCourse.lessons || 0}
-                    onChange={(e) => setEditedCourse({...editedCourse, lessons: parseInt(e.target.value, 10)})}
+                    onChange={(e) => setEditedCourse({...editedCourse, lessons: parseInt(e.target.value, 10) || 0})}
                   />
                 </div>
                 
@@ -232,7 +245,7 @@ const EditCourse = () => {
                     type="number" 
                     className="w-full p-2 border rounded-md" 
                     value={editedCourse.students || 0}
-                    onChange={(e) => setEditedCourse({...editedCourse, students: parseInt(e.target.value, 10)})}
+                    onChange={(e) => setEditedCourse({...editedCourse, students: parseInt(e.target.value, 10) || 0})}
                   />
                 </div>
               </CardContent>

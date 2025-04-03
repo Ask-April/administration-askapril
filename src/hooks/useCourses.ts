@@ -26,7 +26,10 @@ export function useCourseById(courseId: string | undefined) {
   return useQuery({
     queryKey: ["course", courseId],
     queryFn: async (): Promise<Course | null> => {
-      if (!courseId) return null;
+      if (!courseId) {
+        console.log("No course ID provided");
+        return null;
+      }
 
       console.log("Fetching course with ID:", courseId);
       
@@ -48,12 +51,14 @@ export function useCourseById(courseId: string | undefined) {
         }
 
         console.log("Course data retrieved:", data);
-        return data;
+        return data || null; // Ensure we return null instead of undefined
       } catch (error) {
         console.error("Exception in useCourseById:", error);
         throw error;
       }
     },
     enabled: !!courseId, // Only run the query if courseId is provided
+    retry: 1, // Limit retries on failure
+    staleTime: 5 * 60 * 1000, // Cache valid for 5 minutes
   });
 }
