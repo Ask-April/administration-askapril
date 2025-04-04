@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Form } from "@/components/ui/form";
 import { courseFormSchema, CourseFormValues } from "./schema/courseFormSchema";
-import CourseFormFields from "./course-form/CourseFormFields";
-import CourseFormActions from "./course-form/CourseFormActions";
+import CourseFormFields from "./forms/CourseFormFields";
+import CourseFormActions from "./forms/CourseFormActions";
 import { createCourse } from "./services/courseFormService";
 
 interface CreateCourseFormProps {

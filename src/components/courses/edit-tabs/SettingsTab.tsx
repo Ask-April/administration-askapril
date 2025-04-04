@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -35,7 +34,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   editedCourse, 
   setEditedCourse 
 }) => {
-  // Function to update any course property
   const updateCourseData = (field: string, value: any) => {
     setEditedCourse({
       ...editedCourse,
@@ -56,7 +54,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                 <span className="hidden md:inline">Account</span>
               </TabsTrigger>
               <TabsTrigger value="branding" className="flex items-center gap-2">
-                <PaintBrush className="h-4 w-4" />
+                <Paintbrush className="h-4 w-4" />
                 <span className="hidden md:inline">Branding</span>
               </TabsTrigger>
               <TabsTrigger value="integrations" className="flex items-center gap-2">
