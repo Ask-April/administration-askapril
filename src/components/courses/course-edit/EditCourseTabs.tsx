@@ -22,7 +22,7 @@ interface EditCourseTabsProps {
     lessons: number;
     students: number;
   };
-  updateCourseData: (data: Partial<typeof courseData>) => void;
+  updateCourseData: (data: Partial<EditCourseTabsProps["courseData"]>) => void;
 }
 
 const EditCourseTabs: React.FC<EditCourseTabsProps> = ({ 
