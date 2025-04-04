@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tabs";
 import { 
   UserCog, 
-  PaintBrush, 
+  Paintbrush, 
   Link, 
   ShieldAlert, 
   Wrench 
