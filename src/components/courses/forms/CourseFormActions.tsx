@@ -6,11 +6,13 @@ import { Loader2 } from "lucide-react";
 interface CourseFormActionsProps {
   isSubmitting: boolean;
   onCancel: () => void;
+  submitLabel?: string;
 }
 
 const CourseFormActions: React.FC<CourseFormActionsProps> = ({ 
   isSubmitting, 
-  onCancel 
+  onCancel,
+  submitLabel = "Create Course"
 }) => {
   return (
     <div className="flex justify-end space-x-2">
@@ -28,9 +30,9 @@ const CourseFormActions: React.FC<CourseFormActionsProps> = ({
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Creating...
+            {submitLabel === "Create Course" ? "Creating..." : "Saving..."}
           </>
-        ) : "Create Course"}
+        ) : submitLabel}
       </Button>
     </div>
   );
