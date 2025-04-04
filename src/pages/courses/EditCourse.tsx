@@ -5,7 +5,7 @@ import CoursePageHeader from "@/components/courses/CoursePageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, Trash2 } from "lucide-react";
+import { Save, Trash2, LayoutDashboard, FileText, BookOpen, DollarSign, Settings, Users } from "lucide-react";
 import PageTransition from "@/components/layout/PageTransition";
 import { toast } from "sonner";
 import { useCourseById } from "@/hooks/useCourses";
@@ -15,7 +15,7 @@ import { updateCourse } from "@/pages/api/courses";
 const EditCourse = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("general");
+  const [activeTab, setActiveTab] = useState("overview");
   
   // Fetch the course data using our useCourseById hook
   const { data: course, isLoading, error, isError } = useCourseById(id);
@@ -32,8 +32,8 @@ const EditCourse = () => {
         category: course.category || '',
         image: course.image || '',
         duration: course.duration || '',
-        status: course.status || 'draft',
         lessons: course.lessons || 0,
+        status: course.status || 'draft',
         students: course.students || 0
       });
     }
@@ -117,61 +117,99 @@ const EditCourse = () => {
         />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
-            <TabsTrigger value="pricing">Pricing</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsList className="mb-4 w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
+            <TabsTrigger value="overview" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12">
+              <LayoutDashboard className="h-4 w-4 mr-2" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="details" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12">
+              <FileText className="h-4 w-4 mr-2" />
+              Details
+            </TabsTrigger>
+            <TabsTrigger value="content" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Content
+            </TabsTrigger>
+            <TabsTrigger value="price" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Price
+            </TabsTrigger>
+            <TabsTrigger value="automate" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12">
+              <Settings className="h-4 w-4 mr-2" />
+              Automate
+            </TabsTrigger>
+            <TabsTrigger value="students" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12">
+              <Users className="h-4 w-4 mr-2" />
+              Students
+            </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="general">
+          <TabsContent value="overview">
             <Card>
               <CardContent className="pt-6">
+                <h3 className="text-lg font-medium">Course Overview</h3>
+                <p className="text-muted-foreground mb-4">View and edit basic course information.</p>
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-medium mb-2">Course Information</h3>
-                    <p className="text-muted-foreground mb-4">Basic information about your course.</p>
-                    
-                    <div className="grid gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Title</label>
-                        <input 
-                          type="text" 
-                          className="w-full p-2 border rounded-md" 
-                          value={editedCourse.title || ''}
-                          onChange={(e) => setEditedCourse({...editedCourse, title: e.target.value})}
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Description</label>
-                        <textarea 
-                          className="w-full p-2 border rounded-md min-h-[100px]" 
-                          value={editedCourse.description || ''}
-                          onChange={(e) => setEditedCourse({...editedCourse, description: e.target.value})}
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Category</label>
-                        <input 
-                          type="text" 
-                          className="w-full p-2 border rounded-md" 
-                          value={editedCourse.category || ''}
-                          onChange={(e) => setEditedCourse({...editedCourse, category: e.target.value})}
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Image URL</label>
-                        <input 
-                          type="text" 
-                          className="w-full p-2 border rounded-md" 
-                          value={editedCourse.image || ''}
-                          onChange={(e) => setEditedCourse({...editedCourse, image: e.target.value})}
-                        />
-                      </div>
-                    </div>
+                    <label className="block text-sm font-medium mb-1">Title</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-2 border rounded-md" 
+                      value={editedCourse.title || ''}
+                      onChange={(e) => setEditedCourse({...editedCourse, title: e.target.value})}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Description</label>
+                    <textarea 
+                      className="w-full p-2 border rounded-md min-h-[100px]" 
+                      value={editedCourse.description || ''}
+                      onChange={(e) => setEditedCourse({...editedCourse, description: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="details">
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-lg font-medium">Course Details</h3>
+                <p className="text-muted-foreground mb-4">Additional course information and settings.</p>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Category</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-2 border rounded-md" 
+                      value={editedCourse.category || ''}
+                      onChange={(e) => setEditedCourse({...editedCourse, category: e.target.value})}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Image URL</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-2 border rounded-md" 
+                      value={editedCourse.image || ''}
+                      onChange={(e) => setEditedCourse({...editedCourse, image: e.target.value})}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Status</label>
+                    <select 
+                      className="w-full p-2 border rounded-md"
+                      value={editedCourse.status || 'draft'}
+                      onChange={(e) => setEditedCourse({...editedCourse, status: e.target.value})}
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                      <option value="archived">Archived</option>
+                    </select>
                   </div>
                 </div>
               </CardContent>
@@ -190,63 +228,71 @@ const EditCourse = () => {
             </Card>
           </TabsContent>
           
-          <TabsContent value="pricing">
+          <TabsContent value="price">
             <Card>
               <CardContent className="pt-6">
-                <h3 className="text-lg font-medium">Pricing</h3>
+                <h3 className="text-lg font-medium">Price & Plans</h3>
                 <p className="text-muted-foreground mb-4">Set pricing options for your course.</p>
                 
-                <div>
-                  <label className="block text-sm font-medium mb-1">Duration</label>
-                  <input 
-                    type="text" 
-                    className="w-full p-2 border rounded-md" 
-                    value={editedCourse.duration || ''}
-                    onChange={(e) => setEditedCourse({...editedCourse, duration: e.target.value})}
-                    placeholder="e.g., 8 hours"
-                  />
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Duration</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-2 border rounded-md" 
+                      value={editedCourse.duration || ''}
+                      onChange={(e) => setEditedCourse({...editedCourse, duration: e.target.value})}
+                      placeholder="e.g., 8 hours"
+                    />
+                  </div>
+                  
+                  <div className="mt-6 border-t pt-4">
+                    <h4 className="font-medium mb-2">Pricing Plans</h4>
+                    <div className="bg-muted rounded-md p-6 text-center">
+                      <p>No pricing plans yet</p>
+                      <Button className="mt-4" variant="outline">Add Plan</Button>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
           
-          <TabsContent value="settings">
+          <TabsContent value="automate">
             <Card>
               <CardContent className="pt-6">
-                <h3 className="text-lg font-medium">Course Settings</h3>
-                <p className="text-muted-foreground mb-4">Configure additional course settings.</p>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-1">Status</label>
-                  <select 
-                    className="w-full p-2 border rounded-md"
-                    value={editedCourse.status || 'draft'}
-                    onChange={(e) => setEditedCourse({...editedCourse, status: e.target.value})}
-                  >
-                    <option value="draft">Draft</option>
-                    <option value="published">Published</option>
-                    <option value="archived">Archived</option>
-                  </select>
+                <h3 className="text-lg font-medium">Automation</h3>
+                <p className="text-muted-foreground mb-4">Set up automated emails and actions for your course.</p>
+                <div className="bg-muted rounded-md p-6 text-center">
+                  <p>Automation features coming soon</p>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="students">
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-lg font-medium">Students</h3>
+                <p className="text-muted-foreground mb-4">Manage students enrolled in this course.</p>
                 
-                <div className="mt-4">
-                  <label className="block text-sm font-medium mb-1">Number of Lessons</label>
-                  <input 
-                    type="number" 
-                    className="w-full p-2 border rounded-md" 
-                    value={editedCourse.lessons || 0}
-                    onChange={(e) => setEditedCourse({...editedCourse, lessons: parseInt(e.target.value, 10) || 0})}
-                  />
-                </div>
-                
-                <div className="mt-4">
-                  <label className="block text-sm font-medium mb-1">Students</label>
-                  <input 
-                    type="number" 
-                    className="w-full p-2 border rounded-md" 
-                    value={editedCourse.students || 0}
-                    onChange={(e) => setEditedCourse({...editedCourse, students: parseInt(e.target.value, 10) || 0})}
-                  />
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Number of Students</label>
+                    <input 
+                      type="number" 
+                      className="w-full p-2 border rounded-md" 
+                      value={editedCourse.students || 0}
+                      onChange={(e) => setEditedCourse({...editedCourse, students: parseInt(e.target.value, 10) || 0})}
+                    />
+                  </div>
+                  
+                  <div className="mt-6 border-t pt-4">
+                    <h4 className="font-medium mb-2">Enrolled Students</h4>
+                    <div className="bg-muted rounded-md p-6 text-center">
+                      <p>No students enrolled yet</p>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
