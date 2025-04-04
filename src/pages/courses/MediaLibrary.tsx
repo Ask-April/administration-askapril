@@ -1,4 +1,3 @@
-
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +9,7 @@ const MediaLibrary = () => {
     <PageTransition>
       <div className="container px-4 py-6">
         <h1 className="text-3xl font-bold mb-6">Media Library</h1>
-        
+
         <Tabs defaultValue="all" className="mb-6">
           <TabsList>
             <TabsTrigger value="all">All Media</TabsTrigger>
@@ -19,7 +18,7 @@ const MediaLibrary = () => {
             <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="audio">Audio</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="all" className="mt-6">
             <Card>
               <CardContent className="p-6">
@@ -29,14 +28,17 @@ const MediaLibrary = () => {
                   <MediaItem type="document" name="course-slides.pdf" />
                   <MediaItem type="image" name="project-example.png" />
                   <MediaItem type="audio" name="podcast-interview.mp3" />
-                  <MediaItem type="document" name="assignment-instructions.docx" />
+                  <MediaItem
+                    type="document"
+                    name="assignment-instructions.docx"
+                  />
                   <MediaItem type="video" name="tutorial-lesson-2.mp4" />
                   <MediaItem type="image" name="infographic.jpg" />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="images" className="mt-6">
             <Card>
               <CardContent className="p-6">
@@ -48,7 +50,7 @@ const MediaLibrary = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="videos" className="mt-6">
             <Card>
               <CardContent className="p-6">
@@ -59,18 +61,21 @@ const MediaLibrary = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="documents" className="mt-6">
             <Card>
               <CardContent className="p-6">
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   <MediaItem type="document" name="course-slides.pdf" />
-                  <MediaItem type="document" name="assignment-instructions.docx" />
+                  <MediaItem
+                    type="document"
+                    name="assignment-instructions.docx"
+                  />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="audio" className="mt-6">
             <Card>
               <CardContent className="p-6">

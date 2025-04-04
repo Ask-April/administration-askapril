@@ -1,81 +1,41 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import PageTransition from "@/components/layout/PageTransition";
-import { useCourseById } from "@/hooks/useCourses";
-import { EmptyState, LoadingSkeleton } from "@/components/ui/loading-states";
-import { updateCourse } from "@/pages/api/courses";
+import CoursePageHeader from "@/components/courses/CoursePageHeader";
 import { Button } from "@/components/ui/button";
-import EditCourseHeader from "@/components/courses/course-edit/EditCourseHeader";
-import EditCourseTabs from "@/components/courses/course-edit/EditCourseTabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Save, Trash2 } from "lucide-react";
+import PageTransition from "@/components/layout/PageTransition";
+import { toast } from "sonner";
+import { useEditCourse } from "@/hooks/useEditCourse";
+import { EmptyState, LoadingSkeleton } from "@/components/ui/loading-states";
+import { 
+  GeneralTab, 
+  ContentTab, 
+  PricingTab, 
+  SettingsTab 
+} from "@/components/courses/edit-tabs";
 
 const EditCourse = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("overview");
-  const [isSaving, setIsSaving] = useState(false);
-  
-  // Fetch the course data using our useCourseById hook
-  const { data: course, isLoading, error, isError } = useCourseById(id);
-  
-  // Local state for edited course data - initialize as null
-  const [editedCourse, setEditedCourse] = useState<any>(null);
-  
-  // Update local state when the data is loaded
-  useEffect(() => {
-    if (course) {
-      setEditedCourse({
-        title: course.title || '',
-        description: course.description || '',
-        category: course.category || '',
-        image: course.image || '',
-        duration: course.duration || '',
-        lessons: course.lessons || 0,
-        status: course.status || 'draft',
-        students: course.students || 0
-      });
-    }
-  }, [course]);
-  
-  const handleSave = async () => {
-    try {
-      setIsSaving(true);
-      if (id && editedCourse) {
-        // Call the updateCourse API function
-        await updateCourse(id, {
-          title: editedCourse.title,
-          description: editedCourse.description,
-          status: editedCourse.status,
-          category: editedCourse.category,
-          image: editedCourse.image,
-          duration: editedCourse.duration,
-          lessons: editedCourse.lessons,
-          students: editedCourse.students
-        });
-        
-        toast.success("Course saved successfully!");
-      }
-    } catch (error) {
-      console.error("Error saving course:", error);
-      toast.error("Failed to save course. Please try again.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const [activeTab, setActiveTab] = useState("general");
+
+  // Use our custom hook to manage course editing
+  const { 
+    editedCourse, 
+    setEditedCourse, 
+    isLoading, 
+    error, 
+    isError, 
+    handleSave 
+  } = useEditCourse(id);
 
   const handleDelete = async () => {
     // For now, just show a toast and navigate away
     // In a real implementation, you would call an API to delete the course
     toast.error("Course deleted!");
-    navigate('/courses/overview');
-  };
-
-  const updateCourseData = (data: Partial<typeof editedCourse>) => {
-    setEditedCourse({
-      ...editedCourse,
-      ...data
-    });
+    navigate("/courses/overview");
   };
 
   if (isLoading) {
@@ -88,10 +48,14 @@ const EditCourse = () => {
 
   if (isError || !id) {
     return (
-      <EmptyState 
-        title="Course Not Found" 
+      <EmptyState
+        title="Course Not Found"
         description="The course you're looking for doesn't exist or has been removed."
-        action={<Button onClick={() => navigate('/courses/overview')}>Back to Courses</Button>}
+        action={
+          <Button onClick={() => navigate("/courses/overview")}>
+            Back to Courses
+          </Button>
+        }
       />
     );
   }
@@ -108,19 +72,60 @@ const EditCourse = () => {
   return (
     <PageTransition>
       <div className="container px-4 py-6">
-        <EditCourseHeader 
-          title={editedCourse.title} 
-          isSaving={isSaving}
-          onSave={handleSave}
-          onDelete={handleDelete}
+        <CoursePageHeader
+          title={`Edit Course: ${editedCourse.title || "Untitled Course"}`}
+          backPath="/courses/overview"
+          actions={
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleDelete}
+                className="text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+              <Button onClick={handleSave}>
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </Button>
+            </div>
+          }
         />
 
-        <EditCourseTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          courseData={editedCourse}
-          updateCourseData={updateCourseData}
-        />
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="pricing">Pricing</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general">
+            <GeneralTab 
+              editedCourse={editedCourse}
+              setEditedCourse={setEditedCourse}
+            />
+          </TabsContent>
+
+          <TabsContent value="content">
+            <ContentTab />
+          </TabsContent>
+
+          <TabsContent value="pricing">
+            <PricingTab 
+              editedCourse={editedCourse}
+              setEditedCourse={setEditedCourse}
+            />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <SettingsTab 
+              editedCourse={editedCourse}
+              setEditedCourse={setEditedCourse}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </PageTransition>
   );
