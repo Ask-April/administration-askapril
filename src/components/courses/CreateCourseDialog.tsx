@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import ImageUploadField from "./ImageUploadField";
 
 const formSchema = z.object({
   title: z.string().min(3, {
@@ -174,18 +175,13 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
                 )}
               />
             </div>
+            
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image URL (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter image URL" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={() => (
+                  <ImageUploadField name="image" label="Course Image" />
                 )}
               />
               <FormField
@@ -206,6 +202,7 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
                 )}
               />
             </div>
+            
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                 Cancel
