@@ -30,7 +30,7 @@ const CourseFormActions: React.FC<CourseFormActionsProps> = ({
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {isUpdate ? "Updating..." : "Creating..."}
+            {isUpdate ? "Saving..." : "Creating..."}
           </>
         ) : (
           <>

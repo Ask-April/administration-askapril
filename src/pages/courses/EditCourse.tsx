@@ -5,7 +5,7 @@ import CoursePageHeader from "@/components/courses/CoursePageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, Trash2, LayoutDashboard, FileText, BookOpen, DollarSign, Settings, Users } from "lucide-react";
+import { Save, Trash2, LayoutDashboard, FileText, BookOpen, DollarSign, Settings, Users, Loader2 } from "lucide-react";
 import PageTransition from "@/components/layout/PageTransition";
 import { toast } from "sonner";
 import { useCourseById } from "@/hooks/useCourses";
@@ -16,6 +16,7 @@ const EditCourse = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  const [isSaving, setIsSaving] = useState(false);
   
   // Fetch the course data using our useCourseById hook
   const { data: course, isLoading, error, isError } = useCourseById(id);
@@ -41,6 +42,7 @@ const EditCourse = () => {
   
   const handleSave = async () => {
     try {
+      setIsSaving(true);
       if (id && editedCourse) {
         // Call the updateCourse API function
         await updateCourse(id, {
@@ -59,6 +61,8 @@ const EditCourse = () => {
     } catch (error) {
       console.error("Error saving course:", error);
       toast.error("Failed to save course. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -108,9 +112,18 @@ const EditCourse = () => {
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete
               </Button>
-              <Button onClick={handleSave}>
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
+              <Button onClick={handleSave} disabled={isSaving}>
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </>
+                )}
               </Button>
             </div>
           }
