@@ -1,7 +1,7 @@
+
 import React from "react";
+import { SearchBar, NavbarActions } from "./navbar";
 import { Profile } from "@/hooks/auth/use-profile";
-import NavbarActions from "./navbar/NavbarActions";
-import SearchBar from "./navbar/SearchBar";
 
 interface NavbarProps {
   profile: Profile | null;
@@ -14,7 +14,7 @@ const Navbar: React.FC<NavbarProps> = ({ profile }) => {
         <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
           <SearchBar />
         </div>
-
+        
         <NavbarActions profile={profile} />
       </div>
     </header>
