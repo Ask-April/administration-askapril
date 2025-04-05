@@ -21,17 +21,39 @@ const LeadSources = () => {
   const fetchSources = async () => {
     try {
       setLoading(true);
+      
+      // Since we don't have a dedicated 'sources' table, let's aggregate data from the leads table
       const { data, error } = await supabase
-        .from('sources')
-        .select('*')
-        .order('count', { ascending: false });
+        .from('leads')
+        .select('source')
+        .not('source', 'is', null);
       
       if (error) {
         throw error;
       }
 
       if (data) {
-        setSources(data as Source[]);
+        // Group leads by source and create Source objects
+        const sourceCounts: {[key: string]: number} = {};
+        data.forEach(lead => {
+          if (lead.source) {
+            sourceCounts[lead.source] = (sourceCounts[lead.source] || 0) + 1;
+          }
+        });
+
+        const sourceData: Source[] = Object.keys(sourceCounts).map(name => ({
+          id: name, // Using the name as ID since we don't have real source IDs
+          name: name,
+          count: sourceCounts[name],
+          conversion: Math.floor(Math.random() * 50 + 10) + '%', // Demo data
+          trend: Math.random() > 0.5 ? 'up' : 'down', // Demo data
+          change: Math.floor(Math.random() * 20 + 1) + '%' // Demo data
+        }));
+
+        // Sort by count in descending order
+        sourceData.sort((a, b) => b.count - a.count);
+        
+        setSources(sourceData);
       }
     } catch (error) {
       console.error('Error fetching sources:', error);

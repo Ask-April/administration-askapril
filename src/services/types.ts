@@ -74,6 +74,9 @@ export interface Lead {
   status: string | null;
   joined_on: string | null;
   tags: string[] | null;
+  
+  name?: string;
+  last_contact?: string;
 }
 
 export interface Source {

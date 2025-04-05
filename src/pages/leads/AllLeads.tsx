@@ -96,15 +96,18 @@ const AllLeads = () => {
       }
 
       // Transform the data to match our Lead type
-      const transformedLeads = data.map(lead => ({
+      const transformedLeads: Lead[] = data.map(lead => ({
         id: lead.id || '',
-        name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim(),
-        email: lead.email || '',
-        phone: lead.phone || '',
-        source: lead.source || '',
+        first_name: lead.first_name || null,
+        last_name: lead.last_name || null,
+        email: lead.email || null,
+        phone: lead.phone || null,
+        source: lead.source || null,
         status: lead.status || 'Cold',
-        last_contact: formatLastContact(lead.joined_on),
-        tags: lead.tags ? (typeof lead.tags === 'string' ? JSON.parse(lead.tags) : lead.tags) : []
+        joined_on: lead.joined_on || null,
+        tags: lead.tags ? (typeof lead.tags === 'string' ? JSON.parse(lead.tags) : lead.tags) : [],
+        name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim(),
+        last_contact: formatLastContact(lead.joined_on)
       }));
       
       setLeads(transformedLeads);
