@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
@@ -31,7 +31,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route element={<Layout />}>
+            <Route path="/" element={<Layout><Outlet /></Layout>}>
               <Route path="/dashboard" element={<Dashboard />} />
               
               {/* Courses routes */}
