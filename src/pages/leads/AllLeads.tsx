@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +15,6 @@ import {
   Phone, 
   Tag, 
   Calendar, 
-  Loader2,
   ChevronDown,
   ArrowUp,
   ArrowDown
@@ -42,12 +42,23 @@ import {
   SheetDescription,
   SheetClose,
 } from "@/components/ui/sheet";
+import { EmptyState } from "@/components/ui/loading-states";
+import LeadListSkeleton from "@/components/leads/LeadListSkeleton";
 
 type SortField = "name" | "email" | "source" | "status" | "last_contact";
 type SortDirection = "asc" | "desc";
 
+// Extended Lead type to include all the fields we need
+interface ExtendedLead extends Lead {
+  name?: string;
+  phone?: string;
+  source?: string;
+  last_contact?: string;
+  tags?: string[];
+}
+
 const AllLeads = () => {
-  const [leads, setLeads] = useState<Lead[]>([]);
+  const [leads, setLeads] = useState<ExtendedLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalLeads, setTotalLeads] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,7 +66,7 @@ const AllLeads = () => {
   const [pageSizeOptions] = useState([50, 100, 500, 1000]);
   const [sortField, setSortField] = useState<SortField>("last_contact");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [selectedLead, setSelectedLead] = useState<ExtendedLead | null>(null);
   const [showLeadDetails, setShowLeadDetails] = useState(false);
 
   const { toast } = useToast();
@@ -97,12 +108,10 @@ const AllLeads = () => {
 
       // Transform the data to match our Lead type
       const transformedLeads = data.map(lead => ({
-        id: lead.id || '',
+        ...lead,
         name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim(),
-        email: lead.email || '',
         phone: lead.phone || '',
         source: lead.source || '',
-        status: lead.status || 'Cold',
         last_contact: formatLastContact(lead.joined_on),
         tags: lead.tags ? (typeof lead.tags === 'string' ? JSON.parse(lead.tags) : lead.tags) : []
       }));
@@ -178,7 +187,7 @@ const AllLeads = () => {
 
   const totalPages = Math.ceil(totalLeads / pageSize);
   
-  const viewLeadDetails = (lead: Lead) => {
+  const viewLeadDetails = (lead: ExtendedLead) => {
     setSelectedLead(lead);
     setShowLeadDetails(true);
   };
@@ -231,21 +240,29 @@ const AllLeads = () => {
           <Card>
             <CardContent className="p-0">
               {loading ? (
-                <div className="flex justify-center items-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <div className="rounded-md border">
+                  <div className="grid grid-cols-7 p-4 font-medium">
+                    <div className="col-span-2">Name</div>
+                    <div>Source</div>
+                    <div>Status</div>
+                    <div>Tags</div>
+                    <div>Last Contact</div>
+                    <div>Actions</div>
+                  </div>
+                  <LeadListSkeleton count={10} />
                 </div>
               ) : leads.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-12 text-center">
-                  <PlusCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No leads found</h3>
-                  <p className="text-muted-foreground mb-4">
-                    You don't have any leads yet. Start by adding your first lead.
-                  </p>
-                  <Button>
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Add Lead
-                  </Button>
-                </div>
+                <EmptyState
+                  title="No leads found"
+                  description="You don't have any leads yet. Start by adding your first lead."
+                  icon={PlusCircle}
+                  action={
+                    <Button>
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Add Lead
+                    </Button>
+                  }
+                />
               ) : (
                 <div className="rounded-md border">
                   <div className="grid grid-cols-7 p-4 font-medium">
@@ -269,7 +286,7 @@ const AllLeads = () => {
                       <div key={lead.id} className="grid grid-cols-7 p-4 items-center">
                         <div className="col-span-2 flex items-center gap-3">
                           <Avatar>
-                            <AvatarFallback>{getInitials(lead.name)}</AvatarFallback>
+                            <AvatarFallback>{getInitials(lead.name || '')}</AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="font-medium">{lead.name}</p>
@@ -398,7 +415,7 @@ const AllLeads = () => {
               <div>
                 <div className="flex items-center space-x-4 mb-6">
                   <Avatar className="h-16 w-16">
-                    <AvatarFallback className="text-lg">{getInitials(selectedLead.name)}</AvatarFallback>
+                    <AvatarFallback className="text-lg">{getInitials(selectedLead.name || '')}</AvatarFallback>
                   </Avatar>
                   <div>
                     <h2 className="text-2xl font-semibold">{selectedLead.name}</h2>
