@@ -1,77 +1,96 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   PlusCircle, 
   Filter,
   Mail,
   Phone,
   Tag,
-  Calendar
+  Calendar,
+  Loader2
 } from "lucide-react";
 
+type Lead = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  source: string;
+  status: string;
+  last_contact: string;
+  tags: string[];
+};
+
 const AllLeads = () => {
-  const leads = [
-    { 
-      id: "1", 
-      name: "John Smith", 
-      email: "john.s@example.com", 
-      phone: "+1 (555) 123-4567",
-      source: "Website", 
-      status: "Hot", 
-      lastContact: "2 hours ago",
-      tags: ["Newsletter", "Webinar Attendee"],
-      avatar: "JS"
-    },
-    { 
-      id: "2", 
-      name: "Emily Johnson", 
-      email: "emily.j@example.com", 
-      phone: "+1 (555) 234-5678",
-      source: "Referral", 
-      status: "Warm", 
-      lastContact: "1 day ago",
-      tags: ["Free Trial"],
-      avatar: "EJ"
-    },
-    { 
-      id: "3", 
-      name: "Michael Brown", 
-      email: "michael.b@example.com", 
-      phone: "+1 (555) 345-6789",
-      source: "Social Media", 
-      status: "Cold", 
-      lastContact: "5 days ago",
-      tags: ["Newsletter"],
-      avatar: "MB"
-    },
-    { 
-      id: "4", 
-      name: "Sarah Wilson", 
-      email: "sarah.w@example.com", 
-      phone: "+1 (555) 456-7890",
-      source: "Paid Ad", 
-      status: "Hot", 
-      lastContact: "3 hours ago",
-      tags: ["Webinar Attendee", "Free Trial"],
-      avatar: "SW"
-    },
-    { 
-      id: "5", 
-      name: "David Lee", 
-      email: "david.l@example.com", 
-      phone: "+1 (555) 567-8901",
-      source: "Email Campaign", 
-      status: "Warm", 
-      lastContact: "2 days ago",
-      tags: ["Newsletter"],
-      avatar: "DL"
-    },
-  ];
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchLeads();
+  }, []);
+
+  const fetchLeads = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('lead_contacts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        throw error;
+      }
+
+      // Transform the data to match our Lead type
+      const transformedLeads = data.map(lead => ({
+        id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        phone: lead.phone || '',
+        source: lead.source || '',
+        status: lead.status || 'Cold',
+        last_contact: formatLastContact(lead.last_contact),
+        tags: lead.tags || []
+      }));
+
+      setLeads(transformedLeads);
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+      toast({
+        title: "Error fetching leads",
+        description: "There was a problem loading your leads.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatLastContact = (lastContact: string) => {
+    if (!lastContact) return "Never";
+    
+    const date = new Date(lastContact);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    
+    if (diffDays > 0) {
+      return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    } else if (diffHours > 0) {
+      return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    } else {
+      return "Recently";
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -84,6 +103,13 @@ const AllLeads = () => {
       default:
         return <Badge>{status}</Badge>;
     }
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ')
+      .map(part => part.charAt(0).toUpperCase())
+      .join('')
+      .substring(0, 2);
   };
 
   return (
@@ -106,59 +132,83 @@ const AllLeads = () => {
         <div className="grid gap-6">
           <Card>
             <CardContent className="p-0">
-              <div className="rounded-md border">
-                <div className="grid grid-cols-7 p-4 font-medium">
-                  <div className="col-span-2">Name</div>
-                  <div>Source</div>
-                  <div>Status</div>
-                  <div>Tags</div>
-                  <div>Last Contact</div>
-                  <div>Actions</div>
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-                <div className="divide-y">
-                  {leads.map((lead) => (
-                    <div key={lead.id} className="grid grid-cols-7 p-4 items-center">
-                      <div className="col-span-2 flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={`/placeholder.svg`} alt={lead.name} />
-                          <AvatarFallback>{lead.avatar}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{lead.name}</p>
-                          <div className="flex flex-col text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              <span>{lead.email}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              <span>{lead.phone}</span>
+              ) : leads.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-12 text-center">
+                  <PlusCircle className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No leads found</h3>
+                  <p className="text-muted-foreground mb-4">
+                    You don't have any leads yet. Start by adding your first lead.
+                  </p>
+                  <Button>
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Add Lead
+                  </Button>
+                </div>
+              ) : (
+                <div className="rounded-md border">
+                  <div className="grid grid-cols-7 p-4 font-medium">
+                    <div className="col-span-2">Name</div>
+                    <div>Source</div>
+                    <div>Status</div>
+                    <div>Tags</div>
+                    <div>Last Contact</div>
+                    <div>Actions</div>
+                  </div>
+                  <div className="divide-y">
+                    {leads.map((lead) => (
+                      <div key={lead.id} className="grid grid-cols-7 p-4 items-center">
+                        <div className="col-span-2 flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src={`/placeholder.svg`} alt={lead.name} />
+                            <AvatarFallback>{getInitials(lead.name)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{lead.name}</p>
+                            <div className="flex flex-col text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <Mail className="h-3 w-3" />
+                                <span>{lead.email}</span>
+                              </div>
+                              {lead.phone && (
+                                <div className="flex items-center gap-1">
+                                  <Phone className="h-3 w-3" />
+                                  <span>{lead.phone}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
+                        <div>{lead.source || '-'}</div>
+                        <div>{getStatusBadge(lead.status)}</div>
+                        <div className="flex flex-wrap gap-1">
+                          {lead.tags && lead.tags.length > 0 ? (
+                            lead.tags.map((tag, tagIndex) => (
+                              <Badge key={tagIndex} variant="outline" className="text-xs flex items-center gap-1">
+                                <Tag className="h-2 w-2" />
+                                {tag}
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-xs text-muted-foreground">No tags</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Calendar className="h-3 w-3" />
+                          <span>{lead.last_contact}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm">Contact</Button>
+                          <Button variant="outline" size="sm">View</Button>
+                        </div>
                       </div>
-                      <div>{lead.source}</div>
-                      <div>{getStatusBadge(lead.status)}</div>
-                      <div className="flex flex-wrap gap-1">
-                        {lead.tags.map((tag, tagIndex) => (
-                          <Badge key={tagIndex} variant="outline" className="text-xs flex items-center gap-1">
-                            <Tag className="h-2 w-2" />
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
-                        <span>{lead.lastContact}</span>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">Contact</Button>
-                        <Button variant="outline" size="sm">View</Button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>
