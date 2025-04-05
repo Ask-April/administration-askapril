@@ -15,7 +15,7 @@ import {
   ContentTab, 
   StudentsTab,
   PricingTab,
-  TriggersTab,
+  AutomationTab,
   SettingsTab 
 } from "@/components/courses/edit-tabs";
 
@@ -120,14 +120,13 @@ const EditCourse = () => {
         />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 grid grid-cols-7 w-full">
+          <TabsList className="mb-4 grid grid-cols-6 w-full">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="students">Students</TabsTrigger>
-            <TabsTrigger value="automation">Automation</TabsTrigger>
             <TabsTrigger value="pricing">Pricing</TabsTrigger>
-            <TabsTrigger value="triggers">Triggers</TabsTrigger>
+            <TabsTrigger value="automation">Automation</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -152,13 +151,6 @@ const EditCourse = () => {
             <StudentsTab courseId={id} />
           </TabsContent>
 
-          <TabsContent value="automation">
-            <SettingsTab 
-              editedCourse={editedCourse}
-              setEditedCourse={setEditedCourse}
-            />
-          </TabsContent>
-
           <TabsContent value="pricing">
             <PricingTab 
               editedCourse={editedCourse}
@@ -166,8 +158,8 @@ const EditCourse = () => {
             />
           </TabsContent>
 
-          <TabsContent value="triggers">
-            <TriggersTab courseId={id} />
+          <TabsContent value="automation">
+            <AutomationTab courseId={id} />
           </TabsContent>
         </Tabs>
       </div>

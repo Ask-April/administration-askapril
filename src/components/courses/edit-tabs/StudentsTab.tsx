@@ -1,12 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import { 
   Users, 
   TrendingUp, 
@@ -16,7 +11,8 @@ import {
 import {
   StudentTable,
   ProgressTracking,
-  CommunicationTools
+  CommunicationTools,
+  StudentSupport
 } from "@/components/courses/students";
 
 interface StudentsTabProps {
@@ -25,49 +21,44 @@ interface StudentsTabProps {
 
 const StudentsTab: React.FC<StudentsTabProps> = ({ courseId }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Card>
         <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-4">Student Management</h3>
-          
-          <Tabs defaultValue="enrollment" className="w-full">
-            <TabsList className="mb-4 grid grid-cols-4 md:w-auto w-full">
-              <TabsTrigger value="enrollment" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span className="hidden md:inline">Enrollment</span>
-              </TabsTrigger>
-              <TabsTrigger value="progress" className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                <span className="hidden md:inline">Progress</span>
-              </TabsTrigger>
-              <TabsTrigger value="communication" className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                <span className="hidden md:inline">Communication</span>
-              </TabsTrigger>
-              <TabsTrigger value="support" className="flex items-center gap-2">
-                <HeadphonesIcon className="h-4 w-4" />
-                <span className="hidden md:inline">Support</span>
-              </TabsTrigger>
-            </TabsList>
+          <div className="flex items-center gap-2 mb-4">
+            <Users className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-medium">Student Enrollment</h3>
+          </div>
+          <StudentTable />
+        </CardContent>
+      </Card>
 
-            <TabsContent value="enrollment" className="space-y-4">
-              <StudentTable />
-            </TabsContent>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-medium">Progress Tracking</h3>
+          </div>
+          <ProgressTracking />
+        </CardContent>
+      </Card>
 
-            <TabsContent value="progress" className="border rounded-md p-4">
-              <h4 className="font-medium mb-4">Progress Tracking</h4>
-              <ProgressTracking />
-            </TabsContent>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <MessageSquare className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-medium">Communication</h3>
+          </div>
+          <CommunicationTools />
+        </CardContent>
+      </Card>
 
-            <TabsContent value="communication" className="border rounded-md p-4">
-              <h4 className="font-medium mb-4">Communication Tools</h4>
-              <CommunicationTools />
-            </TabsContent>
-
-            <TabsContent value="support" className="border rounded-md p-4">
-              <p className="text-muted-foreground">Support & engagement content coming soon</p>
-            </TabsContent>
-          </Tabs>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <HeadphonesIcon className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-medium">Support & Engagement</h3>
+          </div>
+          <StudentSupport />
         </CardContent>
       </Card>
     </div>
