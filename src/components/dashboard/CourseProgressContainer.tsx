@@ -1,14 +1,8 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, User, Calendar } from "lucide-react";
-import { useDashboardStats } from "@/hooks/useDashboardStats";
-import { format, formatDistanceToNow } from "date-fns";
-import { EmptyState } from "@/components/ui/loading-states";
-import { Skeleton } from "@/components/ui/skeleton";
-
+import { ArrowRight } from "lucide-react";
 interface CourseProgressItem {
   id: string;
   title: string;
@@ -16,21 +10,19 @@ interface CourseProgressItem {
   totalLessons: number;
   progress: number;
 }
-
 interface ActivityItem {
   id: string;
   type: string;
   title: string;
   description: string;
   date: string;
-  amount?: string;
-  image?: string;
+  amount?: string; // Make amount optional
+  image?: string; // Add image property
 }
-
 interface CourseProgressContainerProps {
   courses: CourseProgressItem[];
+  activities: ActivityItem[];
 }
-
 const ProgressBar = ({
   progress
 }: {
@@ -42,7 +34,6 @@ const ProgressBar = ({
     }}></div>
     </div>;
 };
-
 const CourseItem = ({
   course
 }: {
@@ -66,111 +57,37 @@ const CourseItem = ({
       </div>
     </div>;
 };
-
-const ActivityItemSkeleton = () => {
-  return (
-    <div className="flex items-start space-x-3 p-3 border-b last:border-0">
-      <Skeleton className="rounded-full h-10 w-10" />
+const ActivityItem = ({
+  activity
+}: {
+  activity: ActivityItem;
+}) => {
+  return <div className="flex items-start space-x-3 p-3 border-b last:border-0">
+      <div className="rounded-md bg-muted p-2">
+        {activity.image ? <img src={activity.image} alt={activity.type} className="w-8 h-8 object-cover" /> : <div className="w-8 h-8 flex items-center justify-center text-muted-foreground">
+            {activity.type.slice(0, 1).toUpperCase()}
+          </div>}
+      </div>
       <div className="flex-1">
-        <Skeleton className="h-4 w-3/4 mb-2" />
-        <Skeleton className="h-3 w-full mb-1" />
-        <Skeleton className="h-3 w-1/3" />
+        <div className="flex justify-between">
+          <h4 className="font-medium text-sm">{activity.title}</h4>
+          {activity.amount && <span className="text-green-600 font-medium text-sm">
+              ${activity.amount}
+            </span>}
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          {activity.description}
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">{activity.date}</p>
       </div>
-    </div>
-  );
+    </div>;
 };
-
-const ActivityList = () => {
-  const { data, isLoading, isError } = useDashboardStats();
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[1, 2, 3, 4].map(i => <ActivityItemSkeleton key={i} />)}
-      </div>
-    );
-  }
-
-  if (isError || !data) {
-    return (
-      <EmptyState
-        title="Unable to load activity"
-        description="There was an error loading recent activity."
-        icon={User}
-      />
-    );
-  }
-
-  const recentEnrollments = data.recentEnrollments || [];
-
-  if (recentEnrollments.length === 0) {
-    return (
-      <EmptyState
-        title="No recent activity"
-        description="Student enrollments will appear here as they happen."
-        icon={User}
-      />
-    );
-  }
-
-  return (
-    <div className="space-y-0 divide-y">
-      {recentEnrollments.map((enrollment, index) => {
-        const timeAgo = enrollment.enroll_date 
-          ? formatDistanceToNow(new Date(enrollment.enroll_date), { addSuffix: true })
-          : "recently";
-        
-        return (
-          <div key={enrollment.enrollment_id || index} className="flex items-start space-x-3 p-4">
-            <div className="rounded-full bg-muted p-2 flex-shrink-0">
-              <User className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium line-clamp-1">
-                {enrollment.student?.first_name || "Student"} {enrollment.student?.last_name || ""}
-                <span className="font-normal text-muted-foreground"> joined as student</span>
-              </p>
-              {enrollment.courses?.title && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  <span className="font-normal">{enrollment.student?.first_name || "Student"}</span>
-                  <span className="text-muted-foreground"> registered in </span>
-                  <span className="font-medium">{enrollment.courses?.title}</span>
-                </p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">
-                {timeAgo}
-              </p>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-const CourseList = ({ courses }: { courses: CourseProgressItem[] }) => {
-  if (courses.length === 0) {
-    return (
-      <EmptyState
-        title="No courses in progress"
-        description="Your enrolled courses will appear here."
-        icon={Calendar}
-      />
-    );
-  }
-
-  return (
-    <div className="space-y-3">
-      {courses.map(course => <CourseItem key={course.id} course={course} />)}
-    </div>
-  );
-};
-
 const CourseProgressContainer: React.FC<CourseProgressContainerProps> = ({
-  courses
+  courses,
+  activities
 }) => {
   return <Card className="col-span-12 md:col-span-4">
-      <Tabs defaultValue="activity">
+      <Tabs defaultValue="courses">
         <div className="px-4 pt-4">
           <TabsList className="w-full">
             <TabsTrigger value="courses" className="flex-1">
@@ -182,16 +99,16 @@ const CourseProgressContainer: React.FC<CourseProgressContainerProps> = ({
           </TabsList>
         </div>
         <CardContent>
-          <TabsContent value="courses" className="mt-4 space-y-4">
-            <CourseList courses={courses} />
-          </TabsContent>
           
           <TabsContent value="activity" className="mt-4">
-            <ActivityList />
+            {activities.length === 0 ? <div className="text-center py-6">
+                <p className="text-muted-foreground">No recent activity</p>
+              </div> : <div className="space-y-1">
+                {activities.map(activity => <ActivityItem key={activity.id} activity={activity} />)}
+              </div>}
           </TabsContent>
         </CardContent>
       </Tabs>
     </Card>;
 };
-
 export default CourseProgressContainer;
