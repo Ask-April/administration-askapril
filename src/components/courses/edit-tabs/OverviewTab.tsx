@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -5,6 +6,12 @@ import {
   Activity, 
   Users
 } from "lucide-react";
+import {
+  SalesMetricCard,
+  ActivityMetricCard,
+  EngagementMetricCard,
+  MetricSection
+} from "../overview";
 
 interface OverviewTabProps {
   courseId: string;
@@ -19,192 +26,37 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         <CardContent className="pt-6">
           <h3 className="text-lg font-medium mb-6">Course Overview</h3>
           
-          {/* Unified Content */}
           <div className="space-y-8">
             {/* Sales Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
-                <h4 className="text-md font-medium">Sales Overview</h4>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <SalesMetricCard title="Total Enrollments" value="132" trend="+12%" period="Monthly" />
-                <SalesMetricCard title="Total Revenue" value="$8,450" trend="+8.5%" period="Monthly" />
-                <SalesMetricCard title="Average Rating" value="4.8" reviews={24} trend="+0.2" />
-                <SalesMetricCard title="Completion Rate" value="78%" benchmark="65%" industry="72%" />
-                <SalesMetricCard title="Revenue Forecast" nextMonth="$9,200" nextQuarter="$28,500" confidence="85%" />
-                <SalesMetricCard title="Refund Rate" value="2.1%" industry="3.5%" />
-              </div>
-            </div>
+            <MetricSection icon={BarChart3} title="Sales Overview" columns={3}>
+              <SalesMetricCard title="Total Enrollments" value="132" trend="+12%" period="Monthly" />
+              <SalesMetricCard title="Total Revenue" value="$8,450" trend="+8.5%" period="Monthly" />
+              <SalesMetricCard title="Average Rating" value="4.8" reviews={24} trend="+0.2" />
+              <SalesMetricCard title="Completion Rate" value="78%" benchmark="65%" industry="72%" />
+              <SalesMetricCard title="Revenue Forecast" nextMonth="$9,200" nextQuarter="$28,500" confidence="85%" />
+              <SalesMetricCard title="Refund Rate" value="2.1%" industry="3.5%" />
+            </MetricSection>
 
             {/* Activity Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Activity className="h-5 w-5 text-primary" />
-                <h4 className="text-md font-medium">Recent Activity</h4>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ActivityMetricCard title="New Enrollments" last24h={5} last7d={28} last30d={86} />
-                <ActivityMetricCard title="Completed Quizzes" count={56} averageScore="76%" completionRate="68%" />
-                <ActivityMetricCard title="Student Questions" unanswered={3} responseTime="6 hours" />
-                <ActivityMetricCard title="Forum Activity" newPosts={12} activeDiscussions={5} />
-              </div>
-            </div>
+            <MetricSection icon={Activity} title="Recent Activity" columns={2}>
+              <ActivityMetricCard title="New Enrollments" last24h={5} last7d={28} last30d={86} />
+              <ActivityMetricCard title="Completed Quizzes" count={56} averageScore="76%" completionRate="68%" />
+              <ActivityMetricCard title="Student Questions" unanswered={3} responseTime="6 hours" />
+              <ActivityMetricCard title="Forum Activity" newPosts={12} activeDiscussions={5} />
+            </MetricSection>
 
             {/* Engagement Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
-                <h4 className="text-md font-medium">Engagement Metrics</h4>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <EngagementMetricCard title="Average Time Spent" perSession="32 min" perStudent="4.2 hours" perModule="58 min" />
-                <EngagementMetricCard title="Interaction Levels" videoCompletion="76%" downloads={128} />
-                <EngagementMetricCard title="Active Students" active="68%" reactivation="8.2%" />
-                <EngagementMetricCard title="Session Frequency" averagePerWeek={2.4} />
-              </div>
-            </div>
+            <MetricSection icon={Users} title="Engagement Metrics" columns={2}>
+              <EngagementMetricCard title="Average Time Spent" perSession="32 min" perStudent="4.2 hours" perModule="58 min" />
+              <EngagementMetricCard title="Interaction Levels" videoCompletion="76%" downloads={128} />
+              <EngagementMetricCard title="Active Students" active="68%" reactivation="8.2%" />
+              <EngagementMetricCard title="Session Frequency" averagePerWeek={2.4} />
+            </MetricSection>
           </div>
         </CardContent>
       </Card>
     </div>
   );
-};
-
-interface SalesMetricCardProps {
-  title: string;
-  value?: string;
-  trend?: string;
-  period?: string;
-  reviews?: number;
-  benchmark?: string;
-  industry?: string;
-  highest?: string;
-  lowest?: string;
-  nextMonth?: string;
-  nextQuarter?: string;
-  confidence?: string;
-}
-
-const SalesMetricCard: React.FC<SalesMetricCardProps> = ({
-  title,
-  value,
-  trend,
-  period,
-  reviews,
-  benchmark,
-  industry,
-  highest,
-  lowest,
-  nextMonth,
-  nextQuarter,
-  confidence
-}) => {
-  return <div className="bg-card border rounded-md p-4">
-      <h5 className="text-sm font-medium text-muted-foreground">{title}</h5>
-      {value && <p className="text-xl font-bold mt-1">{value}</p>}
-      <div className="mt-2 space-y-1">
-        {trend && <p className="text-sm text-emerald-600">{trend} {period && `(${period})`}</p>}
-        {reviews && <p className="text-sm text-muted-foreground">{reviews} reviews</p>}
-        {benchmark && <p className="text-sm text-muted-foreground">Benchmark: {benchmark}</p>}
-        {industry && <p className="text-sm text-muted-foreground">Industry avg: {industry}</p>}
-        {highest && <p className="text-sm text-muted-foreground">Highest: {highest}</p>}
-        {lowest && <p className="text-sm text-muted-foreground">Lowest: {lowest}</p>}
-        {nextMonth && <p className="text-sm text-muted-foreground">Next month: {nextMonth}</p>}
-        {nextQuarter && <p className="text-sm text-muted-foreground">Next quarter: {nextQuarter}</p>}
-        {confidence && <p className="text-sm text-muted-foreground">Confidence: {confidence}</p>}
-      </div>
-    </div>;
-};
-
-interface ActivityMetricCardProps {
-  title: string;
-  last24h?: number;
-  last7d?: number;
-  last30d?: number;
-  count?: number;
-  averageScore?: string;
-  completionRate?: string;
-  unanswered?: number;
-  responseTime?: string;
-  newPosts?: number;
-  activeDiscussions?: number;
-}
-
-const ActivityMetricCard: React.FC<ActivityMetricCardProps> = ({
-  title,
-  last24h,
-  last7d,
-  last30d,
-  count,
-  averageScore,
-  completionRate,
-  unanswered,
-  responseTime,
-  newPosts,
-  activeDiscussions
-}) => {
-  return <div className="bg-card border rounded-md p-4">
-      <h5 className="text-sm font-medium text-muted-foreground">{title}</h5>
-      
-      <div className="mt-2 space-y-1">
-        {last24h !== undefined && <p className="text-sm">Last 24h: <span className="font-medium">{last24h}</span></p>}
-        {last7d !== undefined && <p className="text-sm">Last 7 days: <span className="font-medium">{last7d}</span></p>}
-        {last30d !== undefined && <p className="text-sm">Last 30 days: <span className="font-medium">{last30d}</span></p>}
-        
-        {count !== undefined && <p className="text-sm">Count: <span className="font-medium">{count}</span></p>}
-        {averageScore && <p className="text-sm">Average score: <span className="font-medium">{averageScore}</span></p>}
-        {completionRate && <p className="text-sm">Completion rate: <span className="font-medium">{completionRate}</span></p>}
-        
-        {unanswered !== undefined && <p className="text-sm">Unanswered: <span className="font-medium">{unanswered}</span></p>}
-        {responseTime && <p className="text-sm">Avg. response time: <span className="font-medium">{responseTime}</span></p>}
-        
-        {newPosts !== undefined && <p className="text-sm">New posts: <span className="font-medium">{newPosts}</span></p>}
-        {activeDiscussions !== undefined && <p className="text-sm">Active discussions: <span className="font-medium">{activeDiscussions}</span></p>}
-      </div>
-    </div>;
-};
-
-interface EngagementMetricCardProps {
-  title: string;
-  perSession?: string;
-  perStudent?: string;
-  perModule?: string;
-  videoCompletion?: string;
-  downloads?: number;
-  active?: string;
-  reactivation?: string;
-  averagePerWeek?: number;
-}
-
-const EngagementMetricCard: React.FC<EngagementMetricCardProps> = ({
-  title,
-  perSession,
-  perStudent,
-  perModule,
-  videoCompletion,
-  downloads,
-  active,
-  reactivation,
-  averagePerWeek
-}) => {
-  return <div className="bg-card border rounded-md p-4">
-      <h5 className="text-sm font-medium text-muted-foreground">{title}</h5>
-      
-      <div className="mt-2 space-y-1">
-        {perSession && <p className="text-sm">Per session: <span className="font-medium">{perSession}</span></p>}
-        {perStudent && <p className="text-sm">Per student: <span className="font-medium">{perStudent}</span></p>}
-        {perModule && <p className="text-sm">Per module: <span className="font-medium">{perModule}</span></p>}
-        
-        {videoCompletion && <p className="text-sm">Video completion: <span className="font-medium">{videoCompletion}</span></p>}
-        {downloads !== undefined && <p className="text-sm">Resource downloads: <span className="font-medium">{downloads}</span></p>}
-        
-        {active && <p className="text-sm">Active students: <span className="font-medium">{active}</span></p>}
-        {reactivation && <p className="text-sm">Reactivation rate: <span className="font-medium">{reactivation}</span></p>}
-        
-        {averagePerWeek !== undefined && <p className="text-sm">Sessions per week: <span className="font-medium">{averagePerWeek}</span></p>}
-      </div>
-    </div>;
 };
 
 export default OverviewTab;
