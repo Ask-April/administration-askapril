@@ -1,9 +1,9 @@
+
 import React, { Suspense } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import StatCards from "@/components/dashboard/StatCards";
 import DashboardTabs from "@/components/dashboard/DashboardTabs";
 import CourseProgressContainer from "@/components/dashboard/CourseProgressContainer";
-import RecentActivity from "@/components/dashboard/RecentActivity";
 import TopPerformingCourses from "@/components/dashboard/TopPerformingCourses";
 import QuickActions from "@/components/dashboard/QuickActions";
 import { StatCardSkeleton, ChartSkeleton, CourseProgressSkeleton, RecentActivitySkeleton } from "@/components/ui/loading-states";
@@ -28,27 +28,7 @@ const sampleCourseProgress = [{
   totalLessons: 8,
   progress: 25
 }];
-const sampleActivities = [{
-  id: "1",
-  type: "course",
-  title: "Started React Fundamentals",
-  description: "You began a new course",
-  date: "2 hours ago"
-}, {
-  id: "2",
-  type: "certificate",
-  title: "Earned Certificate",
-  description: "TypeScript Advanced Concepts",
-  date: "Yesterday",
-  image: "/placeholder.svg"
-}, {
-  id: "3",
-  type: "payment",
-  title: "Course Purchase",
-  description: "UI/UX Design Principles",
-  date: "3 days ago",
-  amount: "49.99"
-}];
+
 const Dashboard = () => {
   return <PageTransition>
       <div className="flex flex-col gap-6 p-6 md:gap-8 md:p-8">
@@ -65,21 +45,19 @@ const Dashboard = () => {
           <StatCards />
         </Suspense>
         
-        <div className="">
-          <div className="col-span-full lg:col-span-8">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="col-span-full lg:col-span-2">
             <Suspense fallback={<ChartSkeleton />}>
               <DashboardTabs />
             </Suspense>
           </div>
           
-          
+          <Suspense fallback={<CourseProgressSkeleton />}>
+            <CourseProgressContainer courses={sampleCourseProgress} />
+          </Suspense>
         </div>
         
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Suspense fallback={<RecentActivitySkeleton />}>
-            <RecentActivity />
-          </Suspense>
-          
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
           <Suspense fallback={<RecentActivitySkeleton />}>
             <TopPerformingCourses />
           </Suspense>
@@ -89,4 +67,5 @@ const Dashboard = () => {
       </div>
     </PageTransition>;
 };
+
 export default Dashboard;
