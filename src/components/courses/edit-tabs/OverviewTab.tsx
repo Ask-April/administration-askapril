@@ -22,6 +22,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ courseId }) => {
         <CardContent className="pt-6">
           <h3 className="text-lg font-medium mb-4">Course Overview</h3>
           
+          {/* Filter pills */}
           <div className="flex overflow-x-auto pb-2 mb-4 gap-2">
             <MetricPill icon={<BarChart3 className="h-4 w-4" />} label="Sales" active={true} />
             <MetricPill icon={<Activity className="h-4 w-4" />} label="Activity" />
@@ -32,10 +33,11 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ courseId }) => {
             <MetricPill icon={<LineChart className="h-4 w-4" />} label="Benchmark" />
           </div>
           
+          {/* Main Overview Content */}
           <div className="border rounded-md p-6">
+            {/* Sales Section */}
             <h4 className="text-md font-medium mb-6">Sales Overview</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Row 1 */}
               <SalesMetricCard 
                 title="Total Enrollments" 
                 value="132" 
@@ -55,7 +57,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ courseId }) => {
                 trend="+0.2" 
               />
               
-              {/* Row 2 */}
               <SalesMetricCard 
                 title="Completion Rate" 
                 value="78%" 
@@ -75,7 +76,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ courseId }) => {
                 confidence="85%" 
               />
               
-              {/* Row 3 */}
               <SalesMetricCard 
                 title="Refund Rate" 
                 value="2.1%" 
@@ -83,7 +83,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ courseId }) => {
               />
             </div>
             
-            {/* Additional metrics sections could be added here */}
+            {/* Activity Section */}
             <div className="mt-8">
               <h4 className="text-md font-medium mb-4">Recent Activity</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -102,6 +102,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ courseId }) => {
               </div>
             </div>
             
+            {/* Engagement Section */}
             <div className="mt-8">
               <h4 className="text-md font-medium mb-4">Engagement Metrics</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
