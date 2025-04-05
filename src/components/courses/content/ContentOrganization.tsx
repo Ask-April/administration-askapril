@@ -1,10 +1,13 @@
+
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import SectionItem from "./SectionItem";
 import LessonEditModal from "./LessonEditModal";
 import { Lesson } from "@/hooks/useCurriculum";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
+import { LessonForm } from "@/components/courses/lesson-form";
 
 interface Section {
   id: string;
@@ -42,6 +45,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
   
   const [newSectionTitle, setNewSectionTitle] = useState('');
   const [draggedItem, setDraggedItem] = useState<any>(null);
+  const [dragOverItem, setDragOverItem] = useState<any>(null);
   
   // State for lesson editing modal
   const [selectedLesson, setSelectedLesson] = useState<{
@@ -51,11 +55,23 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
   
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
   
+  // State for adding new lesson sidebar
+  const [isAddLessonSidebarOpen, setIsAddLessonSidebarOpen] = useState(false);
+  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null);
+  
   // Content editor states
   const [content, setContent] = useState('');
   const [contentUrl, setContentUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  // New lesson form state
+  const [lessonName, setLessonName] = useState('');
+  const [selectedType, setSelectedType] = useState<string | null>('video');
+  const [enableFreePreview, setEnableFreePreview] = useState(false);
+  const [setAsDraft, setSetAsDraft] = useState(false);
+  const [setAsCompulsory, setSetAsCompulsory] = useState(false);
+  const [enableDiscussion, setEnableDiscussion] = useState(false);
+
   const handleDeleteSection = (sectionId: string) => {
     setSections(sections.filter(section => section.id !== sectionId));
   };
@@ -74,15 +90,33 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     setNewSectionTitle('');
   };
   
-  const handleAddLesson = (sectionId: string, lessonType: string) => {
+  const handleAddLesson = (sectionId: string) => {
+    setCurrentSectionId(sectionId);
+    setIsAddLessonSidebarOpen(true);
+    resetLessonForm();
+  };
+
+  const handleSaveNewLesson = () => {
+    if (!currentSectionId || !lessonName.trim() || !selectedType) return;
+
+    const section = sections.find(s => s.id === currentSectionId);
+    if (!section) return;
+
+    const newLesson = {
+      id: `lesson-${Date.now()}`,
+      title: lessonName,
+      type: selectedType,
+      isPreview: enableFreePreview,
+      isDraft: setAsDraft,
+      isCompulsory: setAsCompulsory,
+      enableDiscussion: enableDiscussion,
+      content: content,
+      contentUrl: contentUrl,
+      position: section.lessons.length + 1
+    };
+
     const updatedSections = sections.map(section => {
-      if (section.id === sectionId) {
-        const newLesson = {
-          id: `lesson-${Date.now()}`,
-          title: `New ${lessonType} Lesson`,
-          type: lessonType.toLowerCase(),
-          position: section.lessons.length + 1
-        };
+      if (section.id === currentSectionId) {
         return {
           ...section,
           lessons: [...section.lessons, newLesson]
@@ -92,6 +126,20 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     });
     
     setSections(updatedSections);
+    setIsAddLessonSidebarOpen(false);
+    toast.success(`Lesson "${lessonName}" added successfully`);
+    resetLessonForm();
+  };
+
+  const resetLessonForm = () => {
+    setLessonName('');
+    setSelectedType('video');
+    setEnableFreePreview(false);
+    setSetAsDraft(false);
+    setSetAsCompulsory(false);
+    setEnableDiscussion(false);
+    setContent('');
+    setContentUrl('');
   };
   
   const handleDeleteLesson = (sectionId: string, lessonId: string) => {
@@ -120,10 +168,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     });
     
     setSections(updatedSections);
-    toast({ 
-      title: "Success", 
-      description: "Section title updated successfully" 
-    });
+    toast.success("Section title updated successfully");
   };
   
   const updateLessonTitle = (sectionId: string, lessonId: string, newTitle: string) => {
@@ -142,10 +187,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     });
     
     setSections(updatedSections);
-    toast({ 
-      title: "Success", 
-      description: "Lesson title updated successfully" 
-    });
+    toast.success("Lesson title updated successfully");
   };
   
   const changeLessonType = (sectionId: string, lessonId: string, newType: string) => {
@@ -182,6 +224,8 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.remove('opacity-50');
     }
+    setDraggedItem(null);
+    setDragOverItem(null);
   };
   
   const handleDragOver = (e: React.DragEvent) => {
@@ -224,6 +268,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
       });
       
       setSections(updatedSections);
+      toast.success("Section reordered successfully");
     } else if (draggedItem.type === 'lesson' && type === 'lesson') {
       // Only allow reordering within the same section
       if (draggedItem.sectionId === sectionId) {
@@ -250,7 +295,9 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
         });
         
         setSections(updatedSections);
+        toast.success("Lesson reordered successfully");
       }
+      // Could also implement drag between sections here
     }
     
     setDraggedItem(null);
@@ -273,6 +320,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
             return { 
               ...lesson, 
               title: selectedLesson.lesson.title,
+              type: selectedLesson.lesson.type,
               content: content,
               contentUrl: contentUrl
             };
@@ -286,10 +334,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     });
     
     setSections(updatedSections);
-    toast({
-      title: "Success",
-      description: "Lesson content saved successfully",
-    });
+    toast.success("Lesson content saved successfully");
     setIsLessonModalOpen(false);
     setSelectedLesson(null);
   };
@@ -335,7 +380,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
         ))}
       </div>
       
-      {/* Lesson Content Edit Modal as a separate component */}
+      {/* Lesson Content Edit Modal */}
       <LessonEditModal
         isOpen={isLessonModalOpen}
         setIsOpen={setIsLessonModalOpen}
@@ -349,6 +394,52 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
         handleFileChange={handleFileChange}
         handleLessonContentSave={handleLessonContentSave}
       />
+
+      {/* Add New Lesson Sidebar */}
+      <Sheet open={isAddLessonSidebarOpen} onOpenChange={setIsAddLessonSidebarOpen}>
+        <SheetContent className="sm:max-w-md md:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Add New Lesson</SheetTitle>
+          </SheetHeader>
+          
+          <div className="py-4">
+            <LessonForm
+              lessonName={lessonName}
+              setLessonName={setLessonName}
+              selectedType={selectedType}
+              setSelectedType={setSelectedType!}
+              enableFreePreview={enableFreePreview}
+              setEnableFreePreview={setEnableFreePreview}
+              setAsDraft={setAsDraft}
+              setSetAsDraft={setSetAsDraft}
+              setAsCompulsory={setAsCompulsory}
+              setSetAsCompulsory={setSetAsCompulsory}
+              enableDiscussion={enableDiscussion}
+              setEnableDiscussion={setEnableDiscussion}
+              contentUrl={contentUrl}
+              setContentUrl={setContentUrl}
+              content={content}
+              setContent={setContent}
+              fileInputRef={fileInputRef}
+              handleFileChange={handleFileChange}
+            />
+          </div>
+          
+          <SheetFooter className="pt-4 mt-6 border-t">
+            <div className="flex justify-end gap-2 w-full">
+              <Button variant="outline" onClick={() => setIsAddLessonSidebarOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveNewLesson} 
+                disabled={!lessonName.trim() || !selectedType}
+              >
+                Save Lesson
+              </Button>
+            </div>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

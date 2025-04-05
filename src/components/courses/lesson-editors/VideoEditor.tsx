@@ -1,9 +1,10 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Camera, Upload, Link as LinkIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { getVideoThumbnail } from "@/utils/videoUtils";
 
 interface VideoEditorProps {
   contentUrl: string;
@@ -19,6 +20,21 @@ const VideoEditor: React.FC<VideoEditorProps> = ({
   fileInputRef 
 }) => {
   const [contentMethod, setContentMethod] = useState<string>("url");
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (contentUrl) {
+      getVideoThumbnail(contentUrl)
+        .then(thumbnailUrl => {
+          setThumbnail(thumbnailUrl);
+        })
+        .catch(() => {
+          setThumbnail(null);
+        });
+    } else {
+      setThumbnail(null);
+    }
+  }, [contentUrl]);
 
   return (
     <Tabs defaultValue="url" value={contentMethod} onValueChange={setContentMethod} className="w-full">
@@ -37,6 +53,18 @@ const VideoEditor: React.FC<VideoEditorProps> = ({
             onChange={(e) => onContentUrlChange(e.target.value)}
           />
         </div>
+        {thumbnail && (
+          <div className="mt-3">
+            <p className="text-sm font-medium mb-1">Preview:</p>
+            <div className="border rounded-md overflow-hidden bg-black/5">
+              <img 
+                src={thumbnail} 
+                alt="Video thumbnail" 
+                className="w-full h-auto object-cover" 
+              />
+            </div>
+          </div>
+        )}
       </TabsContent>
       <TabsContent value="upload" className="space-y-2">
         <div>

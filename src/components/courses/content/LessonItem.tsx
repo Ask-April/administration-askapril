@@ -1,9 +1,10 @@
 
 import React, { useState } from "react";
-import { Pencil, Check, X, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Pencil, Check, X, GripVertical } from "lucide-react";
 import { Lesson } from "@/hooks/useCurriculum";
+import { lessonTypes } from "@/components/courses/lesson-editors";
 
 interface LessonItemProps {
   lesson: Lesson;
@@ -16,7 +17,7 @@ interface LessonItemProps {
   onDragLeave: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, targetId: string, type: 'section' | 'lesson', sectionId?: string) => void;
   changeLessonType: (sectionId: string, lessonId: string, newType: string) => void;
-  updateLessonTitle?: (lessonId: string, newTitle: string) => void;
+  updateLessonTitle?: (sectionId: string, lessonId: string, newTitle: string) => void;
 }
 
 const LessonItem: React.FC<LessonItemProps> = ({
@@ -44,7 +45,7 @@ const LessonItem: React.FC<LessonItemProps> = ({
     
     // Call the parent component's function to update the title
     if (updateLessonTitle) {
-      updateLessonTitle(editingLesson.lessonId, editingLesson.title);
+      updateLessonTitle(editingLesson.sectionId, editingLesson.lessonId, editingLesson.title);
     }
     
     setEditingLesson(null);
@@ -55,6 +56,28 @@ const LessonItem: React.FC<LessonItemProps> = ({
       saveEditingLesson();
     } else if (e.key === 'Escape') {
       setEditingLesson(null);
+    }
+  };
+
+  // Find the appropriate icon for the lesson type
+  const getLessonTypeLabel = (type: string | undefined) => {
+    if (!type) return "Unknown";
+    const foundType = lessonTypes.find(t => t.id === type);
+    return foundType ? foundType.name : type;
+  };
+
+  const getLessonTypeColor = (type: string | undefined) => {
+    switch (type) {
+      case "video": return "bg-blue-100 text-blue-800";
+      case "audio": return "bg-purple-100 text-purple-800";
+      case "text": return "bg-green-100 text-green-800";
+      case "quiz": return "bg-yellow-100 text-yellow-800";
+      case "survey": return "bg-orange-100 text-orange-800";
+      case "pdf": return "bg-red-100 text-red-800";
+      case "e-book": return "bg-indigo-100 text-indigo-800";
+      case "custom-code": return "bg-gray-100 text-gray-800";
+      case "live": return "bg-pink-100 text-pink-800";
+      default: return "bg-primary/10 text-primary";
     }
   };
 
@@ -111,9 +134,9 @@ const LessonItem: React.FC<LessonItemProps> = ({
           </span>
         )}
         
-        {/* Display lesson type as simple tag instead of dropdown */}
-        <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-          {lesson.type || 'Unknown'}
+        {/* Display lesson type as simple tag */}
+        <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${getLessonTypeColor(lesson.type)}`}>
+          {getLessonTypeLabel(lesson.type)}
         </span>
       </div>
       <Button

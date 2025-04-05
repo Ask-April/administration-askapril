@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Pencil, Check, X, GripVertical } from "lucide-react";
 import { Lesson } from "@/hooks/useCurriculum";
 import LessonItem from "./LessonItem";
+import { useEditCourse } from "@/hooks/useEditCourse";
+import { LessonEditModal } from "./LessonEditModal";
 
 interface Section {
   id: string;
@@ -43,12 +45,19 @@ const SectionItem: React.FC<SectionItemProps> = ({
   updateSectionTitle
 }) => {
   const [editingSection, setEditingSection] = useState<{ id: string, title: string } | null>(null);
+  const [expanded, setExpanded] = useState<boolean>(true);
   
-  const startEditingSection = (sectionId: string, title: string) => {
+  const toggleExpand = () => {
+    setExpanded(!expanded);
+  };
+
+  const startEditingSection = (sectionId: string, title: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setEditingSection({ id: sectionId, title });
   };
   
-  const saveEditingSection = () => {
+  const saveEditingSection = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!editingSection) return;
     
     // Call the parent component's function to update the title
@@ -60,8 +69,9 @@ const SectionItem: React.FC<SectionItemProps> = ({
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
     if (e.key === 'Enter') {
-      saveEditingSection();
+      saveEditingSection(e as unknown as React.MouseEvent);
     } else if (e.key === 'Escape') {
       setEditingSection(null);
     }
@@ -78,14 +88,17 @@ const SectionItem: React.FC<SectionItemProps> = ({
       onDrop={(e) => onDrop(e, section.id, 'section')}
       className="border rounded-md bg-card transition-all"
     >
-      <div className="p-4 flex items-center justify-between bg-muted">
+      <div 
+        className="p-4 flex items-center justify-between bg-muted cursor-pointer"
+        onClick={toggleExpand}
+      >
         <div className="flex items-center">
-          <div className="cursor-grab mr-2">
+          <div className="cursor-grab mr-2" onClick={e => e.stopPropagation()}>
             <GripVertical className="h-4 w-4 text-muted-foreground" />
           </div>
           
           {editingSection && editingSection.id === section.id ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
               <Input 
                 value={editingSection.title}
                 onChange={(e) => setEditingSection({...editingSection, title: e.target.value})}
@@ -104,34 +117,52 @@ const SectionItem: React.FC<SectionItemProps> = ({
               <Button 
                 size="icon" 
                 variant="ghost" 
-                onClick={() => setEditingSection(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditingSection(null);
+                }}
                 className="h-8 w-8"
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
           ) : (
-            <h3 
-              className="font-medium flex items-center gap-2 cursor-pointer"
-              onClick={() => startEditingSection(section.id, section.title)}
+            <div
+              className="font-medium flex items-center gap-2 cursor-pointer" 
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleExpand();
+              }}
             >
               <span>{section.position}. {section.title}</span>
-              <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-            </h3>
+              <Pencil 
+                className="h-3.5 w-3.5 text-muted-foreground cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startEditingSection(section.id, section.title, e);
+                }}
+              />
+            </div>
           )}
         </div>
         <div className="space-x-2">
           <Button 
             variant="outline"
             size="sm"
-            onClick={() => onAddLesson(section.id, 'Video')}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddLesson(section.id, 'Video');
+            }}
           >
             Add Lesson
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onDeleteSection(section.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteSection(section.id);
+            }}
             className="text-destructive"
           >
             Delete
@@ -139,7 +170,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
         </div>
       </div>
       
-      <div className="p-2">
+      <div className={`p-2 ${expanded ? 'block' : 'hidden'}`}>
         {section.lessons.length === 0 ? (
           <p className="text-sm text-muted-foreground p-2">
             No lessons yet. Click "Add Lesson" to create one.
