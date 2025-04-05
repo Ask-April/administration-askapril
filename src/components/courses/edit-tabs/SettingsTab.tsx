@@ -34,7 +34,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   editedCourse, 
   setEditedCourse 
 }) => {
-  // Function to update any course property
   const updateCourseData = (field: string, value: any) => {
     setEditedCourse({
       ...editedCourse,
