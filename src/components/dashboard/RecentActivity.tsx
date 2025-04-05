@@ -1,13 +1,27 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users } from "lucide-react";
+import { Users, BookOpen, DollarSign, Calendar } from "lucide-react";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { format } from "date-fns";
 import { EmptyState } from "@/components/ui/loading-states";
 
-// This component is now used in other pages, but its main dashboard functionality
-// has been moved to the CourseProgressContainer
+const ActivityIcons: Record<string, React.ElementType> = {
+  enrollment: Users,
+  course: BookOpen,
+  payment: DollarSign,
+  event: Calendar,
+};
+
+const ActivityIcon = ({ type }: { type: string }) => {
+  const Icon = ActivityIcons[type] || Users;
+  return (
+    <div className="rounded-full bg-primary/10 p-2">
+      <Icon className="h-4 w-4" />
+    </div>
+  );
+};
+
 const RecentActivity = () => {
   const { data, isError } = useDashboardStats();
 
@@ -55,9 +69,7 @@ const RecentActivity = () => {
                 key={enrollment.enrollment_id || index}
                 className="flex items-start gap-4 rounded-lg border p-3"
               >
-                <div className="rounded-full bg-primary/10 p-2">
-                  <Users className="h-4 w-4" />
-                </div>
+                <ActivityIcon type="enrollment" />
                 <div>
                   <p className="text-sm font-medium">
                     New student enrolled

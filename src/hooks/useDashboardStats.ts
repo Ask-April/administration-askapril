@@ -63,7 +63,7 @@ export const useDashboardStats = () => {
 
       const totalRevenue = revenueData?.reduce((acc, order) => acc + (order.amount || 0), 0) || 0;
 
-      // Get recent enrollments with student and course details
+      // Get recent enrollments
       const { data: recentEnrollments, error: recentError } = await supabase
         .from("enrollment")
         .select(`
@@ -71,11 +71,10 @@ export const useDashboardStats = () => {
           enroll_date,
           student_id,
           course_id,
-          courses:course_id (title, image),
-          student:student_id (first_name, last_name, email)
+          courses:course_id (title, image)
         `)
         .order("enroll_date", { ascending: false })
-        .limit(10);
+        .limit(4);
 
       if (recentError) {
         console.error("Error fetching recent enrollments:", recentError);
@@ -121,6 +120,5 @@ export const useDashboardStats = () => {
         studentProgress: studentProgress || []
       };
     },
-    refetchInterval: 30000, // Refetch every 30 seconds to keep data fresh
   });
 };

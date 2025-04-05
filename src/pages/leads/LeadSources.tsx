@@ -4,12 +4,10 @@ import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, ExternalLink, ArrowUp, ArrowDown } from "lucide-react";
+import { PlusCircle, ExternalLink, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Source } from "@/services/types";
-import { EmptyState } from "@/components/ui/loading-states";
-import LeadSourceSkeleton from "@/components/leads/LeadSourceSkeleton";
 
 const LeadSources = () => {
   const [sources, setSources] = useState<Source[]>([]);
@@ -23,35 +21,18 @@ const LeadSources = () => {
   const fetchSources = async () => {
     try {
       setLoading(true);
-      // This is a workaround until the sources table is properly added to the Supabase schema
-      // For now, we'll use mock data to avoid the error
+      const { data, error } = await supabase
+        .from('sources')
+        .select('*')
+        .order('count', { ascending: false });
       
-      // Uncomment this when the sources table exists in Supabase
-      // const { data, error } = await supabase
-      //   .from('sources')
-      //   .select('*')
-      //   .order('count', { ascending: false });
-      
-      // if (error) {
-      //   throw error;
-      // }
+      if (error) {
+        throw error;
+      }
 
-      // if (data) {
-      //   setSources(data as Source[]);
-      // }
-
-      // Mock data for demonstration
-      setTimeout(() => {
-        const mockSources: Source[] = [
-          { id: '1', name: 'Facebook Ads', count: 245, conversion: '12.5%', trend: 'up', change: '4.2%' },
-          { id: '2', name: 'Google Search', count: 189, conversion: '8.7%', trend: 'up', change: '2.1%' },
-          { id: '3', name: 'Direct Traffic', count: 142, conversion: '15.3%', trend: 'down', change: '1.8%' },
-          { id: '4', name: 'Email Campaign', count: 98, conversion: '22.4%', trend: 'up', change: '5.6%' },
-          { id: '5', name: 'Partner Referrals', count: 76, conversion: '18.9%', trend: 'down', change: '3.4%' },
-        ];
-        setSources(mockSources);
-        setLoading(false);
-      }, 1500);
+      if (data) {
+        setSources(data as Source[]);
+      }
     } catch (error) {
       console.error('Error fetching sources:', error);
       toast({
@@ -59,6 +40,7 @@ const LeadSources = () => {
         description: "There was a problem loading your lead sources.",
         variant: "destructive"
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -78,27 +60,21 @@ const LeadSources = () => {
           <Card>
             <CardContent className="p-0">
               {loading ? (
-                <div className="rounded-md border">
-                  <div className="grid grid-cols-5 p-4 font-medium">
-                    <div className="col-span-2">Source</div>
-                    <div>Leads</div>
-                    <div>Conversion Rate</div>
-                    <div>Trend</div>
-                  </div>
-                  <LeadSourceSkeleton />
+                <div className="flex justify-center items-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
               ) : sources.length === 0 ? (
-                <EmptyState
-                  title="No sources found"
-                  description="You don't have any lead sources yet. Start by adding your first source."
-                  icon={PlusCircle}
-                  action={
-                    <Button>
-                      <PlusCircle className="h-4 w-4 mr-2" />
-                      Add Source
-                    </Button>
-                  }
-                />
+                <div className="flex flex-col items-center justify-center p-12 text-center">
+                  <PlusCircle className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No sources found</h3>
+                  <p className="text-muted-foreground mb-4">
+                    You don't have any lead sources yet. Start by adding your first source.
+                  </p>
+                  <Button>
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Add Source
+                  </Button>
+                </div>
               ) : (
                 <div className="rounded-md border">
                   <div className="grid grid-cols-5 p-4 font-medium">
