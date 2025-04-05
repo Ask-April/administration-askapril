@@ -1,7 +1,7 @@
 
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
-import { Dashboard as DashboardComponent } from "@/components/dashboard/Dashboard";
+import DashboardComponent from "@/components/dashboard/Dashboard";
 
 const Dashboard = () => {
   return (
