@@ -2,6 +2,9 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Pencil, Check, X } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { lessonTypes } from "@/components/courses/lesson-editors/LessonTypeSelector";
 
 interface Section {
   id: string;
@@ -46,6 +49,8 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
   
   const [newSectionTitle, setNewSectionTitle] = useState('');
   const [draggedItem, setDraggedItem] = useState<any>(null);
+  const [editingSection, setEditingSection] = useState<{ id: string, title: string } | null>(null);
+  const [editingLesson, setEditingLesson] = useState<{ sectionId: string, lessonId: string, title: string } | null>(null);
   
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
@@ -92,6 +97,67 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
           ...section,
           lessons: section.lessons.filter((lesson) => lesson.id !== lessonId)
         };
+      }
+      return section;
+    });
+    
+    setSections(updatedSections);
+  };
+  
+  const startEditingSection = (sectionId: string, title: string) => {
+    setEditingSection({ id: sectionId, title });
+  };
+  
+  const saveEditingSection = () => {
+    if (!editingSection) return;
+    
+    const updatedSections = sections.map(section => {
+      if (section.id === editingSection.id) {
+        return { ...section, title: editingSection.title };
+      }
+      return section;
+    });
+    
+    setSections(updatedSections);
+    setEditingSection(null);
+  };
+  
+  const startEditingLesson = (sectionId: string, lessonId: string, title: string) => {
+    setEditingLesson({ sectionId, lessonId, title });
+  };
+  
+  const saveEditingLesson = () => {
+    if (!editingLesson) return;
+    
+    const updatedSections = sections.map(section => {
+      if (section.id === editingLesson.sectionId) {
+        const updatedLessons = section.lessons.map(lesson => {
+          if (lesson.id === editingLesson.lessonId) {
+            return { ...lesson, title: editingLesson.title };
+          }
+          return lesson;
+        });
+        
+        return { ...section, lessons: updatedLessons };
+      }
+      return section;
+    });
+    
+    setSections(updatedSections);
+    setEditingLesson(null);
+  };
+  
+  const changeLessonType = (sectionId: string, lessonId: string, newType: string) => {
+    const updatedSections = sections.map(section => {
+      if (section.id === sectionId) {
+        const updatedLessons = section.lessons.map(lesson => {
+          if (lesson.id === lessonId) {
+            return { ...lesson, type: newType };
+          }
+          return lesson;
+        });
+        
+        return { ...section, lessons: updatedLessons };
       }
       return section;
     });
@@ -210,9 +276,40 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
             className="border rounded-md bg-card"
           >
             <div className="p-4 flex items-center justify-between bg-muted">
-              <h3 className="font-medium cursor-grab">
-                {section.position}. {section.title}
-              </h3>
+              {editingSection && editingSection.id === section.id ? (
+                <div className="flex items-center gap-2">
+                  <Input 
+                    value={editingSection.title}
+                    onChange={(e) => setEditingSection({...editingSection, title: e.target.value})}
+                    className="h-8 w-60"
+                    autoFocus
+                  />
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    onClick={saveEditingSection}
+                    className="h-8 w-8"
+                  >
+                    <Check className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    onClick={() => setEditingSection(null)}
+                    className="h-8 w-8"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <h3 
+                  className="font-medium cursor-grab flex items-center gap-2"
+                  onClick={() => startEditingSection(section.id, section.title)}
+                >
+                  <span>{section.position}. {section.title}</span>
+                  <Pencil className="h-3.5 w-3.5 text-muted-foreground cursor-pointer" />
+                </h3>
+              )}
               <div className="space-x-2">
                 <Button 
                   variant="outline"
@@ -250,18 +347,74 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
                     >
                       <div className="flex items-center">
                         <span className="mr-2">{lesson.position}.</span>
-                        <span>{lesson.title}</span>
-                        <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                          {lesson.type}
-                        </span>
+                        {editingLesson && editingLesson.lessonId === lesson.id ? (
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              value={editingLesson.title}
+                              onChange={(e) => setEditingLesson({...editingLesson, title: e.target.value})}
+                              className="h-7 w-48"
+                              autoFocus
+                            />
+                            <Button 
+                              size="icon" 
+                              variant="ghost" 
+                              onClick={saveEditingLesson}
+                              className="h-6 w-6 p-0"
+                            >
+                              <Check className="h-3 w-3" />
+                            </Button>
+                            <Button 
+                              size="icon" 
+                              variant="ghost" 
+                              onClick={() => setEditingLesson(null)}
+                              className="h-6 w-6 p-0"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <span 
+                            className="cursor-pointer flex items-center gap-1"
+                            onClick={() => startEditingLesson(section.id, lesson.id, lesson.title)}
+                          >
+                            {lesson.title}
+                            <Pencil className="h-3 w-3 text-muted-foreground cursor-pointer" />
+                          </span>
+                        )}
+                        
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <span 
+                              className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full cursor-pointer"
+                            >
+                              {lesson.type}
+                            </span>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-48 p-2">
+                            <div className="grid grid-cols-2 gap-1">
+                              {lessonTypes.map((type) => (
+                                <Button
+                                  key={type.id}
+                                  size="sm"
+                                  variant={lesson.type === type.id ? "secondary" : "ghost"}
+                                  className="justify-start h-8 text-xs"
+                                  onClick={() => changeLessonType(section.id, lesson.id, type.id)}
+                                >
+                                  <div className="mr-1.5 h-3.5 w-3.5">{type.icon}</div>
+                                  {type.name}
+                                </Button>
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteLesson(section.id, lesson.id)}
-                        className="text-destructive"
+                        className="h-7 w-7 p-0 text-destructive"
                       >
-                        Delete
+                        <X className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   ))}
