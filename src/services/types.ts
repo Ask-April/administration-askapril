@@ -1,4 +1,3 @@
-
 export interface Course {
   course_id: string;
   title: string | null;
@@ -12,6 +11,15 @@ export interface Course {
   site_id: string;
   created_at: string | null;
   updated_at: string | null;
+  
+  subtitle?: string | null;
+  featured?: boolean;
+  priceVisible?: boolean;
+  hidden?: boolean;
+  hasCertificate?: boolean;
+  certificateTemplate?: string;
+  hasEnrollmentLimit?: boolean;
+  maxEnrollments?: number;
 }
 
 export interface CourseSection {

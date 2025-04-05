@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react';
 import { useCourseById } from '@/hooks/useCourses';
 import { toast } from 'sonner';
 import { updateCourse } from '@/pages/api/courses';
+import { Course } from '@/services/types';
 
 export const useEditCourse = (id: string | undefined) => {
   // Fetch the course data using our useCourseById hook
   const { data: course, isLoading, error, isError } = useCourseById(id);
 
   // Local state for edited course data - initialize with default empty values
-  const [editedCourse, setEditedCourse] = useState<any>({
+  const [editedCourse, setEditedCourse] = useState<Partial<Course>>({
     title: "",
     subtitle: "",
     description: "",
@@ -56,24 +57,7 @@ export const useEditCourse = (id: string | undefined) => {
     try {
       if (id && editedCourse) {
         // Call the updateCourse API function
-        await updateCourse(id, {
-          title: editedCourse.title,
-          subtitle: editedCourse.subtitle,
-          description: editedCourse.description,
-          status: editedCourse.status,
-          category: editedCourse.category,
-          image: editedCourse.image,
-          duration: editedCourse.duration,
-          lessons: editedCourse.lessons,
-          students: editedCourse.students,
-          featured: editedCourse.featured,
-          priceVisible: editedCourse.priceVisible,
-          hidden: editedCourse.hidden,
-          hasCertificate: editedCourse.hasCertificate,
-          certificateTemplate: editedCourse.certificateTemplate,
-          hasEnrollmentLimit: editedCourse.hasEnrollmentLimit,
-          maxEnrollments: editedCourse.maxEnrollments,
-        });
+        await updateCourse(id, editedCourse);
       }
     } catch (error) {
       console.error("Error saving course:", error);
