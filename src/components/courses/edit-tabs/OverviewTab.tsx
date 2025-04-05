@@ -2,12 +2,6 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { 
   BarChart3, 
   Activity, 
   Users, 
@@ -28,86 +22,69 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ courseId }) => {
         <CardContent className="pt-6">
           <h3 className="text-lg font-medium mb-4">Course Overview</h3>
           
-          <Tabs defaultValue="sales" className="w-full">
-            <TabsList className="mb-4 grid grid-cols-7 md:w-auto w-full">
-              <TabsTrigger value="sales" className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                <span className="hidden md:inline">Sales</span>
-              </TabsTrigger>
-              <TabsTrigger value="activity" className="flex items-center gap-2">
-                <Activity className="h-4 w-4" />
-                <span className="hidden md:inline">Activity</span>
-              </TabsTrigger>
-              <TabsTrigger value="engagement" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span className="hidden md:inline">Engagement</span>
-              </TabsTrigger>
-              <TabsTrigger value="notifications" className="flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                <span className="hidden md:inline">Notifications</span>
-              </TabsTrigger>
-              <TabsTrigger value="actions" className="flex items-center gap-2">
-                <Zap className="h-4 w-4" />
-                <span className="hidden md:inline">Quick Actions</span>
-              </TabsTrigger>
-              <TabsTrigger value="tips" className="flex items-center gap-2">
-                <Award className="h-4 w-4" />
-                <span className="hidden md:inline">Tips</span>
-              </TabsTrigger>
-              <TabsTrigger value="benchmark" className="flex items-center gap-2">
-                <LineChart className="h-4 w-4" />
-                <span className="hidden md:inline">Benchmark</span>
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="sales" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Sales Overview</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <SalesMetricCard 
-                  title="Total Enrollments" 
-                  value="132" 
-                  trend="+12%" 
-                  period="Monthly" 
-                />
-                <SalesMetricCard 
-                  title="Total Revenue" 
-                  value="$8,450" 
-                  trend="+8.5%" 
-                  period="Monthly" 
-                />
-                <SalesMetricCard 
-                  title="Average Rating" 
-                  value="4.8" 
-                  reviews={24} 
-                  trend="+0.2" 
-                />
-                <SalesMetricCard 
-                  title="Completion Rate" 
-                  value="78%" 
-                  benchmark="65%" 
-                  industry="72%" 
-                />
-                <SalesMetricCard 
-                  title="Average Quiz Score" 
-                  value="82%" 
-                  highest="98%" 
-                  lowest="65%" 
-                />
-                <SalesMetricCard 
-                  title="Revenue Forecast" 
-                  nextMonth="$9,200" 
-                  nextQuarter="$28,500" 
-                  confidence="85%" 
-                />
-                <SalesMetricCard 
-                  title="Refund Rate" 
-                  value="2.1%" 
-                  industry="3.5%" 
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="activity" className="border rounded-md p-4">
+          <div className="flex overflow-x-auto pb-2 mb-4 gap-2">
+            <MetricPill icon={<BarChart3 className="h-4 w-4" />} label="Sales" active={true} />
+            <MetricPill icon={<Activity className="h-4 w-4" />} label="Activity" />
+            <MetricPill icon={<Users className="h-4 w-4" />} label="Engagement" />
+            <MetricPill icon={<Bell className="h-4 w-4" />} label="Notifications" />
+            <MetricPill icon={<Zap className="h-4 w-4" />} label="Quick Actions" />
+            <MetricPill icon={<Award className="h-4 w-4" />} label="Tips" />
+            <MetricPill icon={<LineChart className="h-4 w-4" />} label="Benchmark" />
+          </div>
+          
+          <div className="border rounded-md p-6">
+            <h4 className="text-md font-medium mb-6">Sales Overview</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Row 1 */}
+              <SalesMetricCard 
+                title="Total Enrollments" 
+                value="132" 
+                trend="+12%" 
+                period="Monthly" 
+              />
+              <SalesMetricCard 
+                title="Total Revenue" 
+                value="$8,450" 
+                trend="+8.5%" 
+                period="Monthly" 
+              />
+              <SalesMetricCard 
+                title="Average Rating" 
+                value="4.8" 
+                reviews={24} 
+                trend="+0.2" 
+              />
+              
+              {/* Row 2 */}
+              <SalesMetricCard 
+                title="Completion Rate" 
+                value="78%" 
+                benchmark="65%" 
+                industry="72%" 
+              />
+              <SalesMetricCard 
+                title="Average Quiz Score" 
+                value="82%" 
+                highest="98%" 
+                lowest="65%" 
+              />
+              <SalesMetricCard 
+                title="Revenue Forecast" 
+                nextMonth="$9,200" 
+                nextQuarter="$28,500" 
+                confidence="85%" 
+              />
+              
+              {/* Row 3 */}
+              <SalesMetricCard 
+                title="Refund Rate" 
+                value="2.1%" 
+                industry="3.5%" 
+              />
+            </div>
+            
+            {/* Additional metrics sections could be added here */}
+            <div className="mt-8">
               <h4 className="text-md font-medium mb-4">Recent Activity</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ActivityMetricCard 
@@ -122,68 +99,49 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ courseId }) => {
                   averageScore="76%" 
                   completionRate="68%" 
                 />
-                <ActivityMetricCard 
-                  title="Student Questions" 
-                  unanswered={3} 
-                  responseTime="6 hours" 
-                />
-                <ActivityMetricCard 
-                  title="Forum Activity" 
-                  newPosts={12} 
-                  activeDiscussions={5} 
-                />
               </div>
-            </TabsContent>
-
-            <TabsContent value="engagement" className="border rounded-md p-4">
+            </div>
+            
+            <div className="mt-8">
               <h4 className="text-md font-medium mb-4">Engagement Metrics</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <EngagementMetricCard 
                   title="Average Time Spent" 
                   perSession="32 min" 
                   perStudent="4.2 hours" 
-                  perModule="58 min" 
-                />
-                <EngagementMetricCard 
-                  title="Interaction Levels" 
-                  videoCompletion="76%" 
-                  downloads={128} 
                 />
                 <EngagementMetricCard 
                   title="Active Students" 
                   active="68%" 
                   reactivation="8.2%" 
                 />
-                <EngagementMetricCard 
-                  title="Session Frequency" 
-                  averagePerWeek={2.4} 
-                />
               </div>
-            </TabsContent>
-
-            {/* Placeholder content for other tabs */}
-            <TabsContent value="notifications" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Notifications</h4>
-              <p className="text-muted-foreground">Notification content coming soon</p>
-            </TabsContent>
-
-            <TabsContent value="actions" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Quick Actions</h4>
-              <p className="text-muted-foreground">Quick action content coming soon</p>
-            </TabsContent>
-
-            <TabsContent value="tips" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Tips for Improvement</h4>
-              <p className="text-muted-foreground">Tips content coming soon</p>
-            </TabsContent>
-
-            <TabsContent value="benchmark" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Benchmark Comparison</h4>
-              <p className="text-muted-foreground">Benchmark content coming soon</p>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </CardContent>
       </Card>
+    </div>
+  );
+};
+
+interface MetricPillProps {
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+}
+
+const MetricPill: React.FC<MetricPillProps> = ({ icon, label, active = false }) => {
+  return (
+    <div 
+      className={`
+        flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap
+        ${active 
+          ? 'bg-primary text-primary-foreground' 
+          : 'bg-muted/50 hover:bg-muted cursor-pointer'}
+      `}
+    >
+      {icon}
+      <span className="text-sm font-medium">{label}</span>
     </div>
   );
 };
@@ -220,7 +178,7 @@ const SalesMetricCard: React.FC<SalesMetricCardProps> = ({
   return (
     <div className="bg-card border rounded-md p-4">
       <h5 className="text-sm font-medium text-muted-foreground">{title}</h5>
-      {value && <p className="text-xl font-bold mt-1">{value}</p>}
+      {value && <p className="text-2xl font-bold mt-1">{value}</p>}
       <div className="mt-2 space-y-1">
         {trend && <p className="text-sm text-emerald-600">{trend} {period && `(${period})`}</p>}
         {reviews && <p className="text-sm text-muted-foreground">{reviews} reviews</p>}
