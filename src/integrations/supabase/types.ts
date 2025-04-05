@@ -966,6 +966,7 @@ export type Database = {
           joined_on: string | null
           last_name: string | null
           status: string | null
+          tags: string | null
         }
         Insert: {
           email?: string | null
@@ -974,6 +975,7 @@ export type Database = {
           joined_on?: string | null
           last_name?: string | null
           status?: string | null
+          tags?: string | null
         }
         Update: {
           email?: string | null
@@ -982,6 +984,7 @@ export type Database = {
           joined_on?: string | null
           last_name?: string | null
           status?: string | null
+          tags?: string | null
         }
         Relationships: []
       }

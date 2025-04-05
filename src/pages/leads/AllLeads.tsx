@@ -108,7 +108,7 @@ const AllLeads = () => {
 
       // Transform the data to match our Lead type
       const transformedLeads = data.map(lead => ({
-        id: lead.id || `${lead.first_name || ''}-${lead.last_name || ''}-${lead.email || ''}`,
+        id: lead.id || '',
         name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim(),
         email: lead.email || '',
         phone: lead.phone || '',
