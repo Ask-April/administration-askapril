@@ -38,7 +38,9 @@ const LeadSources = () => {
         throw error;
       }
 
-      setSources(data || []);
+      if (data) {
+        setSources(data as Source[]);
+      }
     } catch (error) {
       console.error('Error fetching sources:', error);
       toast({
