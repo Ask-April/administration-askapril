@@ -1,63 +1,117 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "sonner";
-import { QueryProvider } from "@/providers/QueryProvider";
-import { ThemeProvider } from "@/providers/ThemeProvider";
-import Layout from "@/components/layout/Layout";
-import Index from "@/pages/Index";
-import SignIn from "@/pages/auth/SignIn";
-import SignUp from "@/pages/auth/SignUp";
-import Dashboard from "@/pages/Dashboard";
-import CoursesOverview from "@/pages/courses/CoursesOverview";
-import Courses from "@/pages/Courses";
-import EditCourse from "@/pages/courses/EditCourse";
-import Bundles from "@/pages/courses/Bundles";
-import Categories from "@/pages/courses/Categories";
-import People from "@/pages/courses/People";
-import Reports from "@/pages/courses/Reports";
-import Assignments from "@/pages/courses/Assignments";
-import Coupons from "@/pages/courses/Coupons";
-import MediaLibrary from "@/pages/courses/MediaLibrary";
-import NotFound from "@/pages/NotFound";
-import CreateCourse from "./pages/courses/CreateCourse";
 
-const App = () => {
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import Dashboard from "./components/dashboard/Dashboard";
+import Courses from "./pages/Courses";
+import Overview from "./pages/courses/Overview";
+import CreateCourse from "./pages/courses/CreateCourse";
+import Broadcasts from "./pages/Broadcasts";
+import Communities from "./pages/Communities";
+import Analytics from "./pages/Analytics";
+import Leads from "./pages/Leads";
+import EditCourse from "./pages/courses/EditCourse";
+import SignIn from "./pages/auth/SignIn";
+import SignUp from "./pages/auth/SignUp";
+import { useProtectedRoute } from "./hooks/auth/use-protected-route";
+import Bundles from "./pages/courses/Bundles";
+import Categories from "./pages/courses/Categories";
+import Assignments from "./pages/courses/Assignments";
+import Coupons from "./pages/courses/Coupons";
+import People from "./pages/courses/People";
+import MediaLibrary from "./pages/courses/MediaLibrary";
+import Reports from "./pages/courses/Reports";
+
+// Lead pages
+import AllLeads from "./pages/leads/AllLeads";
+import LeadForms from "./pages/leads/LeadForms";
+import LeadSources from "./pages/leads/LeadSources";
+import LeadTags from "./pages/leads/LeadTags";
+import Funnels from "./pages/leads/Funnels";
+
+// Broadcast pages
+import AllBroadcasts from "./pages/broadcasts/AllBroadcasts";
+import Subscribers from "./pages/broadcasts/Subscribers";
+import BroadcastAnalytics from "./pages/broadcasts/BroadcastAnalytics";
+import BroadcastSettings from "./pages/broadcasts/BroadcastSettings";
+
+// Community pages
+import AllCommunities from "./pages/communities/AllCommunities";
+import Discussions from "./pages/communities/Discussions";
+import Members from "./pages/communities/Members";
+import Manage from "./pages/communities/Manage";
+import CommunitySettings from "./pages/communities/CommunitySettings";
+
+// Analytics pages
+import AnalyticsOverview from "./pages/analytics/Overview";
+import Traffic from "./pages/analytics/Traffic";
+import Conversions from "./pages/analytics/Conversions";
+
+function App() {
+  const ProtectedRoute = useProtectedRoute();
+
   return (
-    <QueryProvider>
-      <ThemeProvider>
-        <Router>
-          <Toaster />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route element={<Layout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              
-              {/* Courses routes */}
-              <Route path="/courses/overview" element={<CoursesOverview />} />
-              <Route path="/courses" element={<Courses />} />
-              <Route path="/courses/create" element={<CreateCourse />} />
-              <Route path="/courses/edit/:id" element={<EditCourse />} />
-              <Route path="/courses/bundles" element={<Bundles />} />
-              <Route path="/courses/categories" element={<Categories />} />
-              <Route path="/courses/people" element={<People />} />
-              <Route path="/courses/reports" element={<Reports />} />
-              <Route path="/courses/assignments" element={<Assignments />} />
-              <Route path="/courses/coupons" element={<Coupons />} />
-              <Route path="/courses/media" element={<MediaLibrary />} />
-              
-              {/* Other routes */}
-              <Route path="/settings" element={<div>Settings</div>} />
-              <Route path="/profile" element={<div>Profile</div>} />
-              <Route path="/notifications" element={<div>Notifications</div>} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Router>
-      </ThemeProvider>
-    </QueryProvider>
+    <Router>
+      <Routes>
+        <Route path="/auth/signin" element={<SignIn />} />
+        <Route path="/auth/signup" element={<SignUp />} />
+        <Route
+          path="*"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  
+                  {/* Courses routes */}
+                  <Route path="/courses" element={<Courses />} />
+                  <Route path="/courses/overview" element={<Overview />} />
+                  <Route path="/courses/create" element={<CreateCourse />} />
+                  <Route path="/courses/edit/:id" element={<EditCourse />} />
+                  <Route path="/courses/bundles" element={<Bundles />} />
+                  <Route path="/courses/categories" element={<Categories />} />
+                  <Route path="/courses/assignments" element={<Assignments />} />
+                  <Route path="/courses/coupons" element={<Coupons />} />
+                  <Route path="/courses/people" element={<People />} />
+                  <Route path="/courses/media" element={<MediaLibrary />} />
+                  <Route path="/courses/reports" element={<Reports />} />
+                  
+                  {/* Leads routes */}
+                  <Route path="/leads" element={<Leads />} />
+                  <Route path="/leads/all" element={<AllLeads />} />
+                  <Route path="/leads/forms" element={<LeadForms />} />
+                  <Route path="/leads/sources" element={<LeadSources />} />
+                  <Route path="/leads/tags" element={<LeadTags />} />
+                  <Route path="/leads/funnels" element={<Funnels />} />
+                  
+                  {/* Broadcasts routes */}
+                  <Route path="/broadcasts" element={<Broadcasts />} />
+                  <Route path="/broadcasts/all" element={<AllBroadcasts />} />
+                  <Route path="/broadcasts/subscribers" element={<Subscribers />} />
+                  <Route path="/broadcasts/analytics" element={<BroadcastAnalytics />} />
+                  <Route path="/broadcasts/settings" element={<BroadcastSettings />} />
+                  
+                  {/* Communities routes */}
+                  <Route path="/communities" element={<Communities />} />
+                  <Route path="/communities/all" element={<AllCommunities />} />
+                  <Route path="/communities/discussions" element={<Discussions />} />
+                  <Route path="/communities/members" element={<Members />} />
+                  <Route path="/communities/manage" element={<Manage />} />
+                  <Route path="/communities/settings" element={<CommunitySettings />} />
+                  
+                  {/* Analytics routes */}
+                  <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/analytics/overview" element={<AnalyticsOverview />} />
+                  <Route path="/analytics/traffic" element={<Traffic />} />
+                  <Route path="/analytics/conversions" element={<Conversions />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
-};
+}
 
 export default App;

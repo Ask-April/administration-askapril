@@ -1,47 +1,9 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import ChartWrapper from "@/components/ui/charts/ChartWrapper";
+import { BarChart3 } from "lucide-react";
 
 const OverviewChart = () => {
-  // Sample data for the chart
-  const chartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Enrollments',
-        data: [30, 45, 57, 48, 65, 73],
-        backgroundColor: 'rgba(155, 135, 245, 0.2)',
-        borderColor: 'rgba(155, 135, 245, 1)',
-        borderWidth: 2,
-      },
-      {
-        label: 'Revenue ($00)',
-        data: [12, 19, 27, 29, 38, 41],
-        backgroundColor: 'rgba(14, 165, 233, 0.2)',
-        borderColor: 'rgba(14, 165, 233, 1)',
-        borderWidth: 2,
-      },
-    ],
-  };
-
-  const chartOptions = {
-    plugins: {
-      title: {
-        display: true,
-        text: 'Student Enrollment & Revenue',
-      },
-      legend: {
-        position: 'bottom' as const,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -51,12 +13,12 @@ const OverviewChart = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="h-[300px] flex items-center justify-center">
-        <ChartWrapper 
-          type="bar" 
-          data={chartData} 
-          options={chartOptions} 
-          height={250} 
-        />
+        <div className="text-center text-muted-foreground">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <BarChart3 className="h-8 w-8 text-primary" />
+          </div>
+          <p>Analytics visualization will appear here</p>
+        </div>
       </CardContent>
     </Card>
   );

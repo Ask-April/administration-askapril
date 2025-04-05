@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import CourseCard from "@/components/courses/CourseCard";
@@ -23,8 +24,8 @@ import {
   Search,
   SlidersHorizontal
 } from "lucide-react";
-import { Link } from 'react-router-dom';
 
+// Initial courses data
 const initialCoursesData = [
   {
     id: "1",
@@ -116,6 +117,7 @@ const Courses = () => {
     setCoursesData([newCourse, ...coursesData]);
   };
 
+  // Filter courses based on search query and filter type
   const filteredCourses = coursesData.filter((course) => {
     const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          course.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -127,6 +129,7 @@ const Courses = () => {
     return matchesSearch;
   });
 
+  // Sort courses based on sort option
   const sortedCourses = [...filteredCourses].sort((a, b) => {
     if (sortBy === "newest") return parseInt(b.id) - parseInt(a.id);
     if (sortBy === "oldest") return parseInt(a.id) - parseInt(b.id);
@@ -194,12 +197,6 @@ const Courses = () => {
               <Plus className="h-4 w-4" />
               <span>Add Course</span>
             </Button>
-            <Link to="/courses/create">
-              <Button variant="outline" className="gap-1">
-                <Plus className="h-4 w-4" />
-                <span>Use Wizard</span>
-              </Button>
-            </Link>
           </div>
         </div>
 
