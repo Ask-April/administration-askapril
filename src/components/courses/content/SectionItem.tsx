@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +5,7 @@ import { Pencil, Check, X, GripVertical } from "lucide-react";
 import { Lesson } from "@/hooks/useCurriculum";
 import LessonItem from "./LessonItem";
 import { useEditCourse } from "@/hooks/useEditCourse";
-import { LessonEditModal } from "./LessonEditModal";
+import LessonEditModal from "./LessonEditModal";
 
 interface Section {
   id: string;
