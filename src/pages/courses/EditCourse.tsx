@@ -10,9 +10,15 @@ import { toast } from "sonner";
 import { useEditCourse } from "@/hooks/useEditCourse";
 import { EmptyState, LoadingSkeleton } from "@/components/ui/loading-states";
 import { 
-  GeneralTab, 
+  GeneralTab,
+  OverviewTab,
+  DetailsTab, 
   ContentTab, 
-  PricingTab, 
+  StudentsTab,
+  QuizzesTab,
+  SalesTab,
+  PricingTab,
+  TriggersTab,
   SettingsTab 
 } from "@/components/courses/edit-tabs";
 
@@ -94,10 +100,16 @@ const EditCourse = () => {
         />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4">
+          <TabsList className="mb-4 grid grid-cols-10 w-full">
             <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="students">Students</TabsTrigger>
+            <TabsTrigger value="quizzes">Quizzes</TabsTrigger>
+            <TabsTrigger value="sales">Sales</TabsTrigger>
             <TabsTrigger value="pricing">Pricing</TabsTrigger>
+            <TabsTrigger value="triggers">Triggers</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -108,8 +120,34 @@ const EditCourse = () => {
             />
           </TabsContent>
 
+          <TabsContent value="overview">
+            <OverviewTab courseId={id} />
+          </TabsContent>
+
+          <TabsContent value="details">
+            <DetailsTab 
+              editedCourse={editedCourse}
+              setEditedCourse={setEditedCourse}
+            />
+          </TabsContent>
+
           <TabsContent value="content">
-            <ContentTab />
+            <ContentTab 
+              editedCourse={editedCourse}
+              setEditedCourse={setEditedCourse}
+            />
+          </TabsContent>
+
+          <TabsContent value="students">
+            <StudentsTab courseId={id} />
+          </TabsContent>
+
+          <TabsContent value="quizzes">
+            <QuizzesTab courseId={id} />
+          </TabsContent>
+
+          <TabsContent value="sales">
+            <SalesTab courseId={id} />
           </TabsContent>
 
           <TabsContent value="pricing">
@@ -117,6 +155,10 @@ const EditCourse = () => {
               editedCourse={editedCourse}
               setEditedCourse={setEditedCourse}
             />
+          </TabsContent>
+
+          <TabsContent value="triggers">
+            <TriggersTab courseId={id} />
           </TabsContent>
 
           <TabsContent value="settings">
