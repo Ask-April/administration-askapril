@@ -149,7 +149,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
             {section.lessons.map((lesson) => (
               <LessonItem
                 key={lesson.id}
-                lesson={{...lesson, type: lesson.type || 'video'}} 
+                lesson={lesson}
                 sectionId={section.id}
                 onDeleteLesson={onDeleteLesson}
                 onOpenLessonModal={onOpenLessonModal}
