@@ -77,7 +77,7 @@ const LessonTypeSelector: React.FC<LessonTypeSelectorProps> = ({ selectedType, o
   return (
     <div className="space-y-2">
       <Label>Lesson Type</Label>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2">
         {lessonTypes.map(type => (
           <Button 
             key={type.id} 

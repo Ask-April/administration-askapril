@@ -1,10 +1,17 @@
 
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetFooter 
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ContentEditor from "@/components/courses/lesson-editors/ContentEditor";
 import { Lesson } from "@/hooks/useCurriculum";
+import { LessonTypeSelector } from "@/components/courses/lesson-editors";
 
 interface LessonEditModalProps {
   isOpen: boolean;
@@ -39,21 +46,30 @@ const LessonEditModal: React.FC<LessonEditModalProps> = ({
   handleFileChange,
   handleLessonContentSave
 }) => {
+  const handleLessonTypeChange = (type: string) => {
+    if (selectedLesson) {
+      setSelectedLesson({
+        ...selectedLesson,
+        lesson: { ...selectedLesson.lesson, type }
+      });
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetContent className="sm:max-w-md md:max-w-lg overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>
             {selectedLesson ? (
               <>Edit Lesson: {selectedLesson.lesson.title}</>
             ) : (
               <>Edit Lesson</>
             )}
-          </DialogTitle>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
         
         {selectedLesson && (
-          <div className="space-y-4">
+          <div className="space-y-6 py-4">
             <div>
               <label className="text-sm font-medium mb-1 block">Lesson Title</label>
               <Input 
@@ -70,6 +86,11 @@ const LessonEditModal: React.FC<LessonEditModalProps> = ({
               />
             </div>
             
+            <LessonTypeSelector 
+              selectedType={selectedLesson.lesson.type || null}
+              onSelectType={handleLessonTypeChange}
+            />
+            
             <ContentEditor
               selectedType={selectedLesson.lesson.type || null}
               contentUrl={contentUrl}
@@ -82,16 +103,18 @@ const LessonEditModal: React.FC<LessonEditModalProps> = ({
           </div>
         )}
         
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleLessonContentSave}>
-            Save Changes
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <SheetFooter className="pt-4 mt-6 border-t">
+          <div className="flex justify-end gap-2 w-full">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleLessonContentSave}>
+              Save Changes
+            </Button>
+          </div>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 };
 
