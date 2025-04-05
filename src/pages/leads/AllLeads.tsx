@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Lead } from "@/services/types";
 import { 
   PlusCircle, 
   Filter, 
@@ -42,17 +42,6 @@ import {
   SheetDescription,
   SheetClose,
 } from "@/components/ui/sheet";
-
-type Lead = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  source: string;
-  status: string;
-  last_contact: string;
-  tags: string[];
-};
 
 type SortField = "name" | "email" | "source" | "status" | "last_contact";
 type SortDirection = "asc" | "desc";

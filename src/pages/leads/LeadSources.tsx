@@ -7,15 +7,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, ExternalLink, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-type Source = {
-  id: string;
-  name: string;
-  count: number;
-  conversion: string;
-  trend: "up" | "down";
-  change: string;
-};
+import { Source } from "@/services/types";
 
 const LeadSources = () => {
   const [sources, setSources] = useState<Source[]>([]);
