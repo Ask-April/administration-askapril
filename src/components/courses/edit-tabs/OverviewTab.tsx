@@ -1,15 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   BarChart3, 
   Activity, 
-  Users, 
-  Bell, 
-  Zap, 
-  Award, 
-  LineChart 
+  Users
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface OverviewTabProps {
   courseId: string;
@@ -18,100 +13,57 @@ interface OverviewTabProps {
 const OverviewTab: React.FC<OverviewTabProps> = ({
   courseId
 }) => {
-  const [activeFilter, setActiveFilter] = useState<string>("all");
-
   return (
     <div className="space-y-6">
       <Card>
         <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-4">Course Overview</h3>
+          <h3 className="text-lg font-medium mb-6">Course Overview</h3>
           
-          {/* Filter Pills */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            <Button 
-              variant={activeFilter === "all" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setActiveFilter("all")}
-            >
-              All Metrics
-            </Button>
-            <Button 
-              variant={activeFilter === "sales" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setActiveFilter("sales")}
-            >
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Sales
-            </Button>
-            <Button 
-              variant={activeFilter === "activity" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setActiveFilter("activity")}
-            >
-              <Activity className="h-4 w-4 mr-2" />
-              Activity
-            </Button>
-            <Button 
-              variant={activeFilter === "engagement" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setActiveFilter("engagement")}
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Engagement
-            </Button>
-          </div>
-
           {/* Unified Content */}
           <div className="space-y-8">
-            {/* Sales Section - Always visible or when activeFilter is "sales" or "all" */}
-            {(activeFilter === "all" || activeFilter === "sales") && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" />
-                  <h4 className="text-md font-medium">Sales Overview</h4>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <SalesMetricCard title="Total Enrollments" value="132" trend="+12%" period="Monthly" />
-                  <SalesMetricCard title="Total Revenue" value="$8,450" trend="+8.5%" period="Monthly" />
-                  <SalesMetricCard title="Average Rating" value="4.8" reviews={24} trend="+0.2" />
-                  <SalesMetricCard title="Completion Rate" value="78%" benchmark="65%" industry="72%" />
-                  <SalesMetricCard title="Revenue Forecast" nextMonth="$9,200" nextQuarter="$28,500" confidence="85%" />
-                  <SalesMetricCard title="Refund Rate" value="2.1%" industry="3.5%" />
-                </div>
+            {/* Sales Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                <h4 className="text-md font-medium">Sales Overview</h4>
               </div>
-            )}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <SalesMetricCard title="Total Enrollments" value="132" trend="+12%" period="Monthly" />
+                <SalesMetricCard title="Total Revenue" value="$8,450" trend="+8.5%" period="Monthly" />
+                <SalesMetricCard title="Average Rating" value="4.8" reviews={24} trend="+0.2" />
+                <SalesMetricCard title="Completion Rate" value="78%" benchmark="65%" industry="72%" />
+                <SalesMetricCard title="Revenue Forecast" nextMonth="$9,200" nextQuarter="$28,500" confidence="85%" />
+                <SalesMetricCard title="Refund Rate" value="2.1%" industry="3.5%" />
+              </div>
+            </div>
 
-            {/* Activity Section - Always visible or when activeFilter is "activity" or "all" */}
-            {(activeFilter === "all" || activeFilter === "activity") && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
-                  <h4 className="text-md font-medium">Recent Activity</h4>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <ActivityMetricCard title="New Enrollments" last24h={5} last7d={28} last30d={86} />
-                  <ActivityMetricCard title="Completed Quizzes" count={56} averageScore="76%" completionRate="68%" />
-                  <ActivityMetricCard title="Student Questions" unanswered={3} responseTime="6 hours" />
-                  <ActivityMetricCard title="Forum Activity" newPosts={12} activeDiscussions={5} />
-                </div>
+            {/* Activity Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
+                <h4 className="text-md font-medium">Recent Activity</h4>
               </div>
-            )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ActivityMetricCard title="New Enrollments" last24h={5} last7d={28} last30d={86} />
+                <ActivityMetricCard title="Completed Quizzes" count={56} averageScore="76%" completionRate="68%" />
+                <ActivityMetricCard title="Student Questions" unanswered={3} responseTime="6 hours" />
+                <ActivityMetricCard title="Forum Activity" newPosts={12} activeDiscussions={5} />
+              </div>
+            </div>
 
-            {/* Engagement Section - Always visible or when activeFilter is "engagement" or "all" */}
-            {(activeFilter === "all" || activeFilter === "engagement") && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary" />
-                  <h4 className="text-md font-medium">Engagement Metrics</h4>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <EngagementMetricCard title="Average Time Spent" perSession="32 min" perStudent="4.2 hours" perModule="58 min" />
-                  <EngagementMetricCard title="Interaction Levels" videoCompletion="76%" downloads={128} />
-                  <EngagementMetricCard title="Active Students" active="68%" reactivation="8.2%" />
-                  <EngagementMetricCard title="Session Frequency" averagePerWeek={2.4} />
-                </div>
+            {/* Engagement Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                <h4 className="text-md font-medium">Engagement Metrics</h4>
               </div>
-            )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <EngagementMetricCard title="Average Time Spent" perSession="32 min" perStudent="4.2 hours" perModule="58 min" />
+                <EngagementMetricCard title="Interaction Levels" videoCompletion="76%" downloads={128} />
+                <EngagementMetricCard title="Active Students" active="68%" reactivation="8.2%" />
+                <EngagementMetricCard title="Session Frequency" averagePerWeek={2.4} />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
