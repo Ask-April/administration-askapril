@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,9 +40,9 @@ const AllLeads = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('lead_contacts')
+        .from('leads')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('joined_on', { ascending: false });
       
       if (error) {
         throw error;
@@ -51,14 +50,14 @@ const AllLeads = () => {
 
       // Transform the data to match our Lead type
       const transformedLeads = data.map(lead => ({
-        id: lead.id,
-        name: lead.name,
-        email: lead.email,
-        phone: lead.phone || '',
-        source: lead.source || '',
+        id: `${lead.first_name || ''}-${lead.last_name || ''}-${lead.email || ''}`,
+        name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim(),
+        email: lead.email || '',
+        phone: '',  // Assuming the leads table doesn't have this field
+        source: '',  // Assuming the leads table doesn't have this field
         status: lead.status || 'Cold',
-        last_contact: formatLastContact(lead.last_contact),
-        tags: lead.tags || []
+        last_contact: formatLastContact(lead.joined_on),
+        tags: []  // Assuming the leads table doesn't have this field
       }));
 
       setLeads(transformedLeads);
