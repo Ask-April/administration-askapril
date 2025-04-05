@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -9,7 +8,7 @@ import {
 } from "@/components/ui/tabs";
 import { 
   UserCog, 
-  PaintBrush, 
+  Palette, 
   Link, 
   ShieldAlert, 
   Wrench 
@@ -56,7 +55,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                 <span className="hidden md:inline">Account</span>
               </TabsTrigger>
               <TabsTrigger value="branding" className="flex items-center gap-2">
-                <PaintBrush className="h-4 w-4" />
+                <Palette className="h-4 w-4" />
                 <span className="hidden md:inline">Branding</span>
               </TabsTrigger>
               <TabsTrigger value="integrations" className="flex items-center gap-2">
