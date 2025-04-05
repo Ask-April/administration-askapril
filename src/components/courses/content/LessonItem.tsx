@@ -1,10 +1,8 @@
 
 import React, { useState } from "react";
 import { Pencil, Check, X, GripVertical } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { lessonTypes } from "@/components/courses/lesson-editors/LessonTypeSelector";
 import { Lesson } from "@/hooks/useCurriculum";
 
 interface LessonItemProps {
@@ -36,7 +34,8 @@ const LessonItem: React.FC<LessonItemProps> = ({
 }) => {
   const [editingLesson, setEditingLesson] = useState<{ sectionId: string, lessonId: string, title: string } | null>(null);
   
-  const startEditingLesson = (sectionId: string, lessonId: string, title: string) => {
+  const startEditingLesson = (sectionId: string, lessonId: string, title: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setEditingLesson({ sectionId, lessonId, title });
   };
   
@@ -71,7 +70,7 @@ const LessonItem: React.FC<LessonItemProps> = ({
       onClick={() => onOpenLessonModal(sectionId, lesson)}
     >
       <div className="flex items-center">
-        <div className="cursor-grab mr-2">
+        <div className="cursor-grab mr-2" onClick={(e) => e.stopPropagation()}>
           <GripVertical className="h-4 w-4 text-muted-foreground" />
         </div>
         
@@ -105,45 +104,17 @@ const LessonItem: React.FC<LessonItemProps> = ({
         ) : (
           <span 
             className="flex items-center gap-1"
-            onClick={(e) => {
-              e.stopPropagation();
-              startEditingLesson(sectionId, lesson.id, lesson.title);
-            }}
+            onClick={(e) => startEditingLesson(sectionId, lesson.id, lesson.title, e)}
           >
             {lesson.title}
             <Pencil className="h-3 w-3 text-muted-foreground" />
           </span>
         )}
         
-        <Popover>
-          <PopoverTrigger asChild>
-            <span 
-              className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {lesson.type || 'Unknown'}
-            </span>
-          </PopoverTrigger>
-          <PopoverContent className="w-48 p-2" onClick={(e) => e.stopPropagation()}>
-            <div className="grid grid-cols-2 gap-1">
-              {lessonTypes.map((type) => (
-                <Button
-                  key={type.id}
-                  size="sm"
-                  variant={lesson.type === type.id ? "secondary" : "ghost"}
-                  className="justify-start h-8 text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    changeLessonType(sectionId, lesson.id, type.id);
-                  }}
-                >
-                  <div className="mr-1.5 h-3.5 w-3.5">{type.icon}</div>
-                  {type.name}
-                </Button>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+        {/* Display lesson type as simple tag instead of dropdown */}
+        <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+          {lesson.type || 'Unknown'}
+        </span>
       </div>
       <Button
         variant="ghost"

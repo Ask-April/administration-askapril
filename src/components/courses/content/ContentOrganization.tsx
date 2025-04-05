@@ -1,25 +1,16 @@
-
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import SectionItem from "./SectionItem";
 import LessonEditModal from "./LessonEditModal";
+import { Lesson } from "@/hooks/useCurriculum";
 
 interface Section {
   id: string;
   title: string;
   position: number;
   lessons: Lesson[];
-}
-
-interface Lesson {
-  id: string;
-  title: string;
-  type: string;
-  position: number;
-  content?: string;
-  contentUrl?: string;
 }
 
 interface ContentOrganizationProps {
@@ -65,6 +56,10 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
   const [contentUrl, setContentUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  const handleDeleteSection = (sectionId: string) => {
+    setSections(sections.filter(section => section.id !== sectionId));
+  };
+  
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
     
@@ -77,10 +72,6 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     
     setSections([...sections, newSection]);
     setNewSectionTitle('');
-  };
-  
-  const handleDeleteSection = (sectionId: string) => {
-    setSections(sections.filter(section => section.id !== sectionId));
   };
   
   const handleAddLesson = (sectionId: string, lessonType: string) => {
@@ -178,12 +169,10 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
   const handleDragStart = (e: React.DragEvent, item: any, type: 'section' | 'lesson', sectionId?: string) => {
     setDraggedItem({ ...item, type, sectionId });
     
-    // Add a visual cue that the item is being dragged
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.add('opacity-50');
     }
     
-    // Set the drag image
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = 'move';
     }
@@ -310,6 +299,10 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     console.log("File selected:", e.target.files);
   };
 
+  const updateSelectedLesson = (lesson: { sectionId: string; lesson: Lesson; } | null) => {
+    setSelectedLesson(lesson);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center space-x-2 mb-4">
@@ -347,7 +340,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
         isOpen={isLessonModalOpen}
         setIsOpen={setIsLessonModalOpen}
         selectedLesson={selectedLesson}
-        setSelectedLesson={setSelectedLesson}
+        setSelectedLesson={updateSelectedLesson}
         content={content}
         setContent={setContent}
         contentUrl={contentUrl}
