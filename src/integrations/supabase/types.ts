@@ -962,6 +962,7 @@ export type Database = {
         Row: {
           email: string | null
           first_name: string | null
+          id: string
           joined_on: string | null
           last_name: string | null
           status: string | null
@@ -969,6 +970,7 @@ export type Database = {
         Insert: {
           email?: string | null
           first_name?: string | null
+          id?: string
           joined_on?: string | null
           last_name?: string | null
           status?: string | null
@@ -976,6 +978,7 @@ export type Database = {
         Update: {
           email?: string | null
           first_name?: string | null
+          id?: string
           joined_on?: string | null
           last_name?: string | null
           status?: string | null
