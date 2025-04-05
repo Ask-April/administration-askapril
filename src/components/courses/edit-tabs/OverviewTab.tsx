@@ -1,108 +1,124 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Activity, Users, Bell, Zap, Award, LineChart } from "lucide-react";
+import { 
+  BarChart3, 
+  Activity, 
+  Users, 
+  Bell, 
+  Zap, 
+  Award, 
+  LineChart 
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+
 interface OverviewTabProps {
   courseId: string;
 }
+
 const OverviewTab: React.FC<OverviewTabProps> = ({
   courseId
 }) => {
-  return <div className="space-y-6">
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+
+  return (
+    <div className="space-y-6">
       <Card>
         <CardContent className="pt-6">
           <h3 className="text-lg font-medium mb-4">Course Overview</h3>
           
-          <Tabs defaultValue="sales" className="w-full">
-            <TabsList className="mb-4 grid grid-cols-7 md:w-auto w-full">
-              <TabsTrigger value="sales" className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                <span className="hidden md:inline">Sales</span>
-              </TabsTrigger>
-              <TabsTrigger value="activity" className="">
-                <Activity className="h-4 w-4" />
-                <span className="hidden md:inline">Activity</span>
-              </TabsTrigger>
-              <TabsTrigger value="engagement" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span className="hidden md:inline">Engagement</span>
-              </TabsTrigger>
-              <TabsTrigger value="notifications" className="flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                <span className="hidden md:inline">Notifications</span>
-              </TabsTrigger>
-              <TabsTrigger value="actions" className="flex items-center gap-2">
-                <Zap className="h-4 w-4" />
-                <span className="hidden md:inline">Quick Actions</span>
-              </TabsTrigger>
-              <TabsTrigger value="tips" className="flex items-center gap-2">
-                <Award className="h-4 w-4" />
-                <span className="hidden md:inline">Tips</span>
-              </TabsTrigger>
-              <TabsTrigger value="benchmark" className="flex items-center gap-2">
-                <LineChart className="h-4 w-4" />
-                <span className="hidden md:inline">Benchmark</span>
-              </TabsTrigger>
-            </TabsList>
+          {/* Filter Pills */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Button 
+              variant={activeFilter === "all" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setActiveFilter("all")}
+            >
+              All Metrics
+            </Button>
+            <Button 
+              variant={activeFilter === "sales" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setActiveFilter("sales")}
+            >
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Sales
+            </Button>
+            <Button 
+              variant={activeFilter === "activity" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setActiveFilter("activity")}
+            >
+              <Activity className="h-4 w-4 mr-2" />
+              Activity
+            </Button>
+            <Button 
+              variant={activeFilter === "engagement" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setActiveFilter("engagement")}
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Engagement
+            </Button>
+          </div>
 
-            <TabsContent value="sales" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Sales Overview</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <SalesMetricCard title="Total Enrollments" value="132" trend="+12%" period="Monthly" />
-                <SalesMetricCard title="Total Revenue" value="$8,450" trend="+8.5%" period="Monthly" />
-                <SalesMetricCard title="Average Rating" value="4.8" reviews={24} trend="+0.2" />
-                <SalesMetricCard title="Completion Rate" value="78%" benchmark="65%" industry="72%" />
-                <SalesMetricCard title="Average Quiz Score" value="82%" highest="98%" lowest="65%" />
-                <SalesMetricCard title="Revenue Forecast" nextMonth="$9,200" nextQuarter="$28,500" confidence="85%" />
-                <SalesMetricCard title="Refund Rate" value="2.1%" industry="3.5%" />
+          {/* Unified Content */}
+          <div className="space-y-8">
+            {/* Sales Section - Always visible or when activeFilter is "sales" or "all" */}
+            {(activeFilter === "all" || activeFilter === "sales") && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                  <h4 className="text-md font-medium">Sales Overview</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <SalesMetricCard title="Total Enrollments" value="132" trend="+12%" period="Monthly" />
+                  <SalesMetricCard title="Total Revenue" value="$8,450" trend="+8.5%" period="Monthly" />
+                  <SalesMetricCard title="Average Rating" value="4.8" reviews={24} trend="+0.2" />
+                  <SalesMetricCard title="Completion Rate" value="78%" benchmark="65%" industry="72%" />
+                  <SalesMetricCard title="Revenue Forecast" nextMonth="$9,200" nextQuarter="$28,500" confidence="85%" />
+                  <SalesMetricCard title="Refund Rate" value="2.1%" industry="3.5%" />
+                </div>
               </div>
-            </TabsContent>
+            )}
 
-            <TabsContent value="activity" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Recent Activity</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ActivityMetricCard title="New Enrollments" last24h={5} last7d={28} last30d={86} />
-                <ActivityMetricCard title="Completed Quizzes" count={56} averageScore="76%" completionRate="68%" />
-                <ActivityMetricCard title="Student Questions" unanswered={3} responseTime="6 hours" />
-                <ActivityMetricCard title="Forum Activity" newPosts={12} activeDiscussions={5} />
+            {/* Activity Section - Always visible or when activeFilter is "activity" or "all" */}
+            {(activeFilter === "all" || activeFilter === "activity") && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  <h4 className="text-md font-medium">Recent Activity</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <ActivityMetricCard title="New Enrollments" last24h={5} last7d={28} last30d={86} />
+                  <ActivityMetricCard title="Completed Quizzes" count={56} averageScore="76%" completionRate="68%" />
+                  <ActivityMetricCard title="Student Questions" unanswered={3} responseTime="6 hours" />
+                  <ActivityMetricCard title="Forum Activity" newPosts={12} activeDiscussions={5} />
+                </div>
               </div>
-            </TabsContent>
+            )}
 
-            <TabsContent value="engagement" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Engagement Metrics</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <EngagementMetricCard title="Average Time Spent" perSession="32 min" perStudent="4.2 hours" perModule="58 min" />
-                <EngagementMetricCard title="Interaction Levels" videoCompletion="76%" downloads={128} />
-                <EngagementMetricCard title="Active Students" active="68%" reactivation="8.2%" />
-                <EngagementMetricCard title="Session Frequency" averagePerWeek={2.4} />
+            {/* Engagement Section - Always visible or when activeFilter is "engagement" or "all" */}
+            {(activeFilter === "all" || activeFilter === "engagement") && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  <h4 className="text-md font-medium">Engagement Metrics</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <EngagementMetricCard title="Average Time Spent" perSession="32 min" perStudent="4.2 hours" perModule="58 min" />
+                  <EngagementMetricCard title="Interaction Levels" videoCompletion="76%" downloads={128} />
+                  <EngagementMetricCard title="Active Students" active="68%" reactivation="8.2%" />
+                  <EngagementMetricCard title="Session Frequency" averagePerWeek={2.4} />
+                </div>
               </div>
-            </TabsContent>
-
-            {/* Placeholder content for other tabs */}
-            <TabsContent value="notifications" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Notifications</h4>
-              <p className="text-muted-foreground">Notification content coming soon</p>
-            </TabsContent>
-
-            <TabsContent value="actions" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Quick Actions</h4>
-              <p className="text-muted-foreground">Quick action content coming soon</p>
-            </TabsContent>
-
-            <TabsContent value="tips" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Tips for Improvement</h4>
-              <p className="text-muted-foreground">Tips content coming soon</p>
-            </TabsContent>
-
-            <TabsContent value="benchmark" className="border rounded-md p-4">
-              <h4 className="text-md font-medium mb-4">Benchmark Comparison</h4>
-              <p className="text-muted-foreground">Benchmark content coming soon</p>
-            </TabsContent>
-          </Tabs>
+            )}
+          </div>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };
+
 interface SalesMetricCardProps {
   title: string;
   value?: string;
@@ -117,6 +133,7 @@ interface SalesMetricCardProps {
   nextQuarter?: string;
   confidence?: string;
 }
+
 const SalesMetricCard: React.FC<SalesMetricCardProps> = ({
   title,
   value,
@@ -147,6 +164,7 @@ const SalesMetricCard: React.FC<SalesMetricCardProps> = ({
       </div>
     </div>;
 };
+
 interface ActivityMetricCardProps {
   title: string;
   last24h?: number;
@@ -160,6 +178,7 @@ interface ActivityMetricCardProps {
   newPosts?: number;
   activeDiscussions?: number;
 }
+
 const ActivityMetricCard: React.FC<ActivityMetricCardProps> = ({
   title,
   last24h,
@@ -193,6 +212,7 @@ const ActivityMetricCard: React.FC<ActivityMetricCardProps> = ({
       </div>
     </div>;
 };
+
 interface EngagementMetricCardProps {
   title: string;
   perSession?: string;
@@ -204,6 +224,7 @@ interface EngagementMetricCardProps {
   reactivation?: string;
   averagePerWeek?: number;
 }
+
 const EngagementMetricCard: React.FC<EngagementMetricCardProps> = ({
   title,
   perSession,
@@ -233,4 +254,5 @@ const EngagementMetricCard: React.FC<EngagementMetricCardProps> = ({
       </div>
     </div>;
 };
+
 export default OverviewTab;
