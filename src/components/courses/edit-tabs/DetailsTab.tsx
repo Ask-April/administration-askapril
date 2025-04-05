@@ -1,37 +1,20 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
-  BookOpen, 
-  Users, 
-  Tag, 
-  Eye, 
-  Award, 
-  Bookmark, 
-  Image 
-} from "lucide-react";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
+import { BookOpen, Users, Tag, Eye, Award, Bookmark, Image } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ImageUpload from "@/components/courses/ImageUpload";
 import { Switch } from "@/components/ui/switch";
-
 interface DetailsTabProps {
   editedCourse: any;
   setEditedCourse: (course: any) => void;
 }
-
-const DetailsTab: React.FC<DetailsTabProps> = ({ 
-  editedCourse, 
-  setEditedCourse 
+const DetailsTab: React.FC<DetailsTabProps> = ({
+  editedCourse,
+  setEditedCourse
 }) => {
   // Function to update any course property
   const updateCourseData = (field: string, value: any) => {
@@ -40,9 +23,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
       [field]: value
     });
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <Card>
         <CardContent className="pt-6">
           <h3 className="text-lg font-medium mb-4">Course Details</h3>
@@ -73,10 +54,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 <Bookmark className="h-4 w-4" />
                 <span className="hidden md:inline">Attributes</span>
               </TabsTrigger>
-              <TabsTrigger value="media" className="flex items-center gap-2">
-                <Image className="h-4 w-4" />
-                <span className="hidden md:inline">Media</span>
-              </TabsTrigger>
+              
             </TabsList>
 
             <TabsContent value="basic" className="border rounded-md p-4">
@@ -84,14 +62,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 <div>
                   <Label htmlFor="title">Course Title</Label>
                   <div className="flex items-center">
-                    <Input
-                      id="title"
-                      value={editedCourse.title || ""}
-                      onChange={(e) => updateCourseData('title', e.target.value)}
-                      maxLength={60}
-                      placeholder="Enter course title"
-                      className="mt-1"
-                    />
+                    <Input id="title" value={editedCourse.title || ""} onChange={e => updateCourseData('title', e.target.value)} maxLength={60} placeholder="Enter course title" className="mt-1" />
                     <span className="ml-2 text-xs text-muted-foreground">
                       {editedCourse.title?.length || 0}/60
                     </span>
@@ -101,14 +72,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 <div>
                   <Label htmlFor="subtitle">Subtitle</Label>
                   <div className="flex items-center">
-                    <Input
-                      id="subtitle"
-                      value={editedCourse.subtitle || ""}
-                      onChange={(e) => updateCourseData('subtitle', e.target.value)}
-                      maxLength={120}
-                      placeholder="Enter subtitle"
-                      className="mt-1"
-                    />
+                    <Input id="subtitle" value={editedCourse.subtitle || ""} onChange={e => updateCourseData('subtitle', e.target.value)} maxLength={120} placeholder="Enter subtitle" className="mt-1" />
                     <span className="ml-2 text-xs text-muted-foreground">
                       {editedCourse.subtitle?.length || 0}/120
                     </span>
@@ -118,19 +82,9 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 <div>
                   <Label htmlFor="url">URL Slug</Label>
                   <div className="flex items-center">
-                    <Input
-                      id="url"
-                      value={editedCourse.slug || ""}
-                      onChange={(e) => updateCourseData('slug', e.target.value)}
-                      placeholder="course-url-slug"
-                      className="mt-1"
-                    />
+                    <Input id="url" value={editedCourse.slug || ""} onChange={e => updateCourseData('slug', e.target.value)} placeholder="course-url-slug" className="mt-1" />
                     <div className="ml-2 flex items-center">
-                      <Switch 
-                        id="auto-generate"
-                        checked={editedCourse.autoGenerateSlug || false}
-                        onCheckedChange={(checked) => updateCourseData('autoGenerateSlug', checked)}
-                      />
+                      <Switch id="auto-generate" checked={editedCourse.autoGenerateSlug || false} onCheckedChange={checked => updateCourseData('autoGenerateSlug', checked)} />
                       <Label htmlFor="auto-generate" className="ml-2 text-sm">Auto-generate</Label>
                     </div>
                   </div>
@@ -138,14 +92,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
 
                 <div>
                   <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={editedCourse.description || ""}
-                    onChange={(e) => updateCourseData('description', e.target.value)}
-                    placeholder="Enter course description"
-                    className="mt-1"
-                    rows={5}
-                  />
+                  <Textarea id="description" value={editedCourse.description || ""} onChange={e => updateCourseData('description', e.target.value)} placeholder="Enter course description" className="mt-1" rows={5} />
                   <div className="flex justify-between mt-1">
                     <span className="text-xs text-muted-foreground">
                       Supports HTML formatting
@@ -158,14 +105,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 
                 <div>
                   <Label htmlFor="learning-objectives">Learning Objectives</Label>
-                  <Textarea
-                    id="learning-objectives"
-                    value={editedCourse.learningObjectives?.join('\n') || ""}
-                    onChange={(e) => updateCourseData('learningObjectives', e.target.value.split('\n'))}
-                    placeholder="Enter learning objectives (one per line)"
-                    className="mt-1"
-                    rows={3}
-                  />
+                  <Textarea id="learning-objectives" value={editedCourse.learningObjectives?.join('\n') || ""} onChange={e => updateCourseData('learningObjectives', e.target.value.split('\n'))} placeholder="Enter learning objectives (one per line)" className="mt-1" rows={3} />
                   <span className="text-xs text-muted-foreground">
                     Recommended: 4-6 objectives
                   </span>
@@ -173,14 +113,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 
                 <div>
                   <Label htmlFor="prerequisites">Prerequisites</Label>
-                  <Textarea
-                    id="prerequisites"
-                    value={editedCourse.prerequisites?.join('\n') || ""}
-                    onChange={(e) => updateCourseData('prerequisites', e.target.value.split('\n'))}
-                    placeholder="Enter prerequisites (one per line)"
-                    className="mt-1"
-                    rows={3}
-                  />
+                  <Textarea id="prerequisites" value={editedCourse.prerequisites?.join('\n') || ""} onChange={e => updateCourseData('prerequisites', e.target.value.split('\n'))} placeholder="Enter prerequisites (one per line)" className="mt-1" rows={3} />
                 </div>
               </div>
             </TabsContent>
@@ -193,10 +126,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="category">Primary Category</Label>
-                  <Select 
-                    value={editedCourse.category || ""}
-                    onValueChange={(value) => updateCourseData('category', value)}
-                  >
+                  <Select value={editedCourse.category || ""} onValueChange={value => updateCourseData('category', value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
@@ -213,10 +143,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 
                 <div>
                   <Label htmlFor="subcategory">Subcategory</Label>
-                  <Select 
-                    value={editedCourse.subcategory || ""}
-                    onValueChange={(value) => updateCourseData('subcategory', value)}
-                  >
+                  <Select value={editedCourse.subcategory || ""} onValueChange={value => updateCourseData('subcategory', value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select subcategory" />
                     </SelectTrigger>
@@ -232,13 +159,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 
                 <div>
                   <Label htmlFor="tags">Tags (comma separated)</Label>
-                  <Input
-                    id="tags"
-                    value={editedCourse.tags?.join(', ') || ""}
-                    onChange={(e) => updateCourseData('tags', e.target.value.split(', '))}
-                    placeholder="react, javascript, programming"
-                    className="mt-1"
-                  />
+                  <Input id="tags" value={editedCourse.tags?.join(', ') || ""} onChange={e => updateCourseData('tags', e.target.value.split(', '))} placeholder="react, javascript, programming" className="mt-1" />
                   <span className="text-xs text-muted-foreground">
                     Min: 3, Max: 10 tags
                   </span>
@@ -255,11 +176,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                       Feature this course on your homepage
                     </p>
                   </div>
-                  <Switch 
-                    id="featured"
-                    checked={editedCourse.featured || false}
-                    onCheckedChange={(checked) => updateCourseData('featured', checked)}
-                  />
+                  <Switch id="featured" checked={editedCourse.featured || false} onCheckedChange={checked => updateCourseData('featured', checked)} />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -269,19 +186,12 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                       Show course price to visitors
                     </p>
                   </div>
-                  <Switch 
-                    id="price-visible"
-                    checked={editedCourse.priceVisible || false}
-                    onCheckedChange={(checked) => updateCourseData('priceVisible', checked)}
-                  />
+                  <Switch id="price-visible" checked={editedCourse.priceVisible || false} onCheckedChange={checked => updateCourseData('priceVisible', checked)} />
                 </div>
                 
                 <div>
                   <Label htmlFor="course-status">Course Status</Label>
-                  <Select 
-                    value={editedCourse.status || "draft"}
-                    onValueChange={(value) => updateCourseData('status', value)}
-                  >
+                  <Select value={editedCourse.status || "draft"} onValueChange={value => updateCourseData('status', value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
@@ -305,10 +215,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="level">Course Level</Label>
-                  <Select 
-                    value={editedCourse.level || ""}
-                    onValueChange={(value) => updateCourseData('level', value)}
-                  >
+                  <Select value={editedCourse.level || ""} onValueChange={value => updateCourseData('level', value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select level" />
                     </SelectTrigger>
@@ -323,14 +230,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                 
                 <div>
                   <Label htmlFor="duration">Estimated Duration (hours)</Label>
-                  <Input
-                    id="duration"
-                    type="number"
-                    value={editedCourse.durationHours || ""}
-                    onChange={(e) => updateCourseData('durationHours', e.target.value)}
-                    placeholder="8"
-                    className="mt-1"
-                  />
+                  <Input id="duration" type="number" value={editedCourse.durationHours || ""} onChange={e => updateCourseData('durationHours', e.target.value)} placeholder="8" className="mt-1" />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -340,11 +240,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                       Students can complete at their own pace
                     </p>
                   </div>
-                  <Switch 
-                    id="self-paced"
-                    checked={editedCourse.selfPaced || false}
-                    onCheckedChange={(checked) => updateCourseData('selfPaced', checked)}
-                  />
+                  <Switch id="self-paced" checked={editedCourse.selfPaced || false} onCheckedChange={checked => updateCourseData('selfPaced', checked)} />
                 </div>
               </div>
             </TabsContent>
@@ -356,29 +252,18 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                   <p className="text-sm text-muted-foreground mb-2">
                     Recommended size: 1280×720 pixels
                   </p>
-                  <ImageUpload
-                    value={editedCourse.image || ""}
-                    onChange={(url) => updateCourseData('image', url)}
-                  />
+                  <ImageUpload value={editedCourse.image || ""} onChange={url => updateCourseData('image', url)} />
                 </div>
                 
                 <div>
                   <Label htmlFor="video-intro">Video Introduction URL</Label>
-                  <Input
-                    id="video-intro"
-                    value={editedCourse.videoIntro || ""}
-                    onChange={(e) => updateCourseData('videoIntro', e.target.value)}
-                    placeholder="https://www.youtube.com/watch?v=..."
-                    className="mt-1"
-                  />
+                  <Input id="video-intro" value={editedCourse.videoIntro || ""} onChange={e => updateCourseData('videoIntro', e.target.value)} placeholder="https://www.youtube.com/watch?v=..." className="mt-1" />
                 </div>
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default DetailsTab;
