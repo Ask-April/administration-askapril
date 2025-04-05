@@ -4,15 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ContentEditor from "@/components/courses/lesson-editors/ContentEditor";
-
-interface Lesson {
-  id: string;
-  title: string;
-  type: string;
-  position: number;
-  content?: string;
-  contentUrl?: string;
-}
+import { Lesson } from "@/hooks/useCurriculum";
 
 interface LessonEditModalProps {
   isOpen: boolean;
@@ -79,7 +71,7 @@ const LessonEditModal: React.FC<LessonEditModalProps> = ({
             </div>
             
             <ContentEditor
-              selectedType={selectedLesson.lesson.type}
+              selectedType={selectedLesson.lesson.type || null}
               contentUrl={contentUrl}
               onContentUrlChange={setContentUrl}
               content={content}

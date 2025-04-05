@@ -5,15 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { lessonTypes } from "@/components/courses/lesson-editors/LessonTypeSelector";
-
-interface Lesson {
-  id: string;
-  title: string;
-  type: string;
-  position: number;
-  content?: string;
-  contentUrl?: string;
-}
+import { Lesson } from "@/hooks/useCurriculum";
 
 interface LessonItemProps {
   lesson: Lesson;
@@ -129,7 +121,7 @@ const LessonItem: React.FC<LessonItemProps> = ({
               className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full"
               onClick={(e) => e.stopPropagation()}
             >
-              {lesson.type}
+              {lesson.type || 'Unknown'}
             </span>
           </PopoverTrigger>
           <PopoverContent className="w-48 p-2" onClick={(e) => e.stopPropagation()}>
