@@ -13,6 +13,13 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
   editedCourse,
   updateCourseData
 }) => {
+  // Calculate the payment amount with 2 decimal places
+  const calculatePaymentAmount = () => {
+    const total = parseFloat(editedCourse?.totalPrice || 299.99);
+    const installments = parseFloat(editedCourse?.installments || 3);
+    return (total / installments).toFixed(2);
+  };
+
   return (
     <div className="border rounded-md p-4">
       <h4 className="font-medium mb-4">Payment Plan Settings</h4>
@@ -60,15 +67,15 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
           <div className="text-sm">
             <p className="flex justify-between mb-1">
               <span>Initial payment:</span>
-              <span>${parseFloat(editedCourse?.totalPrice || 299.99) / parseFloat(editedCourse?.installments || 3)}</span>
+              <span>${calculatePaymentAmount()}</span>
             </p>
             <p className="flex justify-between mb-1">
               <span>{parseInt(editedCourse?.installments || 3) - 1} additional payments:</span>
-              <span>${parseFloat(editedCourse?.totalPrice || 299.99) / parseFloat(editedCourse?.installments || 3)} every {editedCourse?.installmentPeriod || 30} days</span>
+              <span>${calculatePaymentAmount()} every {editedCourse?.installmentPeriod || 30} days</span>
             </p>
             <p className="flex justify-between font-medium mt-2 pt-2 border-t">
               <span>Total:</span>
-              <span>${editedCourse?.totalPrice || 299.99}</span>
+              <span>${parseFloat(editedCourse?.totalPrice || 299.99).toFixed(2)}</span>
             </p>
           </div>
         </div>
