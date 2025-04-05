@@ -26,6 +26,7 @@ interface LessonItemProps {
   onDragLeave: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, targetId: string, type: 'section' | 'lesson', sectionId?: string) => void;
   changeLessonType: (sectionId: string, lessonId: string, newType: string) => void;
+  updateLessonTitle?: (lessonId: string, newTitle: string) => void;
 }
 
 const LessonItem: React.FC<LessonItemProps> = ({
@@ -38,7 +39,8 @@ const LessonItem: React.FC<LessonItemProps> = ({
   onDragOver,
   onDragLeave,
   onDrop,
-  changeLessonType
+  changeLessonType,
+  updateLessonTitle
 }) => {
   const [editingLesson, setEditingLesson] = useState<{ sectionId: string, lessonId: string, title: string } | null>(null);
   
@@ -48,7 +50,21 @@ const LessonItem: React.FC<LessonItemProps> = ({
   
   const saveEditingLesson = () => {
     if (!editingLesson) return;
+    
+    // Call the parent component's function to update the title
+    if (updateLessonTitle) {
+      updateLessonTitle(editingLesson.lessonId, editingLesson.title);
+    }
+    
     setEditingLesson(null);
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveEditingLesson();
+    } else if (e.key === 'Escape') {
+      setEditingLesson(null);
+    }
   };
 
   return (
@@ -73,6 +89,7 @@ const LessonItem: React.FC<LessonItemProps> = ({
             <Input 
               value={editingLesson.title}
               onChange={(e) => setEditingLesson({...editingLesson, title: e.target.value})}
+              onKeyDown={handleKeyDown}
               className="h-7 w-48"
               autoFocus
             />

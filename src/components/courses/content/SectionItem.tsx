@@ -25,6 +25,7 @@ interface SectionItemProps {
   onDragLeave: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, targetId: string, type: 'section' | 'lesson', sectionId?: string) => void;
   changeLessonType: (sectionId: string, lessonId: string, newType: string) => void;
+  updateSectionTitle?: (sectionId: string, newTitle: string) => void;
 }
 
 const SectionItem: React.FC<SectionItemProps> = ({
@@ -38,7 +39,8 @@ const SectionItem: React.FC<SectionItemProps> = ({
   onDragOver,
   onDragLeave,
   onDrop,
-  changeLessonType
+  changeLessonType,
+  updateSectionTitle
 }) => {
   const [editingSection, setEditingSection] = useState<{ id: string, title: string } | null>(null);
   
@@ -48,7 +50,21 @@ const SectionItem: React.FC<SectionItemProps> = ({
   
   const saveEditingSection = () => {
     if (!editingSection) return;
+    
+    // Call the parent component's function to update the title
+    if (updateSectionTitle) {
+      updateSectionTitle(editingSection.id, editingSection.title);
+    }
+    
     setEditingSection(null);
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveEditingSection();
+    } else if (e.key === 'Escape') {
+      setEditingSection(null);
+    }
   };
   
   return (
@@ -73,6 +89,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
               <Input 
                 value={editingSection.title}
                 onChange={(e) => setEditingSection({...editingSection, title: e.target.value})}
+                onKeyDown={handleKeyDown}
                 className="h-8 w-60"
                 autoFocus
               />
@@ -132,7 +149,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
             {section.lessons.map((lesson) => (
               <LessonItem
                 key={lesson.id}
-                lesson={lesson}
+                lesson={{...lesson, type: lesson.type || 'video'}} 
                 sectionId={section.id}
                 onDeleteLesson={onDeleteLesson}
                 onOpenLessonModal={onOpenLessonModal}
@@ -142,6 +159,9 @@ const SectionItem: React.FC<SectionItemProps> = ({
                 onDragLeave={onDragLeave}
                 onDrop={onDrop}
                 changeLessonType={changeLessonType}
+                updateLessonTitle={(lessonId, newTitle) => {
+                  // This will be handled by the parent component
+                }}
               />
             ))}
           </div>

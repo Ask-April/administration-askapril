@@ -117,6 +117,46 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     setSections(updatedSections);
   };
   
+  const updateSectionTitle = (sectionId: string, newTitle: string) => {
+    const updatedSections = sections.map(section => {
+      if (section.id === sectionId) {
+        return {
+          ...section,
+          title: newTitle
+        };
+      }
+      return section;
+    });
+    
+    setSections(updatedSections);
+    toast({ 
+      title: "Success", 
+      description: "Section title updated successfully" 
+    });
+  };
+  
+  const updateLessonTitle = (sectionId: string, lessonId: string, newTitle: string) => {
+    const updatedSections = sections.map(section => {
+      if (section.id === sectionId) {
+        const updatedLessons = section.lessons.map(lesson => {
+          if (lesson.id === lessonId) {
+            return { ...lesson, title: newTitle };
+          }
+          return lesson;
+        });
+        
+        return { ...section, lessons: updatedLessons };
+      }
+      return section;
+    });
+    
+    setSections(updatedSections);
+    toast({ 
+      title: "Success", 
+      description: "Lesson title updated successfully" 
+    });
+  };
+  
   const changeLessonType = (sectionId: string, lessonId: string, newType: string) => {
     const updatedSections = sections.map(section => {
       if (section.id === sectionId) {
@@ -297,6 +337,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             changeLessonType={changeLessonType}
+            updateSectionTitle={updateSectionTitle}
           />
         ))}
       </div>
