@@ -1,17 +1,18 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { BookOpen, Users, Tag, Eye, Award, Bookmark, Image } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ImageUpload from "@/components/courses/ImageUpload";
-import { Switch } from "@/components/ui/switch";
+
 interface DetailsTabProps {
   editedCourse: any;
   setEditedCourse: (course: any) => void;
 }
+
 const DetailsTab: React.FC<DetailsTabProps> = ({
   editedCourse,
   setEditedCourse
@@ -23,110 +24,76 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
       [field]: value
     });
   };
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       <Card>
         <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-4">Course Details</h3>
+          <h3 className="text-lg font-medium mb-6">Course Details</h3>
           
-          <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="mb-4 grid grid-cols-7 md:w-auto w-full">
-              <TabsTrigger value="basic" className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                <span className="hidden md:inline">Basic Info</span>
-              </TabsTrigger>
-              <TabsTrigger value="instructors" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span className="hidden md:inline">Instructors</span>
-              </TabsTrigger>
-              <TabsTrigger value="classification" className="flex items-center gap-2">
-                <Tag className="h-4 w-4" />
-                <span className="hidden md:inline">Classification</span>
-              </TabsTrigger>
-              <TabsTrigger value="visibility" className="flex items-center gap-2">
-                <Eye className="h-4 w-4" />
-                <span className="hidden md:inline">Visibility</span>
-              </TabsTrigger>
-              <TabsTrigger value="certification" className="flex items-center gap-2">
-                <Award className="h-4 w-4" />
-                <span className="hidden md:inline">Certification</span>
-              </TabsTrigger>
-              <TabsTrigger value="attributes" className="flex items-center gap-2">
-                <Bookmark className="h-4 w-4" />
-                <span className="hidden md:inline">Attributes</span>
-              </TabsTrigger>
-              
-            </TabsList>
-
-            <TabsContent value="basic" className="border rounded-md p-4">
+          <div className="space-y-6">
+            {/* Basic Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
+                {/* Title */}
                 <div>
                   <Label htmlFor="title">Course Title</Label>
                   <div className="flex items-center">
-                    <Input id="title" value={editedCourse.title || ""} onChange={e => updateCourseData('title', e.target.value)} maxLength={60} placeholder="Enter course title" className="mt-1" />
+                    <Input 
+                      id="title" 
+                      value={editedCourse.title || ""} 
+                      onChange={e => updateCourseData('title', e.target.value)} 
+                      maxLength={60} 
+                      placeholder="Enter course title" 
+                      className="mt-1" 
+                    />
                     <span className="ml-2 text-xs text-muted-foreground">
                       {editedCourse.title?.length || 0}/60
                     </span>
                   </div>
                 </div>
                 
+                {/* Subtitle */}
                 <div>
                   <Label htmlFor="subtitle">Subtitle</Label>
                   <div className="flex items-center">
-                    <Input id="subtitle" value={editedCourse.subtitle || ""} onChange={e => updateCourseData('subtitle', e.target.value)} maxLength={120} placeholder="Enter subtitle" className="mt-1" />
+                    <Input 
+                      id="subtitle" 
+                      value={editedCourse.subtitle || ""} 
+                      onChange={e => updateCourseData('subtitle', e.target.value)} 
+                      maxLength={120} 
+                      placeholder="Enter subtitle" 
+                      className="mt-1" 
+                    />
                     <span className="ml-2 text-xs text-muted-foreground">
                       {editedCourse.subtitle?.length || 0}/120
                     </span>
                   </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="url">URL Slug</Label>
-                  <div className="flex items-center">
-                    <Input id="url" value={editedCourse.slug || ""} onChange={e => updateCourseData('slug', e.target.value)} placeholder="course-url-slug" className="mt-1" />
-                    <div className="ml-2 flex items-center">
-                      <Switch id="auto-generate" checked={editedCourse.autoGenerateSlug || false} onCheckedChange={checked => updateCourseData('autoGenerateSlug', checked)} />
-                      <Label htmlFor="auto-generate" className="ml-2 text-sm">Auto-generate</Label>
-                    </div>
-                  </div>
-                </div>
-
+                {/* Description */}
                 <div>
                   <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" value={editedCourse.description || ""} onChange={e => updateCourseData('description', e.target.value)} placeholder="Enter course description" className="mt-1" rows={5} />
-                  <div className="flex justify-between mt-1">
-                    <span className="text-xs text-muted-foreground">
-                      Supports HTML formatting
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {editedCourse.description?.length || 0}/5000
-                    </span>
-                  </div>
-                </div>
-                
-                <div>
-                  <Label htmlFor="learning-objectives">Learning Objectives</Label>
-                  <Textarea id="learning-objectives" value={editedCourse.learningObjectives?.join('\n') || ""} onChange={e => updateCourseData('learningObjectives', e.target.value.split('\n'))} placeholder="Enter learning objectives (one per line)" className="mt-1" rows={3} />
+                  <Textarea 
+                    id="description" 
+                    value={editedCourse.description || ""} 
+                    onChange={e => updateCourseData('description', e.target.value)} 
+                    placeholder="Enter course description" 
+                    className="mt-1" 
+                    rows={5} 
+                  />
                   <span className="text-xs text-muted-foreground">
-                    Recommended: 4-6 objectives
+                    {editedCourse.description?.length || 0}/5000
                   </span>
                 </div>
                 
+                {/* Category */}
                 <div>
-                  <Label htmlFor="prerequisites">Prerequisites</Label>
-                  <Textarea id="prerequisites" value={editedCourse.prerequisites?.join('\n') || ""} onChange={e => updateCourseData('prerequisites', e.target.value.split('\n'))} placeholder="Enter prerequisites (one per line)" className="mt-1" rows={3} />
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="instructors" className="border rounded-md p-4">
-              <p className="text-muted-foreground">Instructor details content coming soon</p>
-            </TabsContent>
-            
-            <TabsContent value="classification" className="border rounded-md p-4">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="category">Primary Category</Label>
-                  <Select value={editedCourse.category || ""} onValueChange={value => updateCourseData('category', value)}>
+                  <Label htmlFor="category">Category</Label>
+                  <Select 
+                    value={editedCourse.category || ""} 
+                    onValueChange={value => updateCourseData('category', value)}
+                  >
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
@@ -140,130 +107,134 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                     </SelectContent>
                   </Select>
                 </div>
-                
-                <div>
-                  <Label htmlFor="subcategory">Subcategory</Label>
-                  <Select value={editedCourse.subcategory || ""} onValueChange={value => updateCourseData('subcategory', value)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select subcategory" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="web-design">Web Design</SelectItem>
-                      <SelectItem value="graphic-design">Graphic Design</SelectItem>
-                      <SelectItem value="ui-ux">UI/UX</SelectItem>
-                      <SelectItem value="web-development">Web Development</SelectItem>
-                      <SelectItem value="mobile-development">Mobile Development</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="tags">Tags (comma separated)</Label>
-                  <Input id="tags" value={editedCourse.tags?.join(', ') || ""} onChange={e => updateCourseData('tags', e.target.value.split(', '))} placeholder="react, javascript, programming" className="mt-1" />
-                  <span className="text-xs text-muted-foreground">
-                    Min: 3, Max: 10 tags
-                  </span>
-                </div>
               </div>
-            </TabsContent>
+              
+              {/* Thumbnail */}
+              <div>
+                <Label htmlFor="thumbnail">Thumbnail</Label>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Recommended size: 1280×720 pixels
+                </p>
+                <ImageUpload value={editedCourse.image || ""} onChange={url => updateCourseData('image', url)} />
+              </div>
+            </div>
             
-            <TabsContent value="visibility" className="border rounded-md p-4">
+            {/* Course Settings */}
+            <div className="border-t pt-6 mt-6">
+              <h4 className="font-medium mb-4">Course Settings</h4>
+              
               <div className="space-y-4">
+                {/* Featured Course */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="featured">Featured Status</Label>
+                    <Label htmlFor="featured">Featured Course</Label>
                     <p className="text-sm text-muted-foreground">
                       Feature this course on your homepage
                     </p>
                   </div>
-                  <Switch id="featured" checked={editedCourse.featured || false} onCheckedChange={checked => updateCourseData('featured', checked)} />
+                  <Switch 
+                    id="featured" 
+                    checked={editedCourse.featured || false} 
+                    onCheckedChange={checked => updateCourseData('featured', checked)} 
+                  />
                 </div>
                 
+                {/* Hide Price */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="price-visible">Price Visibility</Label>
+                    <Label htmlFor="hide-price">Hide Price</Label>
                     <p className="text-sm text-muted-foreground">
-                      Show course price to visitors
+                      Hide the course price from visitors
                     </p>
                   </div>
-                  <Switch id="price-visible" checked={editedCourse.priceVisible || false} onCheckedChange={checked => updateCourseData('priceVisible', checked)} />
+                  <Switch 
+                    id="hide-price" 
+                    checked={!editedCourse.priceVisible} 
+                    onCheckedChange={checked => updateCourseData('priceVisible', !checked)} 
+                  />
                 </div>
                 
-                <div>
-                  <Label htmlFor="course-status">Course Status</Label>
-                  <Select value={editedCourse.status || "draft"} onValueChange={value => updateCourseData('status', value)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                      <SelectItem value="archived">Archived</SelectItem>
-                      <SelectItem value="review">Under Review</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </TabsContent>
-            
-            {/* Placeholder content for remaining tabs */}
-            <TabsContent value="certification" className="border rounded-md p-4">
-              <p className="text-muted-foreground">Certification content coming soon</p>
-            </TabsContent>
-            
-            <TabsContent value="attributes" className="border rounded-md p-4">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="level">Course Level</Label>
-                  <Select value={editedCourse.level || ""} onValueChange={value => updateCourseData('level', value)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="beginner">Beginner</SelectItem>
-                      <SelectItem value="intermediate">Intermediate</SelectItem>
-                      <SelectItem value="advanced">Advanced</SelectItem>
-                      <SelectItem value="all-levels">All Levels</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="duration">Estimated Duration (hours)</Label>
-                  <Input id="duration" type="number" value={editedCourse.durationHours || ""} onChange={e => updateCourseData('durationHours', e.target.value)} placeholder="8" className="mt-1" />
-                </div>
-                
+                {/* Hide Course */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="self-paced">Self-paced</Label>
+                    <Label htmlFor="hide-course">Hide Course</Label>
                     <p className="text-sm text-muted-foreground">
-                      Students can complete at their own pace
+                      Hide this course from course listings
                     </p>
                   </div>
-                  <Switch id="self-paced" checked={editedCourse.selfPaced || false} onCheckedChange={checked => updateCourseData('selfPaced', checked)} />
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="media" className="border rounded-md p-4">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="cover-image">Cover Image</Label>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Recommended size: 1280×720 pixels
-                  </p>
-                  <ImageUpload value={editedCourse.image || ""} onChange={url => updateCourseData('image', url)} />
+                  <Switch 
+                    id="hide-course" 
+                    checked={editedCourse.hidden || false} 
+                    onCheckedChange={checked => updateCourseData('hidden', checked)} 
+                  />
                 </div>
                 
-                <div>
-                  <Label htmlFor="video-intro">Video Introduction URL</Label>
-                  <Input id="video-intro" value={editedCourse.videoIntro || ""} onChange={e => updateCourseData('videoIntro', e.target.value)} placeholder="https://www.youtube.com/watch?v=..." className="mt-1" />
+                {/* Enable Certificate */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="enable-certificate">Enable Certificate</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Issue a certificate upon course completion
+                    </p>
+                  </div>
+                  <Switch 
+                    id="enable-certificate" 
+                    checked={editedCourse.hasCertificate || false} 
+                    onCheckedChange={checked => updateCourseData('hasCertificate', checked)} 
+                  />
                 </div>
+                
+                {/* Certificate Upload - Only show if certificates are enabled */}
+                {editedCourse.hasCertificate && (
+                  <div className="ml-6 mt-2">
+                    <Label htmlFor="certificate-template">Certificate Template</Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Upload a custom certificate template
+                    </p>
+                    <ImageUpload 
+                      value={editedCourse.certificateTemplate || ""} 
+                      onChange={url => updateCourseData('certificateTemplate', url)} 
+                    />
+                  </div>
+                )}
+                
+                {/* Enrollment Limits */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="enrollment-limit">Set Enrollment Limits</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Limit the number of students who can enroll
+                    </p>
+                  </div>
+                  <Switch 
+                    id="enrollment-limit" 
+                    checked={editedCourse.hasEnrollmentLimit || false} 
+                    onCheckedChange={checked => updateCourseData('hasEnrollmentLimit', checked)} 
+                  />
+                </div>
+                
+                {/* Enrollment Limit Input - Only show if enrollment limits are enabled */}
+                {editedCourse.hasEnrollmentLimit && (
+                  <div className="ml-6 mt-2">
+                    <Label htmlFor="max-enrollments">Maximum Enrollments</Label>
+                    <Input 
+                      id="max-enrollments" 
+                      type="number" 
+                      min="1" 
+                      value={editedCourse.maxEnrollments || ""} 
+                      onChange={e => updateCourseData('maxEnrollments', parseInt(e.target.value))} 
+                      placeholder="100" 
+                      className="mt-1 w-24" 
+                    />
+                  </div>
+                )}
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };
+
 export default DetailsTab;

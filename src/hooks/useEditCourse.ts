@@ -11,6 +11,7 @@ export const useEditCourse = (id: string | undefined) => {
   // Local state for edited course data - initialize with default empty values
   const [editedCourse, setEditedCourse] = useState<any>({
     title: "",
+    subtitle: "",
     description: "",
     category: "",
     image: "",
@@ -18,6 +19,13 @@ export const useEditCourse = (id: string | undefined) => {
     status: "draft",
     lessons: 0,
     students: 0,
+    featured: false,
+    priceVisible: true,
+    hidden: false,
+    hasCertificate: false,
+    certificateTemplate: "",
+    hasEnrollmentLimit: false,
+    maxEnrollments: 100,
   });
 
   // Update local state when the data is loaded
@@ -25,6 +33,7 @@ export const useEditCourse = (id: string | undefined) => {
     if (course) {
       setEditedCourse({
         title: course.title || "",
+        subtitle: course.subtitle || "",
         description: course.description || "",
         category: course.category || "",
         image: course.image || "",
@@ -32,6 +41,13 @@ export const useEditCourse = (id: string | undefined) => {
         status: course.status || "draft",
         lessons: course.lessons || 0,
         students: course.students || 0,
+        featured: course.featured || false,
+        priceVisible: course.priceVisible !== false,
+        hidden: course.hidden || false,
+        hasCertificate: course.hasCertificate || false,
+        certificateTemplate: course.certificateTemplate || "",
+        hasEnrollmentLimit: course.hasEnrollmentLimit || false,
+        maxEnrollments: course.maxEnrollments || 100,
       });
     }
   }, [course]);
@@ -42,6 +58,7 @@ export const useEditCourse = (id: string | undefined) => {
         // Call the updateCourse API function
         await updateCourse(id, {
           title: editedCourse.title,
+          subtitle: editedCourse.subtitle,
           description: editedCourse.description,
           status: editedCourse.status,
           category: editedCourse.category,
@@ -49,13 +66,18 @@ export const useEditCourse = (id: string | undefined) => {
           duration: editedCourse.duration,
           lessons: editedCourse.lessons,
           students: editedCourse.students,
+          featured: editedCourse.featured,
+          priceVisible: editedCourse.priceVisible,
+          hidden: editedCourse.hidden,
+          hasCertificate: editedCourse.hasCertificate,
+          certificateTemplate: editedCourse.certificateTemplate,
+          hasEnrollmentLimit: editedCourse.hasEnrollmentLimit,
+          maxEnrollments: editedCourse.maxEnrollments,
         });
-
-        toast.success("Course saved successfully!");
       }
     } catch (error) {
       console.error("Error saving course:", error);
-      toast.error("Failed to save course. Please try again.");
+      throw error;
     }
   };
   

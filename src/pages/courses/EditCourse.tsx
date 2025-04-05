@@ -10,13 +10,10 @@ import { toast } from "sonner";
 import { useEditCourse } from "@/hooks/useEditCourse";
 import { EmptyState, LoadingSkeleton } from "@/components/ui/loading-states";
 import { 
-  GeneralTab,
   OverviewTab,
   DetailsTab, 
   ContentTab, 
   StudentsTab,
-  QuizzesTab,
-  SalesTab,
   PricingTab,
   TriggersTab,
   SettingsTab 
@@ -25,7 +22,8 @@ import {
 const EditCourse = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("general");
+  const [activeTab, setActiveTab] = useState("overview");
+  const [isSaving, setIsSaving] = useState(false);
 
   // Use our custom hook to manage course editing
   const { 
@@ -42,6 +40,19 @@ const EditCourse = () => {
     // In a real implementation, you would call an API to delete the course
     toast.error("Course deleted!");
     navigate("/courses/overview");
+  };
+
+  const saveChanges = async () => {
+    setIsSaving(true);
+    try {
+      await handleSave();
+      toast.success("Course saved successfully!");
+      navigate("/courses/overview");
+    } catch (error) {
+      toast.error("Failed to save changes");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (isLoading) {
@@ -79,7 +90,7 @@ const EditCourse = () => {
     <PageTransition>
       <div className="container px-4 py-6">
         <CoursePageHeader
-          title={`Edit Course: ${editedCourse.title || "Untitled Course"}`}
+          title={editedCourse.title || "Untitled Course"}
           backPath="/courses/overview"
           actions={
             <div className="flex gap-2">
@@ -91,34 +102,33 @@ const EditCourse = () => {
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete
               </Button>
-              <Button onClick={handleSave}>
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
+              <Button onClick={saveChanges} disabled={isSaving}>
+                {isSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⊚</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </>
+                )}
               </Button>
             </div>
           }
         />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4 grid grid-cols-10 w-full">
-            <TabsTrigger value="general">General</TabsTrigger>
+          <TabsList className="mb-4 grid grid-cols-7 w-full">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="students">Students</TabsTrigger>
-            <TabsTrigger value="quizzes">Quizzes</TabsTrigger>
-            <TabsTrigger value="sales">Sales</TabsTrigger>
+            <TabsTrigger value="automation">Automation</TabsTrigger>
             <TabsTrigger value="pricing">Pricing</TabsTrigger>
             <TabsTrigger value="triggers">Triggers</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="general">
-            <GeneralTab 
-              editedCourse={editedCourse}
-              setEditedCourse={setEditedCourse}
-            />
-          </TabsContent>
 
           <TabsContent value="overview">
             <OverviewTab courseId={id} />
@@ -142,12 +152,11 @@ const EditCourse = () => {
             <StudentsTab courseId={id} />
           </TabsContent>
 
-          <TabsContent value="quizzes">
-            <QuizzesTab courseId={id} />
-          </TabsContent>
-
-          <TabsContent value="sales">
-            <SalesTab courseId={id} />
+          <TabsContent value="automation">
+            <SettingsTab 
+              editedCourse={editedCourse}
+              setEditedCourse={setEditedCourse}
+            />
           </TabsContent>
 
           <TabsContent value="pricing">
@@ -159,13 +168,6 @@ const EditCourse = () => {
 
           <TabsContent value="triggers">
             <TriggersTab courseId={id} />
-          </TabsContent>
-
-          <TabsContent value="settings">
-            <SettingsTab 
-              editedCourse={editedCourse}
-              setEditedCourse={setEditedCourse}
-            />
           </TabsContent>
         </Tabs>
       </div>
