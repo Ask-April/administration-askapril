@@ -1,29 +1,20 @@
 
-import React from "react";
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
-  SheetTitle, 
-  SheetFooter 
-} from "@/components/ui/sheet";
+import React, { useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import ContentEditor from "@/components/courses/lesson-editors/ContentEditor";
-import { Lesson } from "@/hooks/useCurriculum";
-import { LessonTypeSelector } from "@/components/courses/lesson-editors";
+import LessonForm from "../lesson-form/LessonForm";
 
 interface LessonEditModalProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  selectedLesson: {
-    sectionId: string;
-    lesson: Lesson;
-  } | null;
-  setSelectedLesson: (lesson: {
-    sectionId: string;
-    lesson: Lesson;
-  } | null) => void;
+  selectedLesson: any | null;
+  setSelectedLesson: (lesson: any | null) => void;
   content: string;
   setContent: (content: string) => void;
   contentUrl: string;
@@ -44,77 +35,104 @@ const LessonEditModal: React.FC<LessonEditModalProps> = ({
   setContentUrl,
   fileInputRef,
   handleFileChange,
-  handleLessonContentSave
+  handleLessonContentSave,
 }) => {
-  const handleLessonTypeChange = (type: string) => {
+  const [lessonName, setLessonName] = React.useState("");
+  const [selectedType, setSelectedType] = React.useState<string | null>(null);
+  const [enableFreePreview, setEnableFreePreview] = React.useState(false);
+  const [setAsDraft, setSetAsDraft] = React.useState(true);
+  const [setAsCompulsory, setSetAsCompulsory] = React.useState(true);
+  const [enableDiscussion, setEnableDiscussion] = React.useState(true);
+
+  // Update form state when selectedLesson changes
+  useEffect(() => {
     if (selectedLesson) {
-      setSelectedLesson({
+      setLessonName(selectedLesson.title || "");
+      setSelectedType(selectedLesson.type || null);
+      setEnableFreePreview(selectedLesson.isPreview || false);
+      setSetAsDraft(selectedLesson.isDraft || true);
+      setSetAsCompulsory(selectedLesson.isCompulsory || true);
+      setEnableDiscussion(selectedLesson.enableDiscussion || true);
+    } else {
+      resetForm();
+    }
+  }, [selectedLesson]);
+
+  const resetForm = () => {
+    setLessonName("");
+    setSelectedType(null);
+    setEnableFreePreview(false);
+    setSetAsDraft(true);
+    setSetAsCompulsory(true);
+    setEnableDiscussion(true);
+    setContent("");
+    setContentUrl("");
+  };
+
+  const handleSave = () => {
+    // Update the selected lesson with the form values
+    if (selectedLesson) {
+      const updatedLesson = {
         ...selectedLesson,
-        lesson: { ...selectedLesson.lesson, type }
-      });
+        title: lessonName,
+        type: selectedType,
+        isPreview: enableFreePreview,
+        isDraft: setAsDraft,
+        isCompulsory: setAsCompulsory,
+        enableDiscussion: enableDiscussion,
+      };
+      setSelectedLesson(updatedLesson);
+      handleLessonContentSave();
     }
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetContent className="sm:max-w-md md:max-w-lg overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>
-            {selectedLesson ? (
-              <>Edit Lesson: {selectedLesson.lesson.title}</>
-            ) : (
-              <>Edit Lesson</>
-            )}
-          </SheetTitle>
-        </SheetHeader>
-        
-        {selectedLesson && (
-          <div className="space-y-6 py-4">
-            <div>
-              <label className="text-sm font-medium mb-1 block">Lesson Title</label>
-              <Input 
-                value={selectedLesson.lesson.title}
-                onChange={(e) => {
-                  if (selectedLesson) {
-                    setSelectedLesson({
-                      ...selectedLesson,
-                      lesson: { ...selectedLesson.lesson, title: e.target.value }
-                    });
-                  }
-                }}
-                className="w-full"
-              />
-            </div>
-            
-            <LessonTypeSelector 
-              selectedType={selectedLesson.lesson.type || null}
-              onSelectType={handleLessonTypeChange}
-            />
-            
-            <ContentEditor
-              selectedType={selectedLesson.lesson.type || null}
-              contentUrl={contentUrl}
-              onContentUrlChange={setContentUrl}
-              content={content}
-              onContentChange={setContent}
-              onFileChange={handleFileChange}
-              fileInputRef={fileInputRef}
-            />
-          </div>
-        )}
-        
-        <SheetFooter className="pt-4 mt-6 border-t">
-          <div className="flex justify-end gap-2 w-full">
-            <Button variant="outline" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleLessonContentSave}>
-              Save Changes
-            </Button>
-          </div>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>
+            {selectedLesson?.title
+              ? `Edit Lesson: ${selectedLesson.title}`
+              : "New Lesson"}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="py-4">
+          <LessonForm
+            lessonName={lessonName}
+            setLessonName={setLessonName}
+            selectedType={selectedType}
+            setSelectedType={setSelectedType}
+            enableFreePreview={enableFreePreview}
+            setEnableFreePreview={setEnableFreePreview}
+            setAsDraft={setAsDraft}
+            setSetAsDraft={setSetAsDraft}
+            setAsCompulsory={setAsCompulsory}
+            setSetAsCompulsory={setSetAsCompulsory}
+            enableDiscussion={enableDiscussion}
+            setEnableDiscussion={setEnableDiscussion}
+            contentUrl={contentUrl}
+            setContentUrl={setContentUrl}
+            content={content}
+            setContent={setContent}
+            fileInputRef={fileInputRef}
+            handleFileChange={handleFileChange}
+          />
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={!lessonName || !selectedType}
+          >
+            Save Lesson
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

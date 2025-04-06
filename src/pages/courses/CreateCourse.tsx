@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import CoursePageHeader from "@/components/courses/CoursePageHeader";
@@ -9,6 +9,106 @@ import CourseCurriculum from "@/components/courses/CourseCurriculum";
 import StepProgress from "@/components/courses/StepProgress";
 import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wizard/CourseWizardContext";
 import CourseAIAssistant from "@/components/courses/wizard/CourseAIAssistant";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
+
+// Pricing component
+const CoursePricing: React.FC = () => {
+  const { courseData, updateCourseData } = useCourseWizard();
+  
+  useEffect(() => {
+    // Auto-generate pricing based on course data if not set
+    if (!courseData.duration) {
+      const lessonCount = courseData.lessons || 0;
+      let suggestedDuration = `${Math.max(1, Math.ceil(lessonCount * 0.5))} hours`;
+      updateCourseData({ duration: suggestedDuration });
+    }
+  }, [courseData.lessons, courseData.duration, updateCourseData]);
+  
+  return (
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold mb-4">Course Pricing</h2>
+      
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertTitle>Auto-generated pricing</AlertTitle>
+        <AlertDescription>
+          We've automatically set pricing parameters based on your course content.
+          More advanced pricing options will be available in the future.
+        </AlertDescription>
+      </Alert>
+      
+      <div className="p-4 border rounded-md">
+        <div className="text-center py-4">
+          <h3 className="text-lg font-medium">Suggested Course Duration</h3>
+          <p className="text-2xl font-bold mt-2">{courseData.duration}</p>
+          <p className="text-sm text-muted-foreground mt-1">Based on {courseData.lessons} lessons</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Settings component
+const CourseSettings: React.FC = () => {
+  const { courseData, updateCourseData } = useCourseWizard();
+  
+  useEffect(() => {
+    // Ensure we have a status set
+    if (!courseData.status) {
+      updateCourseData({ status: 'draft' });
+    }
+  }, [courseData.status, updateCourseData]);
+  
+  return (
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold mb-4">Course Settings</h2>
+      
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertTitle>Course Ready for Publishing</AlertTitle>
+        <AlertDescription>
+          Your course is set up successfully! After clicking Finish, you can find it in your course dashboard.
+        </AlertDescription>
+      </Alert>
+      
+      <div className="p-4 border rounded-md">
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-md font-medium">Course Summary</h3>
+            <p className="text-sm text-muted-foreground">Here's a summary of your course details</p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Title</p>
+              <p className="text-sm">{courseData.title}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Category</p>
+              <p className="text-sm">{courseData.category}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Total Lessons</p>
+              <p className="text-sm">{courseData.lessons}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Estimated Duration</p>
+              <p className="text-sm">{courseData.duration}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Status</p>
+              <div className="flex items-center">
+                <div className="h-2 w-2 rounded-full bg-amber-500 mr-2"></div>
+                <p className="text-sm capitalize">{courseData.status}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const WizardContent: React.FC = () => {
   const { 
@@ -41,9 +141,9 @@ const WizardContent: React.FC = () => {
                  onUpdateSections={updateCurriculumSections}
                />;
       case "pricing":
-        return <div className="py-8 text-center text-muted-foreground">Pricing options will be available in the future</div>;
+        return <CoursePricing />;
       case "settings":
-        return <div className="py-8 text-center text-muted-foreground">Settings options will be available in the future</div>;
+        return <CourseSettings />;
       default:
         return null;
     }

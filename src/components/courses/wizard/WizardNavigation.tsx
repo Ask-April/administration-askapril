@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCourseWizard } from './CourseWizardContext';
 
@@ -13,7 +13,9 @@ const WizardNavigation: React.FC = () => {
     cancelWizard,
     isLoading,
     steps,
-    currentStepIndex
+    currentStepIndex,
+    validateCurrentStep,
+    hasUnsavedChanges
   } = useCourseWizard();
 
   const handlePrevious = () => {
@@ -23,6 +25,11 @@ const WizardNavigation: React.FC = () => {
   };
 
   const handleNext = async () => {
+    // First validate the current step
+    if (!validateCurrentStep()) {
+      return;
+    }
+    
     const success = await saveCurrentStep();
     if (!success) return;
     
@@ -53,7 +60,17 @@ const WizardNavigation: React.FC = () => {
         className="gap-2"
         disabled={isLoading}
       >
-        {currentStep === "settings" ? "Finish" : (
+        {isLoading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {currentStep === "settings" ? "Finishing..." : "Saving..."}
+          </>
+        ) : currentStep === "settings" ? (
+          <>
+            Finish
+            <CheckCircle className="h-4 w-4" />
+          </>
+        ) : (
           <>
             Next
             <ArrowRight className="h-4 w-4" />
