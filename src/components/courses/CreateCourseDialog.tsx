@@ -4,9 +4,10 @@ import { BookPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
+import { CourseFormValues } from "./schema/courseFormSchema";
 
 interface CreateCourseDialogProps {
-  onCourseCreated?: (data: any) => void;
+  onCourseCreated?: (data: CourseFormValues) => void;
 }
 
 const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
@@ -36,4 +37,6 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
   );
 };
 
+// Re-export CourseFormValues from courseFormSchema to maintain backward compatibility
+export type { CourseFormValues };
 export default CreateCourseDialog;

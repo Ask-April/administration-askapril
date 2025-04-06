@@ -2,7 +2,8 @@
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import CourseCard from "@/components/courses/CourseCard";
-import CreateCourseDialog, { CourseFormValues } from "@/components/courses/CreateCourseDialog";
+import CreateCourseDialog from "@/components/courses/CreateCourseDialog";
+import { CourseFormValues } from "@/components/courses/schema/courseFormSchema";
 import { useCoursesList } from "@/hooks/useCoursesList";
 import { courseManagementService } from "@/services/course/courseManagementService";
 import { EmptyState } from "@/components/ui/loading-states";
