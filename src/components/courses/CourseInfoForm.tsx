@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useCourseWizard } from "./wizard/CourseWizardContext";
 import { CourseData } from "./course-info/types"; 
 
@@ -9,7 +9,6 @@ import DescriptionField from "./course-info/DescriptionField";
 import CategorySelect from "./course-info/CategorySelect";
 import DurationField from "./course-info/DurationField";
 import CourseImageUpload from "./course-info/CourseImageUpload";
-import CoursePreview from "./course-info/CoursePreview";
 import AIGenerateButton from "./course-info/AIGenerateButton";
 
 interface CourseInfoFormProps {
@@ -25,24 +24,8 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
   const {
     formErrors,
     autoGenerateContent,
-    isGeneratingContent,
-    previewIndex,
-    setPreviewIndex
+    isGeneratingContent
   } = useCourseWizard();
-
-  // Preview content (title and description)
-  const previewContent = [
-    {
-      title: "Course Title",
-      content: courseData.title || "Your course title will appear here",
-      image: courseData.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
-    }, 
-    {
-      title: "Course Description",
-      content: courseData.description || "Your course description will appear here",
-      image: courseData.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
-    }
-  ];
 
   return (
     <div>
@@ -78,18 +61,11 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
           />
         </div>
         
-        {/* Right Column: Image Upload and Preview */}
+        {/* Right Column: Image Upload */}
         <div className="space-y-6">
           <CourseImageUpload
             value={courseData.image}
             onChange={(url) => updateCourseData({ image: url })}
-          />
-          
-          {/* Preview Section */}
-          <CoursePreview
-            previewContent={previewContent}
-            previewIndex={previewIndex}
-            setPreviewIndex={setPreviewIndex}
           />
           
           {/* AI Generation Button */}

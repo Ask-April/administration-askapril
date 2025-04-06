@@ -17,9 +17,3 @@ export interface CourseFormErrors {
   image?: string[];
   info?: string[];
 }
-
-export interface PreviewContent {
-  title: string;
-  content: string;
-  image: string;
-}

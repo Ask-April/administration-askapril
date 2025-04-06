@@ -51,8 +51,6 @@ interface CourseWizardContextValue {
   formErrors: Record<string, string[]>;
   autoGenerateContent: (field: string) => void;
   isGeneratingContent: boolean;
-  previewIndex: number;
-  setPreviewIndex: (index: number) => void;
   hasUnsavedChanges: boolean;
   focusFirstInput: boolean;
   setFocusFirstInput: (value: boolean) => void;
@@ -99,7 +97,6 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
   const [isGeneratingContent, setIsGeneratingContent] = useState(false);
-  const [previewIndex, setPreviewIndex] = useState(0);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [focusFirstInput, setFocusFirstInput] = useState(false);
 
@@ -349,8 +346,6 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
         formErrors,
         autoGenerateContent,
         isGeneratingContent,
-        previewIndex,
-        setPreviewIndex,
         hasUnsavedChanges,
         focusFirstInput,
         setFocusFirstInput
