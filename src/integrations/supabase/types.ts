@@ -964,27 +964,39 @@ export type Database = {
           first_name: string | null
           id: string
           joined_on: string | null
+          last_contact: string | null
           last_name: string | null
+          phone: string | null
+          source: string | null
           status: string | null
           tags: string | null
+          what_to_talk_about: string | null
         }
         Insert: {
           email?: string | null
           first_name?: string | null
           id?: string
           joined_on?: string | null
+          last_contact?: string | null
           last_name?: string | null
+          phone?: string | null
+          source?: string | null
           status?: string | null
           tags?: string | null
+          what_to_talk_about?: string | null
         }
         Update: {
           email?: string | null
           first_name?: string | null
           id?: string
           joined_on?: string | null
+          last_contact?: string | null
           last_name?: string | null
+          phone?: string | null
+          source?: string | null
           status?: string | null
           tags?: string | null
+          what_to_talk_about?: string | null
         }
         Relationships: []
       }

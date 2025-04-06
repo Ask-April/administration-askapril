@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -107,7 +108,7 @@ const AllLeads = () => {
         joined_on: lead.joined_on || null,
         tags: lead.tags ? (typeof lead.tags === 'string' ? JSON.parse(lead.tags) : lead.tags) : [],
         name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim(),
-        last_contact: formatLastContact(lead.joined_on)
+        last_contact: formatLastContact(lead.last_contact || lead.joined_on)
       }));
       
       setLeads(transformedLeads);
