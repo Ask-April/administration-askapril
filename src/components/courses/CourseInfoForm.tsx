@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +10,7 @@ import ImageUpload from "@/components/courses/ImageUpload";
 import { ChevronLeft, ChevronRight, Sparkles, AlertOctagon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+
 interface CourseData {
   title: string;
   description: string;
@@ -18,10 +20,12 @@ interface CourseData {
   lessons: number;
   status: "draft" | "published";
 }
+
 interface CourseInfoFormProps {
   courseData: CourseData;
   updateCourseData: (data: Partial<CourseData>) => void;
 }
+
 const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
   courseData,
   updateCourseData
@@ -79,6 +83,16 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
     content: courseData.description || "Your course description will appear here",
     image: courseData.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
   }];
+
+  // Fixed navigation handlers that directly set a number value instead of a function
+  const handlePrevPreview = () => {
+    setPreviewIndex(previewIndex > 0 ? previewIndex - 1 : 0);
+  };
+
+  const handleNextPreview = () => {
+    setPreviewIndex(previewIndex < previewContent.length - 1 ? previewIndex + 1 : previewContent.length - 1);
+  };
+
   return <div>
       <h2 className="text-xl font-semibold mb-4">Course Information</h2>
       
@@ -195,7 +209,43 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
           </div>
           
           {/* Preview Section */}
-          
+          <div className="border rounded-md overflow-hidden">
+            <div className="bg-muted/50 p-3 border-b">
+              <h3 className="text-sm font-medium">Preview: {previewContent[previewIndex].title}</h3>
+            </div>
+            <div className="p-4 space-y-4">
+              {previewContent[previewIndex].image && (
+                <div className="aspect-video rounded-md overflow-hidden bg-muted">
+                  <img 
+                    src={previewContent[previewIndex].image} 
+                    alt="Course preview" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <p className="text-sm">{previewContent[previewIndex].content}</p>
+            </div>
+            <div className="flex justify-between p-2 border-t bg-muted/30">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handlePrevPreview}
+                disabled={previewIndex === 0}
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Previous
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={handleNextPreview}
+                disabled={previewIndex === previewContent.length - 1}
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
           
           {/* AI Generation Button */}
           {courseData.title && <Button type="button" variant="outline" className="w-full flex items-center justify-center gap-2" onClick={() => autoGenerateContent('description')} disabled={isGeneratingContent}>

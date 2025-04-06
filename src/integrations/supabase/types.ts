@@ -450,18 +450,21 @@ export type Database = {
       course_category: {
         Row: {
           category_id: string
+          description: string
           name: string | null
-          site_id: string
+          total_courses: number | null
         }
         Insert: {
           category_id?: string
+          description: string
           name?: string | null
-          site_id: string
+          total_courses?: number | null
         }
         Update: {
           category_id?: string
+          description?: string
           name?: string | null
-          site_id?: string
+          total_courses?: number | null
         }
         Relationships: []
       }
