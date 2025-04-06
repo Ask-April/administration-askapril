@@ -8,6 +8,7 @@ import CourseInfoForm from "@/components/courses/CourseInfoForm";
 import CourseCurriculum from "@/components/courses/CourseCurriculum";
 import StepProgress from "@/components/courses/StepProgress";
 import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wizard/CourseWizardContext";
+import CourseAIAssistant from "@/components/courses/wizard/CourseAIAssistant";
 
 const WizardContent: React.FC = () => {
   const { 
@@ -23,10 +24,15 @@ const WizardContent: React.FC = () => {
   const renderStepContent = () => {
     switch (currentStep) {
       case "info":
-        return <CourseInfoForm 
-                 courseData={courseData} 
-                 updateCourseData={updateCourseData} 
-               />;
+        return (
+          <div className="space-y-6">
+            <CourseInfoForm 
+              courseData={courseData} 
+              updateCourseData={updateCourseData} 
+            />
+            <CourseAIAssistant />
+          </div>
+        );
       case "curriculum":
         return <CourseCurriculum 
                  courseData={courseData} 
