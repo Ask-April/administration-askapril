@@ -1,199 +1,189 @@
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import React, { useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import CoursePageHeader from "@/components/courses/CoursePageHeader";
-import { Button } from "@/components/ui/button";
+import WizardNavigation from "@/components/courses/wizard/WizardNavigation";
 import CourseInfoForm from "@/components/courses/CourseInfoForm";
 import CourseCurriculum from "@/components/courses/CourseCurriculum";
 import StepProgress from "@/components/courses/StepProgress";
-import { courseService } from "@/services/course";
-import { toast } from "sonner";
+import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wizard/CourseWizardContext";
+import CourseAIAssistant from "@/components/courses/wizard/CourseAIAssistant";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
-type Step = "info" | "curriculum" | "pricing" | "settings";
-
-const CreateCourse = () => {
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState<Step>("info");
-  const [courseData, setCourseData] = useState({
-    title: "",
-    description: "",
-    category: "",
-    image: "",
-    duration: "",
-    lessons: 0,
-    status: "draft" as const,
-  });
+// Pricing component
+const CoursePricing: React.FC = () => {
+  const { courseData, updateCourseData } = useCourseWizard();
   
-  const [createdCourseId, setCreatedCourseId] = useState<string | null>(null);
-  const [curriculumSections, setCurriculumSections] = useState<any[]>([]);
-  
-  const steps = [
-    { id: "info", label: "Basic Info" },
-    { id: "curriculum", label: "Curriculum" },
-    { id: "pricing", label: "Pricing" },
-    { id: "settings", label: "Settings" }
-  ];
-
-  const currentStepIndex = steps.findIndex(step => step.id === currentStep);
-  
-  const handleNext = async () => {
-    if (currentStep === "info") {
-      try {
-        // Only create the course when moving from info to curriculum
-        if (!createdCourseId) {
-          console.log("Creating course with data:", courseData);
-          
-          const course = await courseService.createCourse({
-            title: courseData.title,
-            description: courseData.description,
-            category: courseData.category,
-            image: courseData.image,
-            duration: courseData.duration || "0 hours",
-            status: courseData.status,
-            lessons: courseData.lessons,
-            students: 0,
-          });
-          
-          console.log("Course created successfully:", course);
-          setCreatedCourseId(course.course_id);
-          toast.success("Course information saved!");
-        }
-        setCurrentStep("curriculum");
-      } catch (error) {
-        console.error("Error creating course:", error);
-        toast.error("Failed to save course information. Please try again.");
-      }
+  useEffect(() => {
+    // Auto-generate pricing based on course data if not set
+    if (!courseData.duration) {
+      const lessonCount = courseData.lessons || 0;
+      let suggestedDuration = `${Math.max(1, Math.ceil(lessonCount * 0.5))} hours`;
+      updateCourseData({ duration: suggestedDuration });
     }
-    else if (currentStep === "curriculum") {
-      try {
-        if (createdCourseId && curriculumSections.length > 0) {
-          await courseService.saveCurriculum(createdCourseId, curriculumSections);
-          toast.success("Curriculum saved successfully!");
-        }
-        setCurrentStep("pricing");
-      } catch (error) {
-        console.error("Error saving curriculum:", error);
-        toast.error("Failed to save curriculum. Please try again.");
-      }
-    }
-    else if (currentStep === "pricing") {
-      setCurrentStep("settings");
-    }
-    else if (currentStep === "settings") {
-      await handleFinish();
-    }
-  };
+  }, [courseData.lessons, courseData.duration, updateCourseData]);
   
-  const handlePrevious = () => {
-    if (currentStep === "curriculum") setCurrentStep("info");
-    else if (currentStep === "pricing") setCurrentStep("curriculum");
-    else if (currentStep === "settings") setCurrentStep("pricing");
-  };
-  
-  const handleFinish = async () => {
-    try {
-      if (createdCourseId) {
-        await courseService.updateCourse(createdCourseId, {
-          status: "published"
-        });
-      }
+  return (
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold mb-4">Course Pricing</h2>
       
-      toast.success("Course created successfully!");
-      navigate("/courses/overview");
-    } catch (error) {
-      console.error("Error finalizing course:", error);
-      toast.error("Failed to finalize course. Please try again.");
-    }
-  };
-  
-  const handleCancel = () => {
-    navigate("/courses/overview");
-  };
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertTitle>Auto-generated pricing</AlertTitle>
+        <AlertDescription>
+          We've automatically set pricing parameters based on your course content.
+          More advanced pricing options will be available in the future.
+        </AlertDescription>
+      </Alert>
+      
+      <div className="p-4 border rounded-md">
+        <div className="text-center py-4">
+          <h3 className="text-lg font-medium">Suggested Course Duration</h3>
+          <p className="text-2xl font-bold mt-2">{courseData.duration}</p>
+          <p className="text-sm text-muted-foreground mt-1">Based on {courseData.lessons} lessons</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-  const updateCourseData = (data: Partial<typeof courseData>) => {
-    setCourseData(prev => ({ ...prev, ...data }));
-  };
+// Settings component
+const CourseSettings: React.FC = () => {
+  const { courseData, updateCourseData } = useCourseWizard();
   
-  const handleUpdateCurriculum = (sections: any[]) => {
-    setCurriculumSections(sections);
-    // Update the total lesson count
-    const totalLessons = sections.reduce((count, section) => count + section.lessons.length, 0);
-    updateCourseData({ lessons: totalLessons });
-  };
+  useEffect(() => {
+    // Ensure we have a status set
+    if (!courseData.status) {
+      updateCourseData({ status: 'draft' });
+    }
+  }, [courseData.status, updateCourseData]);
+  
+  return (
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold mb-4">Course Settings</h2>
+      
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertTitle>Course Ready for Publishing</AlertTitle>
+        <AlertDescription>
+          Your course is set up successfully! After clicking Finish, you can find it in your course dashboard.
+        </AlertDescription>
+      </Alert>
+      
+      <div className="p-4 border rounded-md">
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-md font-medium">Course Summary</h3>
+            <p className="text-sm text-muted-foreground">Here's a summary of your course details</p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Title</p>
+              <p className="text-sm">{courseData.title}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Category</p>
+              <p className="text-sm">{courseData.category}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Total Lessons</p>
+              <p className="text-sm">{courseData.lessons}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Estimated Duration</p>
+              <p className="text-sm">{courseData.duration}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Status</p>
+              <div className="flex items-center">
+                <div className="h-2 w-2 rounded-full bg-amber-500 mr-2"></div>
+                <p className="text-sm capitalize">{courseData.status}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const WizardContent: React.FC = () => {
+  const { 
+    currentStep, 
+    courseData, 
+    updateCourseData, 
+    createdCourseId,
+    updateCurriculumSections,
+    steps,
+    currentStepIndex
+  } = useCourseWizard();
 
   const renderStepContent = () => {
     switch (currentStep) {
       case "info":
-        return <CourseInfoForm 
-                 courseData={courseData} 
-                 updateCourseData={updateCourseData} 
-               />;
+        return (
+          <div className="space-y-6">
+            <CourseInfoForm 
+              courseData={courseData} 
+              updateCourseData={updateCourseData} 
+            />
+            <CourseAIAssistant />
+          </div>
+        );
       case "curriculum":
         return <CourseCurriculum 
                  courseData={courseData} 
                  updateCourseData={updateCourseData}
                  courseId={createdCourseId || ""}
-                 onUpdateSections={handleUpdateCurriculum}
+                 onUpdateSections={updateCurriculumSections}
                />;
       case "pricing":
-        return <div className="py-8 text-center text-muted-foreground">Pricing options will be available in the future</div>;
+        return <CoursePricing />;
       case "settings":
-        return <div className="py-8 text-center text-muted-foreground">Settings options will be available in the future</div>;
+        return <CourseSettings />;
       default:
         return null;
     }
   };
 
   return (
-    <PageTransition>
-      <div className="container px-4 py-6">
-        <CoursePageHeader 
-          title="Create New Course" 
-          backPath="/courses/overview" 
+    <>
+      <div className="max-w-4xl mx-auto mb-6">
+        <StepProgress 
+          steps={steps} 
+          currentStep={currentStep} 
+          currentStepIndex={currentStepIndex}
         />
-        
-        <div className="max-w-4xl mx-auto mb-6">
-          <StepProgress 
-            steps={steps} 
-            currentStep={currentStep as string} 
-            currentStepIndex={currentStepIndex}
-          />
-        </div>
-        
-        <Card className="max-w-4xl mx-auto">
-          <CardContent className="pt-6">
-            {renderStepContent()}
-            
-            <div className="flex justify-between mt-6">
-              <Button
-                variant="outline"
-                onClick={currentStep === "info" ? handleCancel : handlePrevious}
-                className="gap-2"
-              >
-                {currentStep === "info" ? "Cancel" : (
-                  <>
-                    <ArrowLeft className="h-4 w-4" />
-                    Previous
-                  </>
-                )}
-              </Button>
-              
-              <Button onClick={handleNext} className="gap-2">
-                {currentStep === "settings" ? "Finish" : (
-                  <>
-                    Next
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-    </PageTransition>
+      
+      <Card className="max-w-4xl mx-auto">
+        <CardContent className="pt-6">
+          {renderStepContent()}
+          
+          <WizardNavigation />
+        </CardContent>
+      </Card>
+    </>
+  );
+};
+
+const CreateCourse: React.FC = () => {
+  return (
+    <CourseWizardProvider>
+      <PageTransition>
+        <div className="container px-4 py-6">
+          <CoursePageHeader 
+            title="Create New Course" 
+            backPath="/courses/overview" 
+          />
+          
+          <WizardContent />
+        </div>
+      </PageTransition>
+    </CourseWizardProvider>
   );
 };
 

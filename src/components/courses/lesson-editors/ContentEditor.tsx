@@ -80,7 +80,10 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
         )}
         
         {selectedType === "survey" && (
-          <SurveyEditor />
+          <SurveyEditor 
+            content={content}
+            onContentChange={onContentChange}
+          />
         )}
         
         {selectedType === "live" && (

@@ -1,62 +1,71 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, ExternalLink, ArrowUp, ArrowDown } from "lucide-react";
+import { PlusCircle, ExternalLink, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Source } from "@/services/types";
 
 const LeadSources = () => {
-  const sources = [
-    { 
-      id: "1", 
-      name: "Organic Search", 
-      count: 345, 
-      conversion: "8.4%", 
-      trend: "up", 
-      change: "+12.3%"
-    },
-    { 
-      id: "2", 
-      name: "Social Media", 
-      count: 231, 
-      conversion: "6.7%", 
-      trend: "down", 
-      change: "-2.5%"
-    },
-    { 
-      id: "3", 
-      name: "Email Campaigns", 
-      count: 187, 
-      conversion: "12.1%", 
-      trend: "up", 
-      change: "+4.8%"
-    },
-    { 
-      id: "4", 
-      name: "Direct Traffic", 
-      count: 154, 
-      conversion: "5.2%", 
-      trend: "up", 
-      change: "+1.3%"
-    },
-    { 
-      id: "5", 
-      name: "Referrals", 
-      count: 98, 
-      conversion: "9.6%", 
-      trend: "down", 
-      change: "-0.7%"
-    },
-    { 
-      id: "6", 
-      name: "Paid Ads", 
-      count: 276, 
-      conversion: "10.2%", 
-      trend: "up", 
-      change: "+15.4%"
-    },
-  ];
+  const [sources, setSources] = useState<Source[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchSources();
+  }, []);
+
+  const fetchSources = async () => {
+    try {
+      setLoading(true);
+      
+      // Since we don't have a dedicated 'sources' table, let's aggregate data from the leads table
+      const { data, error } = await supabase
+        .from('leads')
+        .select('source')
+        .not('source', 'is', null);
+      
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        // Group leads by source and create Source objects
+        const sourceCounts: {[key: string]: number} = {};
+        data.forEach(lead => {
+          if (lead.source) {
+            sourceCounts[lead.source] = (sourceCounts[lead.source] || 0) + 1;
+          }
+        });
+
+        const sourceData: Source[] = Object.keys(sourceCounts).map(name => ({
+          id: name, // Using the name as ID since we don't have real source IDs
+          name: name,
+          count: sourceCounts[name],
+          conversion: Math.floor(Math.random() * 50 + 10) + '%', // Demo data
+          trend: Math.random() > 0.5 ? 'up' : 'down', // Demo data
+          change: Math.floor(Math.random() * 20 + 1) + '%' // Demo data
+        }));
+
+        // Sort by count in descending order
+        sourceData.sort((a, b) => b.count - a.count);
+        
+        setSources(sourceData);
+      }
+    } catch (error) {
+      console.error('Error fetching sources:', error);
+      toast({
+        title: "Error fetching sources",
+        description: "There was a problem loading your lead sources.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   
   return (
     <PageTransition>
@@ -72,39 +81,57 @@ const LeadSources = () => {
         <div className="grid gap-6">
           <Card>
             <CardContent className="p-0">
-              <div className="rounded-md border">
-                <div className="grid grid-cols-5 p-4 font-medium">
-                  <div className="col-span-2">Source</div>
-                  <div>Leads</div>
-                  <div>Conversion Rate</div>
-                  <div>Trend</div>
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-                <div className="divide-y">
-                  {sources.map((source) => (
-                    <div key={source.id} className="grid grid-cols-5 p-4 items-center">
-                      <div className="col-span-2 flex items-center gap-2">
-                        <span className="font-medium">{source.name}</span>
-                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                      <div>{source.count}</div>
-                      <div>{source.conversion}</div>
-                      <div className="flex items-center gap-2">
-                        {source.trend === "up" ? (
-                          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 flex items-center gap-1">
-                            <ArrowUp className="h-3 w-3" />
-                            {source.change}
-                          </Badge>
-                        ) : (
-                          <Badge className="bg-red-100 text-red-800 hover:bg-red-100 flex items-center gap-1">
-                            <ArrowDown className="h-3 w-3" />
-                            {source.change}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+              ) : sources.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-12 text-center">
+                  <PlusCircle className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No sources found</h3>
+                  <p className="text-muted-foreground mb-4">
+                    You don't have any lead sources yet. Start by adding your first source.
+                  </p>
+                  <Button>
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Add Source
+                  </Button>
                 </div>
-              </div>
+              ) : (
+                <div className="rounded-md border">
+                  <div className="grid grid-cols-5 p-4 font-medium">
+                    <div className="col-span-2">Source</div>
+                    <div>Leads</div>
+                    <div>Conversion Rate</div>
+                    <div>Trend</div>
+                  </div>
+                  <div className="divide-y">
+                    {sources.map((source) => (
+                      <div key={source.id} className="grid grid-cols-5 p-4 items-center">
+                        <div className="col-span-2 flex items-center gap-2">
+                          <span className="font-medium">{source.name}</span>
+                          <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                        </div>
+                        <div>{source.count}</div>
+                        <div>{source.conversion}</div>
+                        <div className="flex items-center gap-2">
+                          {source.trend === "up" ? (
+                            <Badge className="bg-green-100 text-green-800 hover:bg-green-100 flex items-center gap-1">
+                              <ArrowUp className="h-3 w-3" />
+                              {source.change}
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-red-100 text-red-800 hover:bg-red-100 flex items-center gap-1">
+                              <ArrowDown className="h-3 w-3" />
+                              {source.change}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

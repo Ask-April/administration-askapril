@@ -1,9 +1,10 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
+import { Course as CourseType } from "@/services/types";
 
 // Define types
-export type Course = Tables<"courses">;
+export type Course = CourseType;
 
 // Get all courses
 export async function getCourses() {

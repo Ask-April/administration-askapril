@@ -1,77 +1,84 @@
+
 import React from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import ImageUpload from "@/components/courses/ImageUpload";
-interface CourseData {
-  title: string;
-  description: string;
-  category: string;
-  image: string;
-  duration: string;
-  lessons: number;
-  status: "draft" | "published";
-}
+import { useCourseWizard } from "./wizard/CourseWizardContext";
+import { CourseData } from "./course-info/types"; 
+
+// Import sub-components
+import TitleField from "./course-info/TitleField";
+import DescriptionField from "./course-info/DescriptionField";
+import CategorySelect from "./course-info/CategorySelect";
+import DurationField from "./course-info/DurationField";
+import CourseImageUpload from "./course-info/CourseImageUpload";
+import AIGenerateButton from "./course-info/AIGenerateButton";
+
 interface CourseInfoFormProps {
   courseData: CourseData;
   updateCourseData: (data: Partial<CourseData>) => void;
 }
+
 const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
   courseData,
   updateCourseData
 }) => {
-  return <div>
+  // Use the wizard context for form validation and AI generation
+  const {
+    formErrors,
+    autoGenerateContent,
+    isGeneratingContent
+  } = useCourseWizard();
+
+  return (
+    <div>
       <h2 className="text-xl font-semibold mb-4">Course Information</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left Column: Title, Description, Category */}
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Course Title</Label>
-            <Input id="title" placeholder="Enter course title" value={courseData.title} onChange={e => updateCourseData({
-            title: e.target.value
-          })} />
-          </div>
+          <TitleField
+            value={courseData.title}
+            onChange={(value) => updateCourseData({ title: value })}
+            errors={formErrors.title}
+            onGenerateContent={() => autoGenerateContent('description')}
+            isGeneratingContent={isGeneratingContent}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea id="description" placeholder="Enter course description" value={courseData.description} onChange={e => updateCourseData({
-            description: e.target.value
-          })} rows={5} />
-          </div>
+          <DescriptionField
+            value={courseData.description}
+            onChange={(value) => updateCourseData({ description: value })}
+            errors={formErrors.description}
+            maxLength={200}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <Select value={courseData.category} onValueChange={value => updateCourseData({
-            category: value
-          })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Design">Design</SelectItem>
-                <SelectItem value="Development">Development</SelectItem>
-                <SelectItem value="Business">Business</SelectItem>
-                <SelectItem value="Marketing">Marketing</SelectItem>
-                <SelectItem value="Photography">Photography</SelectItem>
-                <SelectItem value="Music">Music</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <CategorySelect
+            value={courseData.category}
+            onChange={(value) => updateCourseData({ category: value })}
+            errors={formErrors.category}
+          />
+          
+          <DurationField
+            value={courseData.duration}
+            onChange={(value) => updateCourseData({ duration: value })}
+          />
         </div>
         
         {/* Right Column: Image Upload */}
-        <div className="space-y-2">
-          <Label>Course Image</Label>
-          <ImageUpload value={courseData.image} onChange={url => updateCourseData({
-          image: url
-        })} />
+        <div className="space-y-6">
+          <CourseImageUpload
+            value={courseData.image}
+            onChange={(url) => updateCourseData({ image: url })}
+          />
+          
+          {/* AI Generation Button */}
+          {courseData.title && (
+            <AIGenerateButton
+              onClick={() => autoGenerateContent('description')}
+              isGenerating={isGeneratingContent}
+            />
+          )}
         </div>
       </div>
-      
-      {/* Duration and Lessons section - below both columns */}
-      
-    </div>;
+    </div>
+  );
 };
+
 export default CourseInfoForm;

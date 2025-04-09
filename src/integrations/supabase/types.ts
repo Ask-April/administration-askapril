@@ -450,18 +450,21 @@ export type Database = {
       course_category: {
         Row: {
           category_id: string
+          description: string
           name: string | null
-          site_id: string
+          total_courses: number | null
         }
         Insert: {
           category_id?: string
+          description: string
           name?: string | null
-          site_id: string
+          total_courses?: number | null
         }
         Update: {
           category_id?: string
+          description?: string
           name?: string | null
-          site_id?: string
+          total_courses?: number | null
         }
         Relationships: []
       }
@@ -962,23 +965,41 @@ export type Database = {
         Row: {
           email: string | null
           first_name: string | null
+          id: string
           joined_on: string | null
+          last_contact: string | null
           last_name: string | null
+          phone: string | null
+          source: string | null
           status: string | null
+          tags: string | null
+          what_to_talk_about: string | null
         }
         Insert: {
           email?: string | null
           first_name?: string | null
+          id?: string
           joined_on?: string | null
+          last_contact?: string | null
           last_name?: string | null
+          phone?: string | null
+          source?: string | null
           status?: string | null
+          tags?: string | null
+          what_to_talk_about?: string | null
         }
         Update: {
           email?: string | null
           first_name?: string | null
+          id?: string
           joined_on?: string | null
+          last_contact?: string | null
           last_name?: string | null
+          phone?: string | null
+          source?: string | null
           status?: string | null
+          tags?: string | null
+          what_to_talk_about?: string | null
         }
         Relationships: []
       }
