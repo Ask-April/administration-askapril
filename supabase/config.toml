@@ -1,9 +1,9 @@
 
-project_id = "nbrfwjjlpgeuobknyfst"
+project_id = "fqwodoptwvnyupadzjxj"
 
 [api]
 enabled = true
-port = 54321
+port = 5432
 schemas = ["public", "storage"]
 
 [db]
