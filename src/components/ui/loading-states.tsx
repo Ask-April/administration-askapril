@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const LoadingSkeleton = () => {
   return (
     <div className="w-full h-full flex items-center justify-center p-6">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="animate-pulse rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
     </div>
   );
 };
@@ -79,13 +78,13 @@ export const RecentActivitySkeleton = () => {
   );
 };
 
-export const EmptyState = ({ 
-  title = "No data found", 
+export const EmptyState = ({
+  title = "Nothing here yet",
   description = "There is no data to display at this time.",
   icon: Icon,
-  action
-}: { 
-  title?: string; 
+  action,
+}: {
+  title?: string;
   description?: string;
   icon?: React.ComponentType<any>;
   action?: React.ReactNode;
@@ -98,9 +97,7 @@ export const EmptyState = ({
         </div>
       )}
       <h3 className="text-xl font-medium mb-2">{title}</h3>
-      <p className="text-muted-foreground mb-4 max-w-md">
-        {description}
-      </p>
+      <p className="text-muted-foreground mb-4 max-w-md">{description}</p>
       {action}
     </div>
   );

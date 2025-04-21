@@ -935,6 +935,7 @@ export type Database = {
       }
       lessons: {
         Row: {
+          content_url: string | null
           duration: number | null
           lesson_id: string
           module_id: string | null
@@ -943,6 +944,7 @@ export type Database = {
           type: string | null
         }
         Insert: {
+          content_url?: string | null
           duration?: number | null
           lesson_id?: string
           module_id?: string | null
@@ -951,6 +953,7 @@ export type Database = {
           type?: string | null
         }
         Update: {
+          content_url?: string | null
           duration?: number | null
           lesson_id?: string
           module_id?: string | null
