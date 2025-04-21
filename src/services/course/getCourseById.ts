@@ -42,16 +42,18 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       has_enrollment_limit: data.has_enrollment_limit,
       max_enrollments: data.max_enrollments,
       subtitle: data.subtitle,
-      external_metadata: data.external_metadata,
+      // external_metadata removed
       slug: data.slug,
-      created_at: data.created_at,
-      updated_at: data.updated_at,
       // Add in any virtual properties that aren't stored in the DB
       image: data.image_url,
       category: data.category_id,
       lessons: 0, // Would need additional query to count lessons
       students: 0  // Would need additional query to count students
     };
+
+    // Optionally preserve created_at/updated_at if present on data object
+    if ('created_at' in data) course.created_at = data.created_at;
+    if ('updated_at' in data) course.updated_at = data.updated_at;
 
     return course;
   } catch (error) {

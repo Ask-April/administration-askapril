@@ -458,7 +458,6 @@ export type Database = {
           category_id: string | null
           course_id: string
           description: string | null
-          external_metadata: Json | null
           featured: boolean | null
           has_certificate: boolean | null
           has_enrollment_limit: boolean | null
@@ -476,7 +475,6 @@ export type Database = {
           category_id?: string | null
           course_id?: string
           description?: string | null
-          external_metadata?: Json | null
           featured?: boolean | null
           has_certificate?: boolean | null
           has_enrollment_limit?: boolean | null
@@ -494,7 +492,6 @@ export type Database = {
           category_id?: string | null
           course_id?: string
           description?: string | null
-          external_metadata?: Json | null
           featured?: boolean | null
           has_certificate?: boolean | null
           has_enrollment_limit?: boolean | null

@@ -20,7 +20,7 @@ export const getPublicCourses = async (): Promise<Course[]> => {
 
     // Map the database response to our Course type
     const courses: Course[] = data.map((item: any) => {
-      return {
+      const course: Course = {
         course_id: item.course_id,
         title: item.title,
         description: item.description,
@@ -35,17 +35,16 @@ export const getPublicCourses = async (): Promise<Course[]> => {
         has_enrollment_limit: item.has_enrollment_limit,
         max_enrollments: item.max_enrollments,
         subtitle: item.subtitle,
-        external_id: item.external_id,
-        external_metadata: item.external_metadata,
+        // external_metadata removed
         slug: item.slug,
-        created_at: item.created_at,
-        updated_at: item.updated_at,
-        // Add in any virtual properties that aren't stored in the DB
         image: item.image_url,
         category: item.category_id,
-        lessons: 0, // Would need additional query to count lessons
-        students: 0  // Would need additional query to count students
+        lessons: 0,
+        students: 0
       };
+      if ('created_at' in item) course.created_at = item.created_at;
+      if ('updated_at' in item) course.updated_at = item.updated_at;
+      return course;
     });
 
     return courses;
@@ -54,3 +53,4 @@ export const getPublicCourses = async (): Promise<Course[]> => {
     throw error;
   }
 };
+
