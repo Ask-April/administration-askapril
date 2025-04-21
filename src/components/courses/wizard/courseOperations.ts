@@ -1,12 +1,13 @@
 
 import { toast } from 'sonner';
 import { courseService } from '@/services/course';
-import { CourseData, CurriculumSection } from './types';
+import { CourseData } from './types';
+import { CourseSection } from '@/services/types';
 
 export const saveCurrentStepData = async (
   currentStep: string,
   courseData: CourseData,
-  curriculumSections: CurriculumSection[],
+  curriculumSections: any[],
   createdCourseId: string | null
 ): Promise<string | null> => {
   try {
@@ -29,15 +30,43 @@ export const saveCurrentStepData = async (
       } else {
         // Update existing course
         await courseService.updateCourse(createdCourseId, {
-          ...courseData,
-          // These fields are accepted now because we updated the Course type
+          title: courseData.title,
+          description: courseData.description,
+          category: courseData.category,
+          image: courseData.image,
+          duration: courseData.duration,
+          status: courseData.status,
+          lessons: courseData.lessons,
         });
         toast.success('Course information updated!');
         return createdCourseId;
       }
     } else if (currentStep === 'curriculum' && createdCourseId) {
       if (curriculumSections.length > 0) {
-        await courseService.saveCurriculum(createdCourseId, curriculumSections);
+        // Transform the curriculum sections to match the CourseSection type
+        const courseSections: CourseSection[] = curriculumSections.map(section => ({
+          id: section.id || uuidv4(),
+          course_id: createdCourseId,
+          title: section.title,
+          position: section.position,
+          lessons: section.lessons.map((lesson: any) => ({
+            id: lesson.id || uuidv4(),
+            section_id: section.id,
+            title: lesson.title,
+            type: lesson.type || 'video',
+            position: lesson.position,
+            content: lesson.content,
+            content_url: lesson.contentUrl,
+            video_url: lesson.videoUrl,
+            duration: lesson.duration || 0,
+            is_preview: lesson.isPreview || false,
+            is_draft: lesson.isDraft || false,
+            is_compulsory: lesson.isCompulsory || true,
+            enable_discussion: lesson.enableDiscussion || false
+          }))
+        }));
+        
+        await courseService.saveCurriculum(createdCourseId, courseSections);
         toast.success('Curriculum saved successfully!');
       } else {
         toast.info('No curriculum sections to save.');
@@ -47,7 +76,6 @@ export const saveCurrentStepData = async (
       // Save pricing information
       await courseService.updateCourse(createdCourseId, {
         duration: courseData.duration
-        // This is now valid with our updated Course type
       });
       toast.success('Pricing information saved!');
       return createdCourseId;
@@ -56,7 +84,6 @@ export const saveCurrentStepData = async (
       await courseService.updateCourse(createdCourseId, {
         status: courseData.status,
         lessons: courseData.lessons
-        // This is now valid with our updated Course type
       });
       toast.success('Settings saved!');
       return createdCourseId;
@@ -83,4 +110,9 @@ export const finalizeCourse = async (courseId: string): Promise<void> => {
     toast.error('Failed to finalize course. Please try again.');
     throw error;
   }
+};
+
+// Helper function to generate UUID
+const uuidv4 = (): string => {
+  return crypto.randomUUID();
 };

@@ -32,19 +32,23 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange }) => {
     try {
       console.log("Starting image upload for file:", file.name);
       
-      // Upload the file using our utility function
-      const publicUrl = await uploadImage(file, 'course-images');
+      // For development without Supabase, use a data URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        onChange(result);
+        setIsUploading(false);
+        toast.success("Image uploaded successfully!");
+      };
+      reader.readAsDataURL(file);
       
-      console.log("Upload complete. Public URL:", publicUrl);
-      
-      // Update the form
-      onChange(publicUrl);
-      toast.success("Image uploaded successfully!");
+      // In production, we would use Supabase:
+      // const publicUrl = await uploadImage(file, 'course-images');
+      // onChange(publicUrl);
     } catch (error) {
       console.error("Error uploading image:", error);
       setError("Failed to upload image. Please try again.");
       toast.error("Failed to upload image. Please try again.");
-    } finally {
       setIsUploading(false);
     }
   };

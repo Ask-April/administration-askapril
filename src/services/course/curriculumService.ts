@@ -1,24 +1,27 @@
 
+import { v4 as uuidv4 } from 'uuid';
 import { CourseSection, CourseLesson } from "../types";
 
 /**
- * Service for managing course curriculum (sections and lessons) using mock data
+ * Service for managing course curriculum (sections and lessons) using storage
  */
 export const curriculumService = {
   /**
    * Create a course section
    */
   createSection: async (sectionData: Omit<CourseSection, 'id' | 'lessons'>): Promise<CourseSection> => {
-    // Create a new mock section
+    // Create a new section with a unique ID
     const newSection: CourseSection = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       course_id: sectionData.course_id,
       title: sectionData.title,
       position: sectionData.position,
       lessons: []
     };
     
+    // In a real implementation, we would save to the database
     console.log("Created new section:", newSection);
+    
     return newSection;
   },
   
@@ -26,9 +29,9 @@ export const curriculumService = {
    * Create a course lesson
    */
   createLesson: async (lessonData: Omit<CourseLesson, 'id'>): Promise<CourseLesson> => {
-    // Create a new mock lesson
+    // Create a new lesson with a unique ID
     const newLesson: CourseLesson = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       section_id: lessonData.section_id,
       title: lessonData.title,
       type: lessonData.type || 'video',
@@ -51,59 +54,20 @@ export const curriculumService = {
    * Get all sections and lessons for a course
    */
   getCourseCurriculum: async (courseId: string): Promise<CourseSection[]> => {
-    // Return mock data
-    return [
-      {
-        id: "section-1",
-        course_id: courseId,
-        title: "Introduction",
-        position: 1,
-        lessons: [
-          {
-            id: "lesson-1",
-            section_id: "section-1",
-            title: "Welcome to the Course",
-            type: "video",
-            position: 1,
-            duration: 5,
-            is_preview: true
-          },
-          {
-            id: "lesson-2",
-            section_id: "section-1",
-            title: "Course Overview",
-            type: "text",
-            position: 2,
-            content: "This is the course overview...",
-            duration: 10
-          }
-        ]
-      },
-      {
-        id: "section-2",
-        course_id: courseId,
-        title: "Getting Started",
-        position: 2,
-        lessons: [
-          {
-            id: "lesson-3",
-            section_id: "section-2",
-            title: "Setting Up Your Development Environment",
-            type: "video",
-            position: 1,
-            duration: 15
-          },
-          {
-            id: "lesson-4",
-            section_id: "section-2",
-            title: "Creating Your First Project",
-            type: "video",
-            position: 2,
-            duration: 20
-          }
-        ]
+    // In a real implementation, we would fetch from a database
+    // For now, we'll check localStorage first and return mock data if none exists
+    
+    try {
+      const storedCurriculum = localStorage.getItem(`curriculum_${courseId}`);
+      if (storedCurriculum) {
+        return JSON.parse(storedCurriculum);
       }
-    ];
+    } catch (error) {
+      console.error("Error retrieving curriculum from localStorage:", error);
+    }
+    
+    // Return empty curriculum if no saved data
+    return [];
   },
   
   /**
@@ -112,10 +76,14 @@ export const curriculumService = {
   saveCurriculum: async (courseId: string, sections: CourseSection[]): Promise<{ success: boolean }> => {
     console.log("CourseService - Saving curriculum for course:", courseId, sections);
     
-    // In a real implementation, this would save to the database
-    // For now, just log and return success
-    
-    console.log("CourseService - Curriculum saved successfully");
-    return { success: true };
+    try {
+      // Save to localStorage for persistence between sessions
+      localStorage.setItem(`curriculum_${courseId}`, JSON.stringify(sections));
+      console.log("CourseService - Curriculum saved successfully");
+      return { success: true };
+    } catch (error) {
+      console.error("Error saving curriculum:", error);
+      return { success: false };
+    }
   }
 };
