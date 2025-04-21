@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,58 +11,37 @@ import CourseAIAssistant from "@/components/courses/wizard/CourseAIAssistant";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 
-// Pricing component
+// Pricing component - now without duration
 const CoursePricing: React.FC = () => {
-  const { courseData, updateCourseData } = useCourseWizard();
-  
-  useEffect(() => {
-    // Auto-generate pricing based on course data if not set
-    if (!courseData.duration) {
-      const lessonCount = courseData.lessons || 0;
-      let suggestedDuration = `${Math.max(1, Math.ceil(lessonCount * 0.5))} hours`;
-      updateCourseData({ duration: suggestedDuration });
-    }
-  }, [courseData.lessons, courseData.duration, updateCourseData]);
-  
+  const { courseData } = useCourseWizard();
+  // Remove duration auto-set logic
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Pricing</h2>
-      
       <Alert>
         <Info className="h-4 w-4" />
-        <AlertTitle>Auto-generated pricing</AlertTitle>
+        <AlertTitle>Pricing Info</AlertTitle>
         <AlertDescription>
-          We've automatically set pricing parameters based on your course content.
           More advanced pricing options will be available in the future.
         </AlertDescription>
       </Alert>
-      
       <div className="p-4 border rounded-md">
         <div className="text-center py-4">
-          <h3 className="text-lg font-medium">Suggested Course Duration</h3>
-          <p className="text-2xl font-bold mt-2">{courseData.duration}</p>
-          <p className="text-sm text-muted-foreground mt-1">Based on {courseData.lessons} lessons</p>
+          <h3 className="text-lg font-medium">Total Lessons</h3>
+          <p className="text-2xl font-bold mt-2">{courseData.lessons}</p>
         </div>
       </div>
     </div>
   );
 };
 
-// Settings component
+// Settings component - remove duration
 const CourseSettings: React.FC = () => {
-  const { courseData, updateCourseData } = useCourseWizard();
-  
-  useEffect(() => {
-    // Ensure we have a status set
-    if (!courseData.status) {
-      updateCourseData({ status: 'draft' });
-    }
-  }, [courseData.status, updateCourseData]);
-  
+  const { courseData } = useCourseWizard();
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Settings</h2>
-      
       <Alert>
         <Info className="h-4 w-4" />
         <AlertTitle>Course Ready for Publishing</AlertTitle>
@@ -71,14 +49,12 @@ const CourseSettings: React.FC = () => {
           Your course is set up successfully! After clicking Finish, you can find it in your course dashboard.
         </AlertDescription>
       </Alert>
-      
       <div className="p-4 border rounded-md">
         <div className="space-y-4">
           <div>
             <h3 className="text-md font-medium">Course Summary</h3>
             <p className="text-sm text-muted-foreground">Here's a summary of your course details</p>
           </div>
-          
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <p className="text-sm font-medium">Title</p>
@@ -91,10 +67,6 @@ const CourseSettings: React.FC = () => {
             <div className="space-y-1">
               <p className="text-sm font-medium">Total Lessons</p>
               <p className="text-sm">{courseData.lessons}</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-medium">Estimated Duration</p>
-              <p className="text-sm">{courseData.duration}</p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium">Status</p>
@@ -158,11 +130,9 @@ const WizardContent: React.FC = () => {
           currentStepIndex={currentStepIndex}
         />
       </div>
-      
       <Card className="max-w-4xl mx-auto">
         <CardContent className="pt-6">
           {renderStepContent()}
-          
           <WizardNavigation />
         </CardContent>
       </Card>
@@ -179,7 +149,6 @@ const CreateCourse: React.FC = () => {
             title="Create New Course" 
             backPath="/courses/overview" 
           />
-          
           <WizardContent />
         </div>
       </PageTransition>

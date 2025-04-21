@@ -4,12 +4,10 @@ export interface CourseData {
   description: string;
   category: string;
   image: string;
-  duration: string;
   lessons: number;
   status: 'draft' | 'published';
   students: number;
 }
-
 export interface CurriculumSection {
   title: string;
   position: number;
@@ -26,7 +24,6 @@ export interface CurriculumSection {
     position: number;
   }[];
 }
-
 export interface CourseWizardContextValue {
   currentStep: string;
   setCurrentStep: (step: string) => void;

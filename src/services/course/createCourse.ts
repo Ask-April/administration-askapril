@@ -10,15 +10,14 @@ export const createCourse = async (courseData: {
   description: string;
   category: string;
   image: string;
-  duration: string;
   status: "draft" | "published";
   lessons: number;
   students: number;
 }): Promise<Course> => {
   console.log("Creating course with data:", courseData);
-  
+
   const now = new Date().toISOString();
-  
+
   const { data, error } = await supabase
     .from("courses")
     .insert([
@@ -57,7 +56,6 @@ export const createCourse = async (courseData: {
     // Add virtual properties
     image: data.image_url,
     category: data.category_id,
-    duration: courseData.duration,
     lessons: courseData.lessons,
     students: 0
   };

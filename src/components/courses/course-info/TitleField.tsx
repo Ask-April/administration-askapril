@@ -25,7 +25,7 @@ const TitleField: React.FC<TitleFieldProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [showAISuggestion, setShowAISuggestion] = useState(false);
 
-  // Effect to check when to show the AI suggestion icon
+  // Show AI suggestion only for title field if length > 3
   useEffect(() => {
     if (value.length >= 3 && !showAISuggestion) {
       setShowAISuggestion(true);

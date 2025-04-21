@@ -85,7 +85,7 @@ const CourseFormFields: React.FC<CourseFormFieldsProps> = ({ form }) => {
               <FormLabel>Category</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.value}
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -93,26 +93,9 @@ const CourseFormFields: React.FC<CourseFormFieldsProps> = ({ form }) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Design">Design</SelectItem>
-                  <SelectItem value="Development">Development</SelectItem>
-                  <SelectItem value="Marketing">Marketing</SelectItem>
-                  <SelectItem value="Business">Business</SelectItem>
-                  <SelectItem value="Data Science">Data Science</SelectItem>
+                  {/* Placeholder - actual options are populated in CategorySelect */}
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="duration"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Duration</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g. 6 hours" {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -144,7 +127,7 @@ const CourseFormFields: React.FC<CourseFormFieldsProps> = ({ form }) => {
               <FormLabel>Status</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.value}
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger>

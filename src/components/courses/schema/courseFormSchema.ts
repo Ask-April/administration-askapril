@@ -12,9 +12,6 @@ export const courseFormSchema = z.object({
     required_error: "Please select a category.",
   }),
   image: z.string().optional(),
-  duration: z.string().min(1, {
-    message: "Please enter a duration (e.g., '6 hours').",
-  }),
   lessons: z.coerce.number().min(1, {
     message: "Course must have at least 1 lesson.",
   }),
