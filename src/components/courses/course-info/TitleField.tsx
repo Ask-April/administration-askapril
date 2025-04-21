@@ -5,21 +5,21 @@ import { Sparkles } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import CourseFormField from "./CourseFormField";
-import { CourseData } from "./types";
+import { Button } from "@/components/ui/button";
 
 interface TitleFieldProps {
   value: string;
   onChange: (value: string) => void;
   errors?: string[];
-  onGenerateContent: () => void;
-  isGeneratingContent: boolean;
+  onGenerateContent?: () => void;
+  isGeneratingContent?: boolean;
 }
 
 const TitleField: React.FC<TitleFieldProps> = ({ 
   value, 
   onChange, 
-  errors, 
-  onGenerateContent, 
+  errors,
+  onGenerateContent,
   isGeneratingContent 
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,21 +45,23 @@ const TitleField: React.FC<TitleFieldProps> = ({
           onChange={(e) => onChange(e.target.value)} 
           className={errors ? "border-red-500" : ""}
         />
-        {showAISuggestion && (
+        {showAISuggestion && onGenerateContent && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="absolute right-3 top-2.5 cursor-pointer">
                   <HoverCard>
                     <HoverCardTrigger asChild>
-                      <button 
+                      <Button 
                         type="button" 
-                        className="bg-transparent p-1 rounded-full hover:bg-primary/10 transition-colors" 
-                        onClick={onGenerateContent} 
+                        size="icon" 
+                        variant="ghost"
+                        onClick={onGenerateContent}
                         disabled={isGeneratingContent}
+                        className="h-6 w-6"
                       >
                         <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-                      </button>
+                      </Button>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-80">
                       <div className="flex justify-between space-x-4">
