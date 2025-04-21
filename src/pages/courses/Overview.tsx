@@ -1,11 +1,10 @@
-
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import CourseCard from "@/components/courses/CourseCard";
 import CreateCourseDialog from "@/components/courses/CreateCourseDialog";
 import { CourseFormValues } from "@/components/courses/schema/courseFormSchema";
 import { useCoursesList } from "@/hooks/useCoursesList";
-import { courseManagementService } from "@/services/course/courseManagementService";
+import { createCourse } from "@/services/course/courseManagementService";
 import { EmptyState } from "@/components/ui/loading-states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +38,7 @@ const Overview = () => {
 
   const handleCreateCourse = async (formData: CourseFormValues) => {
     try {
-      await courseManagementService.createCourse({
+      await createCourse({
         title: formData.title,
         description: formData.description,
         image: formData.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",

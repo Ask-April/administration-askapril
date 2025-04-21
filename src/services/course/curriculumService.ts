@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import type { CourseSection, CourseLesson } from "../types";
@@ -177,14 +178,14 @@ export const curriculumService = {
               title: lesson.title,
               type: lesson.type || "video",
               position: lesson.position,
-              content: lesson.content,
-              content_url: lesson.content_url,
-              video_url: lesson.video_url,
-              duration: lesson.duration,
-              is_preview: lesson.is_preview,
-              is_draft: lesson.is_draft,
-              is_compulsory: lesson.is_compulsory,
-              enable_discussion: lesson.enable_discussion,
+              content: lesson.content || null,
+              content_url: lesson.content_url || null,
+              video_url: lesson.video_url || null,
+              duration: lesson.duration || null,
+              is_preview: lesson.is_preview || false,
+              is_draft: lesson.is_draft || false,
+              is_compulsory: lesson.is_compulsory || false,
+              enable_discussion: lesson.enable_discussion || false,
             },
           ]);
         if (lessonRes.error) {
