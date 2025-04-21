@@ -37,8 +37,15 @@ export function useCoursesList() {
           // external_metadata removed
           slug: course.slug,
         });
-        if ('created_at' in course) c.created_at = course.created_at;
-        if ('updated_at' in course) c.updated_at = course.updated_at;
+        
+        // Type checking for timestamps
+        if ('created_at' in course && typeof course.created_at === 'string') {
+          c.created_at = course.created_at;
+        }
+        if ('updated_at' in course && typeof course.updated_at === 'string') {
+          c.updated_at = course.updated_at;
+        }
+        
         return c;
       });
 

@@ -37,8 +37,15 @@ export function useCourses() {
           // external_metadata removed
           slug: course.slug,
         });
-        if ('created_at' in course) c.created_at = course.created_at;
-        if ('updated_at' in course) c.updated_at = course.updated_at;
+        
+        // Type checking for timestamps
+        if ('created_at' in course && typeof course.created_at === 'string') {
+          c.created_at = course.created_at;
+        }
+        if ('updated_at' in course && typeof course.updated_at === 'string') {
+          c.updated_at = course.updated_at;
+        }
+        
         return c;
       });
 
@@ -87,8 +94,15 @@ export function useCourseById(courseId: string | undefined) {
         // external_metadata removed
         slug: data.slug,
       };
-      if ('created_at' in data) course.created_at = data.created_at;
-      if ('updated_at' in data) course.updated_at = data.updated_at;
+      
+      // Type checking for timestamps
+      if ('created_at' in data && typeof data.created_at === 'string') {
+        course.created_at = data.created_at;
+      }
+      if ('updated_at' in data && typeof data.updated_at === 'string') {
+        course.updated_at = data.updated_at;
+      }
+      
       return course;
     },
     enabled: !!courseId,

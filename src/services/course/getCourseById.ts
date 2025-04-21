@@ -51,9 +51,13 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       students: 0  // Would need additional query to count students
     };
 
-    // Optionally preserve created_at/updated_at if present on data object
-    if ('created_at' in data) course.created_at = data.created_at;
-    if ('updated_at' in data) course.updated_at = data.updated_at;
+    // Optionally preserve created_at/updated_at if present on data object with type checking
+    if ('created_at' in data && typeof data.created_at === 'string') {
+      course.created_at = data.created_at;
+    }
+    if ('updated_at' in data && typeof data.updated_at === 'string') {
+      course.updated_at = data.updated_at;
+    }
 
     return course;
   } catch (error) {
