@@ -1,4 +1,3 @@
-
 // Types synchronized with Supabase tables schema
 
 // ---- COURSES ---- //
@@ -20,14 +19,14 @@ export interface Course {
   external_id: string | null;
   external_metadata: any | null;
   slug: string | null;
+  created_at?: string;
+  updated_at?: string;
   // Virtual properties - not in DB but used in UI
   image?: string;
   category?: string;
   duration?: string;
   lessons?: number;
   students?: number;
-  created_at?: string;
-  updated_at?: string;
 }
 
 // ---- USERS ---- //

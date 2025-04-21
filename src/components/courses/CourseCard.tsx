@@ -9,32 +9,32 @@ import {
   PlayCircle, 
   Users,
 } from "lucide-react";
+import { Course } from "@/services/types";
 
 interface CourseCardProps {
-  id: string;
-  title: string;
-  description: string;
-  image?: string;
-  category: string;
-  duration: string;
-  students: number;
-  lessons: number;
-  status?: "published" | "draft";
+  course: Course;
   onClick?: () => void;
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({
-  id,
-  title,
-  description,
-  image,
-  category,
-  duration,
-  students,
-  lessons,
-  status = "published",
+  course,
   onClick,
 }) => {
+  // Extract properties from course object
+  const {
+    course_id: id,
+    title,
+    description,
+    image_url: image,
+    status = "published",
+  } = course;
+  
+  // Default or computed values
+  const category = course.category || "Uncategorized";
+  const duration = course.duration || "N/A";
+  const students = course.students || 0;
+  const lessons = course.lessons || 0;
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
@@ -46,12 +46,12 @@ const CourseCard: React.FC<CourseCardProps> = ({
           {image ? (
             <img
               src={image}
-              alt={title}
+              alt={title || "Course"}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/5 to-accent/10">
-              <span className="text-4xl font-bold text-accent">{title.charAt(0)}</span>
+              <span className="text-4xl font-bold text-accent">{(title || "C").charAt(0)}</span>
             </div>
           )}
           
@@ -82,11 +82,11 @@ const CourseCard: React.FC<CourseCardProps> = ({
           </div>
           
           <h3 className="mb-1 line-clamp-1 text-base font-medium transition-colors duration-200 group-hover:text-accent">
-            {title}
+            {title || "Untitled Course"}
           </h3>
           
           <p className="mb-3 line-clamp-2 text-xs text-muted-foreground">
-            {description}
+            {description || "No description provided."}
           </p>
           
           <div className="flex items-center justify-between text-xs text-muted-foreground">

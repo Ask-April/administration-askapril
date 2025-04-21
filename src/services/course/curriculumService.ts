@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import type { CourseSection, CourseLesson } from "../types";
@@ -46,18 +45,14 @@ export const curriculumService = {
       .from("lessons")
       .insert([
         {
-          section_id: lessonData.section_id,
+          module_id: lessonData.section_id,
           title: lessonData.title,
           type: lessonData.type || "video",
           position: lessonData.position,
-          content: lessonData.content,
-          content_url: lessonData.content_url,
-          video_url: lessonData.video_url,
-          duration: lessonData.duration,
-          is_preview: lessonData.is_preview,
-          is_draft: lessonData.is_draft,
-          is_compulsory: lessonData.is_compulsory,
-          enable_discussion: lessonData.enable_discussion,
+          content: lessonData.content || null,
+          content_url: lessonData.content_url || null,
+          video_url: lessonData.video_url || null,
+          duration: lessonData.duration || null,
         },
       ])
       .select()
@@ -70,18 +65,18 @@ export const curriculumService = {
 
     return {
       id: data.lesson_id,
-      section_id: data.section_id,
+      section_id: data.module_id,
       title: data.title,
       type: data.type || "video",
       position: data.position,
-      content: data.content,
-      content_url: data.content_url,
-      video_url: data.video_url,
-      duration: data.duration,
-      is_preview: data.is_preview,
-      is_draft: data.is_draft,
-      is_compulsory: data.is_compulsory,
-      enable_discussion: data.enable_discussion,
+      content: data.content || undefined,
+      content_url: data.content_url || undefined,
+      video_url: data.video_url || undefined,
+      duration: data.duration || undefined,
+      is_preview: false,
+      is_draft: false,
+      is_compulsory: false,
+      enable_discussion: false,
     };
   },
 
@@ -126,14 +121,14 @@ export const curriculumService = {
         title: lesson.title,
         type: lesson.type || "video",
         position: lesson.position,
-        content: lesson.content,
-        content_url: lesson.content_url,
-        video_url: lesson.video_url,
-        duration: lesson.duration,
-        is_preview: lesson.is_preview,
-        is_draft: lesson.is_draft,
-        is_compulsory: lesson.is_compulsory,
-        enable_discussion: lesson.enable_discussion,
+        content: lesson.content || undefined,
+        content_url: lesson.content_url || undefined,
+        video_url: lesson.video_url || undefined,
+        duration: lesson.duration || undefined,
+        is_preview: false,
+        is_draft: false,
+        is_compulsory: false,
+        enable_discussion: false,
       });
     });
 

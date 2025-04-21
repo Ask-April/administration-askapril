@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useCourses } from "@/hooks/useCourses";
 import { LoadingSkeleton, EmptyState } from "@/components/ui/loading-states";

@@ -1,4 +1,3 @@
-
 // This file previously used mock data; it now uses Supabase for all actions.
 import { supabase } from "@/integrations/supabase/client";
 import { Course } from "../types";
@@ -12,7 +11,7 @@ export const courseManagementService = {
       .from("courses")
       .select("*")
       .eq("status", "published")
-      .order("created_at", { ascending: false });
+      .order("course_id", { ascending: false });
 
     if (error) {
       console.error("Error fetching public courses:", error);
@@ -39,14 +38,13 @@ export const courseManagementService = {
       external_id: row.external_id,
       external_metadata: row.external_metadata,
       slug: row.slug,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-      // Enhanced properties:
       image: row.image_url,
       category: undefined,
       duration: undefined,
       lessons: undefined,
       students: undefined,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
     }));
   },
 
@@ -97,7 +95,7 @@ export const courseManagementService = {
       .from("courses")
       .select("*")
       .eq("category_id", categoryId)
-      .order("created_at", { ascending: false });
+      .order("course_id", { ascending: false });
 
     if (error) {
       console.error("Error fetching courses by category:", error);
@@ -123,13 +121,13 @@ export const courseManagementService = {
       external_id: row.external_id,
       external_metadata: row.external_metadata,
       slug: row.slug,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
       image: row.image_url,
       category: undefined,
       duration: undefined,
       lessons: undefined,
       students: undefined,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
     }));
   },
 
