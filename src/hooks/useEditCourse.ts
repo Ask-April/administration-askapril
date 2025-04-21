@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useCourseById } from '@/hooks/useCourses';
 import { toast } from 'sonner';
-import { updateCourse } from '@/pages/api/courses';
+import { updateCourse } from '@/services/course/courseManagementService';
 import type { Course } from '@/services/types';
 
 export const useEditCourse = (id: string | undefined) => {
@@ -56,8 +56,9 @@ export const useEditCourse = (id: string | undefined) => {
   const handleSave = async () => {
     try {
       if (id && editedCourse) {
-        // Call the updateCourse API function
+        // Call the updateCourse function
         await updateCourse(id, editedCourse);
+        toast.success("Course saved successfully");
       }
     } catch (error) {
       toast.error("Error saving course");

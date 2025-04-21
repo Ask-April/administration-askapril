@@ -49,6 +49,8 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
     image: data.image_url,
     category: data.category_id,
     // Other virtual props would need to be populated if needed
+    lessons: 0,
+    students: 0
   };
 
   return course;
