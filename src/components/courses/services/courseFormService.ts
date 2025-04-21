@@ -28,7 +28,6 @@ export const createCourse = async (values: CourseFormValues): Promise<void> => {
       description: values.description,
       category: values.category,
       image: values.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
-      duration: values.duration,
       lessons: values.lessons,
       status: values.status,
       students: 0,

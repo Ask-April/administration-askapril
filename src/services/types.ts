@@ -24,7 +24,6 @@ export interface Course {
   // Virtual properties - not in DB but used in UI
   image?: string;
   category?: string;
-  duration?: string;
   lessons?: number;
   students?: number;
 }

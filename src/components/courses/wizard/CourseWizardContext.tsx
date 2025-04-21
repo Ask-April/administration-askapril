@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -16,7 +15,6 @@ const defaultCourseData: CourseData = {
   description: '',
   category: '',
   image: '',
-  duration: '',
   lessons: 0,
   status: 'draft',
   students: 0

@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,10 +12,9 @@ import CourseAIAssistant from "@/components/courses/wizard/CourseAIAssistant";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 
-// Pricing component - now without duration
+// Pricing component - without duration
 const CoursePricing: React.FC = () => {
   const { courseData } = useCourseWizard();
-  // Remove duration auto-set logic
 
   return (
     <div className="space-y-6">

@@ -1,4 +1,3 @@
-
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import CourseCard from "@/components/courses/CourseCard";
@@ -44,7 +43,6 @@ const Overview = () => {
         description: formData.description,
         image: formData.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
         category: formData.category,
-        duration: formData.duration,
         lessons: formData.lessons || 0,
         students: 0,
         status: "draft",

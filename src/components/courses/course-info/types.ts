@@ -4,10 +4,11 @@ export interface CourseData {
   description: string;
   category: string;
   image: string;
-  duration: string;
   lessons: number;
   status: "draft" | "published";
   students?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface CourseFormErrors {

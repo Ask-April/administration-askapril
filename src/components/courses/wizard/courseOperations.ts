@@ -1,4 +1,3 @@
-
 import { toast } from 'sonner';
 import { courseService } from '@/services/course';
 import { CourseData } from './types';
@@ -19,7 +18,6 @@ export const saveCurrentStepData = async (
           description: courseData.description,
           category: courseData.category,
           image: courseData.image,
-          duration: courseData.duration || '0 hours',
           status: courseData.status,
           lessons: courseData.lessons,
           students: 0
@@ -34,7 +32,6 @@ export const saveCurrentStepData = async (
           description: courseData.description,
           category: courseData.category,
           image: courseData.image,
-          duration: courseData.duration,
           status: courseData.status,
           lessons: courseData.lessons,
         });
@@ -74,9 +71,7 @@ export const saveCurrentStepData = async (
       return createdCourseId;
     } else if (currentStep === 'pricing' && createdCourseId) {
       // Save pricing information
-      await courseService.updateCourse(createdCourseId, {
-        duration: courseData.duration
-      });
+      await courseService.updateCourse(createdCourseId, {});
       toast.success('Pricing information saved!');
       return createdCourseId;
     } else if (currentStep === 'settings' && createdCourseId) {

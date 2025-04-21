@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -27,7 +26,6 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
       description: "",
       category: "",
       image: "",
-      duration: "",
       lessons: 1,
       status: "draft",
     },

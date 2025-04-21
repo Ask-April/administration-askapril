@@ -16,7 +16,6 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   // Remove virtual properties that don't exist in the database
   delete dbData.image;
   delete dbData.category;
-  delete dbData.duration;
   delete dbData.lessons;
   delete dbData.students;
   
