@@ -1,4 +1,3 @@
-
 // Types synchronized with Supabase tables schema
 
 // ---- COURSES ---- //
@@ -26,6 +25,7 @@ export interface Course {
   category?: string;
   lessons?: number;
   students?: number;
+  certificateTemplate?: string; // Added this property
 }
 
 // ---- USERS ---- //

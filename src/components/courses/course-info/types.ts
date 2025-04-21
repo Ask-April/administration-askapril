@@ -9,7 +9,6 @@ export interface CourseData {
   students?: number;
   created_at?: string;
   updated_at?: string;
-  // Add additional properties to match the Course type
   featured?: boolean;
   price_visible?: boolean;
   hidden?: boolean;
@@ -18,6 +17,7 @@ export interface CourseData {
   max_enrollments?: number;
   subtitle?: string;
   slug?: string;
+  certificateTemplate?: string; // Added this property
 }
 
 export interface CourseFormErrors {

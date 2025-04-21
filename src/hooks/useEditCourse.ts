@@ -32,6 +32,7 @@ export const useEditCourse = (id: string | undefined) => {
     // Virtual properties
     category: "",
     image: "",
+    certificateTemplate: "", // Added this property with default empty string
   });
 
   // Update local state when the data is loaded
@@ -56,6 +57,7 @@ export const useEditCourse = (id: string | undefined) => {
         // Set virtual properties
         category: course.category_id || "",
         image: course.image_url || "",
+        certificateTemplate: course.certificateTemplate || "", // Added this property
       });
     }
   }, [course]);
