@@ -1,4 +1,3 @@
-
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import CourseCard from "@/components/courses/CourseCard";
@@ -58,7 +57,6 @@ const Overview = () => {
     }
   };
 
-  // Filter courses based on search query and filter type
   const filteredCourses = coursesData?.filter((course) => {
     const matchesSearch = course.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          course.description?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -70,10 +68,17 @@ const Overview = () => {
     return matchesSearch;
   }) || [];
 
-  // Sort courses based on sort option
   const sortedCourses = [...filteredCourses].sort((a, b) => {
-    if (sortBy === "newest") return new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime();
-    if (sortBy === "oldest") return new Date(a.created_at || '').getTime() - new Date(b.created_at || '').getTime();
+    if (sortBy === "newest") {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateB - dateA;
+    }
+    if (sortBy === "oldest") {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateA - dateB;
+    }
     if (sortBy === "popular") return (b.students || 0) - (a.students || 0);
     if (sortBy === "a-z") return (a.title || '').localeCompare(b.title || '');
     return 0;
@@ -183,7 +188,7 @@ const Overview = () => {
                 id={course.course_id}
                 title={course.title || 'Untitled Course'}
                 description={course.description || 'No description available.'}
-                image={course.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"}
+                image={course.image_url || course.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"}
                 category={course.category || 'Uncategorized'}
                 duration={course.duration || '0 hours'}
                 students={course.students || 0}

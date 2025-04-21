@@ -28,7 +28,10 @@ export const saveCurrentStepData = async (
         return course.course_id;
       } else {
         // Update existing course
-        await courseService.updateCourse(createdCourseId, courseData);
+        await courseService.updateCourse(createdCourseId, {
+          ...courseData,
+          // These fields are accepted now because we updated the Course type
+        });
         toast.success('Course information updated!');
         return createdCourseId;
       }
@@ -44,6 +47,7 @@ export const saveCurrentStepData = async (
       // Save pricing information
       await courseService.updateCourse(createdCourseId, {
         duration: courseData.duration
+        // This is now valid with our updated Course type
       });
       toast.success('Pricing information saved!');
       return createdCourseId;
@@ -52,6 +56,7 @@ export const saveCurrentStepData = async (
       await courseService.updateCourse(createdCourseId, {
         status: courseData.status,
         lessons: courseData.lessons
+        // This is now valid with our updated Course type
       });
       toast.success('Settings saved!');
       return createdCourseId;

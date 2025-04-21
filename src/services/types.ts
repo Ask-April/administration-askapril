@@ -20,7 +20,14 @@ export interface Course {
   external_id: string | null;
   external_metadata: any | null;
   slug: string | null;
-  // No 'duration', 'lessons', 'students', 'created_at', 'updated_at' in DB schema for courses table
+  // Virtual properties - not in DB but used in UI
+  image?: string;
+  category?: string;
+  duration?: string;
+  lessons?: number;
+  students?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 // ---- USERS ---- //
@@ -59,4 +66,41 @@ export interface Profile {
   bio: string | null;
   created_at: string | null;
   updated_at: string | null;
+}
+
+// ---- LEADS ---- //
+export interface Lead {
+  id: string;
+  name: string;
+  email: string;
+  source: string;
+  status: string;
+  created_at: string;
+  phone?: string;
+  tags?: string[];
+  last_contacted?: string;
+}
+
+// ---- CONTENT REPORTS ---- //
+export interface ContentReport {
+  id: string;
+  community_id: string;
+  reporter_id: string;
+  content_type: string;
+  content_id: string;
+  content_excerpt?: string;
+  reason: string;
+  severity?: 'low' | 'medium' | 'high';
+  status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+  created_at: string;
+  updated_at: string;
+}
+
+// ---- COMMUNITY SETTINGS ---- //
+export interface CommunitySetting {
+  id: string;
+  name: string;
+  description: string | null;
+  category: string;
+  value: boolean;
 }

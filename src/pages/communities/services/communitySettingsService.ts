@@ -1,59 +1,46 @@
 
-// Import supabase client
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+// Mock community settings service for now, will be replaced with real data later
+import { CommunitySetting } from "@/services/types";
 
-// Define interfaces for the settings
-export interface CommunitySettings {
-  id?: string;
-  community_id: string;
-  membership_mode: string;
-  posting_permissions: string;
-  moderation_level: string;
-  notification_frequency: string;
-}
-
-// In a real app, these functions would connect to your database
-// For now, we'll use mock data
-
-export const fetchCommunitySettings = async (communityId: string): Promise<CommunitySettings | null> => {
-  try {
-    // Since there's no settings table yet in Supabase, we'll return mocked data
-    // This would need to be updated once a real table is created
-    return {
-      community_id: communityId,
-      membership_mode: "open",
-      posting_permissions: "all_members",
-      moderation_level: "low",
-      notification_frequency: "daily",
-    };
-  } catch (error) {
-    console.error("Error fetching community settings:", error);
-    toast.error("Could not load community settings");
-    return null;
+// Export as a named constant to match import in useSettingsState
+export const communitySettingsService = {
+  getSettings: async (communityId: string): Promise<CommunitySetting[]> => {
+    // Mock data for now
+    return [
+      {
+        id: "1",
+        name: "Enable discussions",
+        description: "Allow members to create and participate in discussions",
+        category: "general",
+        value: true
+      },
+      {
+        id: "2",
+        name: "Auto-approve new members",
+        description: "Automatically approve new member requests",
+        category: "membership",
+        value: false
+      },
+      {
+        id: "3",
+        name: "Content moderation",
+        description: "Review posts before they are published",
+        category: "moderation",
+        value: true
+      },
+      {
+        id: "4",
+        name: "Email notifications",
+        description: "Send email notifications for new activities",
+        category: "notifications",
+        value: true
+      }
+    ];
+  },
+  
+  updateSetting: async (communityId: string, settingId: string, value: boolean): Promise<void> => {
+    console.log(`Updating setting ${settingId} to ${value} for community ${communityId}`);
+    // In a real implementation, this would update the database
+    return Promise.resolve();
   }
-};
-
-export const updateCommunitySettings = async (settings: CommunitySettings): Promise<boolean> => {
-  try {
-    // In a real app, you would update the database
-    // This is a placeholder that just returns success
-    console.log("Settings would be updated:", settings);
-    toast.success("Settings updated successfully");
-    return true;
-  } catch (error) {
-    console.error("Error updating community settings:", error);
-    toast.error("Failed to update settings");
-    return false;
-  }
-};
-
-// Mock function for reports
-export const fetchModeratorReports = async (communityId: string) => {
-  // Mock data for reports
-  return [
-    { id: "1", reporter: "Jane Smith", reason: "Inappropriate content", status: "pending", created_at: "2023-01-15T10:30:00Z" },
-    { id: "2", reporter: "John Doe", reason: "Spam", status: "resolved", created_at: "2023-01-14T08:15:00Z" },
-    { id: "3", reporter: "Alice Johnson", reason: "Harassment", status: "pending", created_at: "2023-01-13T14:45:00Z" },
-  ];
 };
