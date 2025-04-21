@@ -1,4 +1,3 @@
-
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import CourseCard from "@/components/courses/CourseCard";
@@ -30,6 +29,9 @@ import {
   SlidersHorizontal
 } from "lucide-react";
 import { toast } from "sonner";
+import CourseOverviewHeader from "./components/CourseOverviewHeader";
+import CourseOverviewControls from "./components/CourseOverviewControls";
+import CourseOverviewGrid from "./components/CourseOverviewGrid";
 
 const Overview = () => {
   const { data: coursesData, isLoading, error, refetch } = useCoursesList();
@@ -105,100 +107,22 @@ const Overview = () => {
   return (
     <PageTransition>
       <div className="flex flex-col gap-6 p-6 md:gap-8 md:p-8">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight">Courses</h1>
-          <p className="text-muted-foreground">
-            Manage and organize your course catalog
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-1 items-center gap-2">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search courses..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="h-10 gap-1">
-                  <Filter className="h-4 w-4" />
-                  <span className="hidden sm:inline">Filter</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setFilterType("all")}>All Courses</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterType("published")}>Published</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterType("draft")}>Drafts</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="outline" className="h-10 w-10 px-0" size="icon">
-              <SlidersHorizontal className="h-4 w-4" />
-              <span className="sr-only">More filters</span>
-            </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            <Select 
-              defaultValue={sortBy}
-              onValueChange={(value) => setSortBy(value)}
-            >
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Sort By" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
-                <SelectItem value="popular">Most Popular</SelectItem>
-                <SelectItem value="a-z">Alphabetical A-Z</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button className="gap-1" onClick={() => document.getElementById('create-course-trigger')?.click()}>
-              <Plus className="h-4 w-4" />
-              <span>Add Course</span>
-            </Button>
-          </div>
-        </div>
-
-        {sortedCourses.length === 0 ? (
-          <EmptyState 
-            title="No Courses Found" 
-            description="Get started by creating your first course."
-            icon={BookOpen}
-            action={
-              <Button onClick={() => document.getElementById('create-course-trigger')?.click()}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Course
-              </Button>
-            }
-          />
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div id="create-course-trigger" className="h-full">
-              <CreateCourseDialog onCourseCreated={handleCreateCourse} />
-            </div>
-            
-            {sortedCourses.map((course) => (
-              <CourseCard
-                key={course.course_id}
-                course={course}
-                course_id={course.course_id}
-                title={course.title || 'Untitled Course'}
-                subtitle={course.subtitle || ''}
-                description={course.description || 'No description available.'}
-                image={course.image_url || course.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"}
-                category={course.category || 'Uncategorized'}
-                students={course.students || 0}
-                lessons={course.lessons || 0}
-                status={(course.status as "published" | "draft") || "draft"}
-              />
-            ))}
-          </div>
-        )}
+        <CourseOverviewHeader />
+        <CourseOverviewControls
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          filterType={filterType}
+          setFilterType={setFilterType}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+        />
+        <CourseOverviewGrid
+          isLoading={isLoading}
+          error={error}
+          refetch={refetch}
+          sortedCourses={sortedCourses}
+          handleCreateCourse={handleCreateCourse}
+        />
       </div>
     </PageTransition>
   );
