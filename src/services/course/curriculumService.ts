@@ -1,200 +1,166 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { v4 as uuidv4 } from "uuid";
-import type { CourseSection, CourseLesson } from "../types";
+import { CourseSection, CourseLesson } from "../types";
 
-export const curriculumService = {
-  /**
-   * Create a course section in the DB
-   */
-  createSection: async (
-    sectionData: Omit<CourseSection, "id" | "lessons">
-  ): Promise<CourseSection> => {
-    const { data, error } = await supabase
-      .from("course_module")
-      .insert([
-        {
-          course_id: sectionData.course_id,
-          title: sectionData.title,
-          position: sectionData.position,
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error creating section:", error);
-      throw error;
-    }
-
-    return {
-      id: data.module_id,
-      course_id: data.course_id,
-      title: data.title,
-      position: data.position,
-      lessons: [],
-    };
-  },
-
-  /**
-   * Create a course lesson in the DB
-   */
-  createLesson: async (
-    lessonData: Omit<CourseLesson, "id">
-  ): Promise<CourseLesson> => {
-    const { data, error } = await supabase
-      .from("lessons")
-      .insert([
-        {
-          module_id: lessonData.section_id,
-          title: lessonData.title,
-          type: lessonData.type || "video",
-          position: lessonData.position,
-          content: lessonData.content || null,
-          content_url: lessonData.content_url || null,
-          video_url: lessonData.video_url || null,
-          duration: lessonData.duration || null,
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error creating lesson:", error);
-      throw error;
-    }
-
-    return {
-      id: data.lesson_id,
-      section_id: data.module_id,
-      title: data.title,
-      type: data.type || "video",
-      position: data.position,
-      content: data.content || undefined,
-      content_url: data.content_url || undefined,
-      video_url: data.video_url || undefined,
-      duration: data.duration || undefined,
-      is_preview: false,
-      is_draft: false,
-      is_compulsory: false,
-      enable_discussion: false,
-    };
-  },
-
-  /**
-   * Get all sections and lessons for a course from DB
-   */
-  getCourseCurriculum: async (courseId: string): Promise<CourseSection[]> => {
-    const { data: sections, error } = await supabase
+/**
+ * Get curriculum for a course
+ */
+export const getCurriculum = async (courseId: string): Promise<CourseSection[]> => {
+  try {
+    // Fetch modules for the course
+    const { data: modules, error: modulesError } = await supabase
       .from("course_module")
       .select("*")
       .eq("course_id", courseId)
       .order("position", { ascending: true });
 
-    if (error) {
-      console.error("Error retrieving course sections:", error);
-      throw error;
+    if (modulesError) {
+      console.error("Error fetching modules:", modulesError);
+      throw modulesError;
     }
-    if (!sections || sections.length === 0) {
-      // No sections found
+
+    if (!modules || modules.length === 0) {
       return [];
     }
 
-    // Fetch all lessons for these sections
-    const sectionIds = sections.map((s) => s.module_id);
-    const { data: lessonsData, error: lessonsError } = await supabase
-      .from("lessons")
-      .select("*")
-      .in("module_id", sectionIds);
+    // Create an array to store the complete curriculum with sections and lessons
+    const curriculum: CourseSection[] = [];
 
-    if (lessonsError) {
-      console.error("Error retrieving course lessons:", lessonsError);
-      throw lessonsError;
-    }
+    // For each module, fetch its lessons
+    for (const module of modules) {
+      const { data: lessons, error: lessonsError } = await supabase
+        .from("lessons")
+        .select("*")
+        .eq("module_id", module.module_id)
+        .order("position", { ascending: true });
 
-    // Group lessons by section/module_id
-    const lessonsBySection: Record<string, CourseLesson[]> = {};
-    (lessonsData || []).forEach((lesson) => {
-      if (!lessonsBySection[lesson.module_id]) lessonsBySection[lesson.module_id] = [];
-      lessonsBySection[lesson.module_id].push({
-        id: lesson.lesson_id,
-        section_id: lesson.module_id,
-        title: lesson.title,
-        type: lesson.type || "video",
-        position: lesson.position,
-        content: lesson.content || undefined,
-        content_url: lesson.content_url || undefined,
-        video_url: lesson.video_url || undefined,
-        duration: lesson.duration || undefined,
-        is_preview: false,
-        is_draft: false,
-        is_compulsory: false,
-        enable_discussion: false,
-      });
-    });
-
-    // Combine sections with lessons
-    return sections.map((section) => ({
-      id: section.module_id,
-      course_id: section.course_id,
-      title: section.title,
-      position: section.position,
-      lessons: lessonsBySection[section.module_id] || [],
-    }));
-  },
-
-  /**
-   * Save complete curriculum (sections and lessons)
-   * (usually this would be handled individually, but legacy API may want a full save)
-   */
-  saveCurriculum: async (courseId: string, sectionsIn: CourseSection[]): Promise<{ success: boolean }> => {
-    // Usually you don't replace all data but here for legacy:
-    // Delete all course's modules and lessons, then insert new ones
-
-    // Delete all sections/modules for this course
-    await supabase.from("course_module").delete().eq("course_id", courseId);
-    // Delete all lessons for this course's modules
-    // (You should do in batch - not shown for brevity)
-
-    for (const section of sectionsIn) {
-      const sectionRes = await supabase
-        .from("course_module")
-        .insert([{ course_id: courseId, title: section.title, position: section.position }])
-        .select()
-        .single();
-
-      if (sectionRes.error) {
-        console.error("Error inserting section:", sectionRes.error);
-        throw sectionRes.error;
+      if (lessonsError) {
+        console.error("Error fetching lessons:", lessonsError);
+        throw lessonsError;
       }
 
-      const sectionId = sectionRes.data.module_id;
+      // Transform the module data into our CourseSection format
+      const section: CourseSection = {
+        id: module.module_id,
+        course_id: module.course_id,
+        title: module.title,
+        position: module.position,
+        lessons: lessons ? lessons.map((lesson: any) => ({
+          id: lesson.lesson_id,
+          section_id: module.module_id,
+          title: lesson.title,
+          type: lesson.type || 'video',
+          position: lesson.position,
+          content: lesson.content || '',
+          content_url: lesson.content_url || '',
+          video_url: lesson.video_url || '',
+          duration: lesson.duration || 0,
+          is_preview: false,
+          is_draft: false,
+          is_compulsory: true,
+          enable_discussion: false
+        })) : []
+      };
+
+      curriculum.push(section);
+    }
+
+    return curriculum;
+  } catch (error) {
+    console.error("Error in getCurriculum:", error);
+    throw error;
+  }
+};
+
+/**
+ * Save curriculum for a course
+ */
+export const saveCurriculum = async (
+  courseId: string,
+  sections: CourseSection[]
+): Promise<boolean> => {
+  try {
+    // For now, let's implement a simple version that just logs the data
+    // In a real implementation, we would save each section and its lessons to the database
+    console.log("Saving curriculum for course", courseId, sections);
+
+    // Process each section
+    for (const section of sections) {
+      // Check if section exists
+      const { data: existingSection } = await supabase
+        .from("course_module")
+        .select("*")
+        .eq("module_id", section.id)
+        .single();
+
+      if (existingSection) {
+        // Update existing section
+        await supabase
+          .from("course_module")
+          .update({
+            title: section.title,
+            position: section.position
+          })
+          .eq("module_id", section.id);
+      } else {
+        // Create new section
+        await supabase
+          .from("course_module")
+          .insert({
+            module_id: section.id,
+            course_id: courseId,
+            title: section.title,
+            position: section.position
+          });
+      }
+
+      // Process each lesson in the section
       for (const lesson of section.lessons) {
-        const lessonRes = await supabase
+        // Check if lesson exists
+        const { data: existingLesson } = await supabase
           .from("lessons")
-          .insert([
-            {
-              module_id: sectionId,
-              title: lesson.title,
-              type: lesson.type || "video",
-              position: lesson.position,
-              content: lesson.content || null,
-              content_url: lesson.content_url || null,
-              video_url: lesson.video_url || null,
-              duration: lesson.duration || null,
-              is_preview: lesson.is_preview || false,
-              is_draft: lesson.is_draft || false,
-              is_compulsory: lesson.is_compulsory || false,
-              enable_discussion: lesson.enable_discussion || false,
-            },
-          ]);
-        if (lessonRes.error) {
-          console.error("Error inserting lesson:", lessonRes.error);
-          throw lessonRes.error;
+          .select("*")
+          .eq("lesson_id", lesson.id)
+          .single();
+
+        const lessonData = {
+          title: lesson.title,
+          type: lesson.type,
+          position: lesson.position,
+          content: lesson.content || '',
+          content_url: lesson.content_url || '',
+          video_url: lesson.video_url || '',
+          duration: lesson.duration || 0,
+          module_id: section.id
+        };
+
+        if (existingLesson) {
+          // Update existing lesson
+          await supabase
+            .from("lessons")
+            .update(lessonData)
+            .eq("lesson_id", lesson.id);
+        } else {
+          // Create new lesson
+          await supabase
+            .from("lessons")
+            .insert({
+              lesson_id: lesson.id,
+              ...lessonData
+            });
         }
       }
     }
 
-    return { success: true };
-  },
+    return true;
+  } catch (error) {
+    console.error("Error in saveCurriculum:", error);
+    return false;
+  }
+};
+
+// Create an object with all exports
+export const curriculumService = {
+  getCurriculum,
+  saveCurriculum
 };

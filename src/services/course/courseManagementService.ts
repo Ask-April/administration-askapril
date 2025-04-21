@@ -15,7 +15,7 @@ export { updateCourse } from './updateCourse';
 export { deleteCourse } from './deleteCourse';
 
 // Create an object with all exports for backward compatibility
-const courseManagementService = {
+export const courseManagementService = {
   getPublicCourses,
   getCourseById,
   getCoursesByCategory,
@@ -23,5 +23,3 @@ const courseManagementService = {
   updateCourse,
   deleteCourse
 };
-
-export { courseManagementService };
