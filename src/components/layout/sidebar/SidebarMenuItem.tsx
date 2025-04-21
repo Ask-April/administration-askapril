@@ -30,7 +30,7 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
   expanded, 
   isMenuOpen, 
   toggleMenu, 
-  subMenuItems, 
+  subMenuItems = {}, 
   location 
 }) => {
   if (item.hasSubMenu) {
