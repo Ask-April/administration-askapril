@@ -1,4 +1,11 @@
 
+import { getPublicCourses } from './getPublicCourses';
+import { getCourseById } from './getCourseById';
+import { getCoursesByCategory } from './getCoursesByCategory';
+import { createCourse } from './createCourse';
+import { updateCourse } from './updateCourse';
+import { deleteCourse } from './deleteCourse';
+
 // Direct exports from individual files
 export { getPublicCourses } from './getPublicCourses';
 export { getCourseById } from './getCourseById';

@@ -1,5 +1,5 @@
 
-import * as courseManagementService from './courseManagementService';
+import { courseManagementService } from './courseManagementService';
 import { curriculumService } from './curriculumService';
 
 // Combined course service
