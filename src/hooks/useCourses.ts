@@ -1,7 +1,8 @@
 
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Course } from "@/pages/api/courses";
+import { Course } from "@/services/types";
 
 export function useCourses() {
   return useQuery({
@@ -41,7 +42,6 @@ export function useCourseById(courseId: string | undefined) {
           .single();
 
         if (error) {
-          // PGRST116 means no rows returned
           if (error.code === 'PGRST116') {
             console.log("No course found with ID:", courseId);
             return null;
@@ -51,14 +51,15 @@ export function useCourseById(courseId: string | undefined) {
         }
 
         console.log("Course data retrieved:", data);
-        return data || null; // Ensure we return null instead of undefined
+        return data || null;
       } catch (error) {
         console.error("Exception in useCourseById:", error);
         throw error;
       }
     },
-    enabled: !!courseId, // Only run the query if courseId is provided
-    retry: 1, // Limit retries on failure
-    staleTime: 5 * 60 * 1000, // Cache valid for 5 minutes
+    enabled: !!courseId,
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
   });
 }
+

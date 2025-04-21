@@ -1,21 +1,11 @@
 
+
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Profile } from "@/services/types";
 
-export interface Profile {
-  id: string;
-  display_name: string | null;
-  avatar_url: string | null;
-  bio: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-/**
- * Hook to fetch and manage user profile data
- */
 export const useProfile = (user: User | null) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -28,44 +18,43 @@ export const useProfile = (user: User | null) => {
       }
 
       try {
-        // First check if the profile exists
+        // Try to get the profile from the profiles table
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         
         if (error) {
-          if (error.code === 'PGRST116') {
-            // Profile doesn't exist, create one
-            const newProfile = {
-              id: user.id,
-              display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-              avatar_url: user.user_metadata?.avatar_url || null,
-              bio: null
-            };
-            
-            const { data: createdProfile, error: createError } = await supabase
-              .from('profiles')
-              .insert(newProfile)
-              .select()
-              .single();
-              
-            if (createError) {
-              console.error("Error creating profile:", createError);
-              toast.error("Failed to create your profile");
-            } else {
-              setProfile(createdProfile as Profile);
-            }
+          toast.error("Failed to load your profile: " + error.message);
+          setProfile(null);
+        } else if (!data) {
+          // profile does not exist -- create one
+          const newProfile: Omit<Profile, 'created_at' | 'updated_at'> = {
+            id: user.id,
+            display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+            avatar_url: user.user_metadata?.avatar_url || null,
+            bio: null,
+          };
+          const { data: created, error: createError } = await supabase
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .maybeSingle();
+
+          if (createError) {
+            toast.error("Failed to create your profile: " + createError.message);
+            setProfile(null);
           } else {
-            console.error("Error fetching profile:", error);
-            toast.error("Failed to load your profile");
+            setProfile(created as Profile);
           }
         } else {
           setProfile(data as Profile);
         }
-      } catch (error) {
-        console.error("Unexpected error:", error);
+      } catch (e) {
+        console.error("Profile fetch error:", e);
+        toast.error("Unexpected error loading profile");
+        setProfile(null);
       } finally {
         setLoadingProfile(false);
       }
@@ -76,3 +65,4 @@ export const useProfile = (user: User | null) => {
 
   return { profile, loadingProfile };
 };
+
