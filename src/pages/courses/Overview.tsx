@@ -188,6 +188,7 @@ const Overview = () => {
                 course={course}
                 course_id={course.course_id}
                 title={course.title || 'Untitled Course'}
+                subtitle={course.subtitle || ''}
                 description={course.description || 'No description available.'}
                 image={course.image_url || course.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"}
                 category={course.category || 'Uncategorized'}

@@ -23,6 +23,7 @@ export interface CourseCardProps {
   students?: number;
   lessons?: number;
   status?: "published" | "draft";
+  subtitle?: string;
 }
 
 const CourseCard: React.FC<CourseCardProps> = (props) => {
@@ -38,6 +39,7 @@ const CourseCard: React.FC<CourseCardProps> = (props) => {
     category = course?.category || "Uncategorized",
     students = course?.students || 0,
     lessons = course?.lessons || 0,
+    subtitle = course?.subtitle || "",
   } = props;
   
   // If no course_id is provided, use a fallback ID
@@ -92,6 +94,12 @@ const CourseCard: React.FC<CourseCardProps> = (props) => {
           <h3 className="mb-1 line-clamp-1 text-base font-medium transition-colors duration-200 group-hover:text-accent">
             {title}
           </h3>
+          
+          {subtitle && (
+            <p className="mb-2 line-clamp-1 text-sm text-muted-foreground font-medium">
+              {subtitle}
+            </p>
+          )}
           
           <p className="mb-3 line-clamp-2 text-xs text-muted-foreground">
             {description}

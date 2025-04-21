@@ -45,10 +45,12 @@ const EditCourse = () => {
   const saveChanges = async () => {
     setIsSaving(true);
     try {
-      await handleSave();
-      toast.success("Course saved successfully!");
-      navigate("/courses/overview");
+      const success = await handleSave();
+      if (success) {
+        toast.success("Course saved successfully!");
+      }
     } catch (error) {
+      console.error("Failed to save changes:", error);
       toast.error("Failed to save changes");
     } finally {
       setIsSaving(false);

@@ -352,6 +352,60 @@ export type Database = {
         }
         Relationships: []
       }
+      course_assignments: {
+        Row: {
+          assigned_by: string | null
+          assigned_to: string | null
+          assignment_id: string
+          course_id: string | null
+          created_at: string | null
+          due_date: string | null
+          is_mandatory: boolean | null
+          organization_id: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_by?: string | null
+          assigned_to?: string | null
+          assignment_id?: string
+          course_id?: string | null
+          created_at?: string | null
+          due_date?: string | null
+          is_mandatory?: boolean | null
+          organization_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_by?: string | null
+          assigned_to?: string | null
+          assignment_id?: string
+          course_id?: string | null
+          created_at?: string | null
+          due_date?: string | null
+          is_mandatory?: boolean | null
+          organization_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_assignments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["course_id"]
+          },
+          {
+            foreignKeyName: "course_assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       course_category: {
         Row: {
           category_id: string
@@ -1138,6 +1192,45 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string | null
+          is_read: boolean | null
+          message: string
+          notification_id: string
+          organization_id: string | null
+          related_id: string | null
+          title: string
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          is_read?: boolean | null
+          message: string
+          notification_id?: string
+          organization_id?: string | null
+          related_id?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          is_read?: boolean | null
+          message?: string
+          notification_id?: string
+          organization_id?: string | null
+          related_id?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       order_item: {
         Row: {
           item_price: number | null
@@ -1234,6 +1327,101 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      organization_courses: {
+        Row: {
+          added_at: string | null
+          course_id: string | null
+          id: string
+          organization_id: string | null
+        }
+        Insert: {
+          added_at?: string | null
+          course_id?: string | null
+          id?: string
+          organization_id?: string | null
+        }
+        Update: {
+          added_at?: string | null
+          course_id?: string | null
+          id?: string
+          organization_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_courses_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["course_id"]
+          },
+          {
+            foreignKeyName: "organization_courses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      organization_users: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_primary: boolean | null
+          organization_id: string | null
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          organization_id?: string | null
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          organization_id?: string | null
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_users_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          name: string
+          organization_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          name: string
+          organization_id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          name?: string
+          organization_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       page: {
         Row: {

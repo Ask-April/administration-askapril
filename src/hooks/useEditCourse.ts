@@ -2,12 +2,12 @@
 import { useState, useEffect } from 'react';
 import { useCourseById } from '@/hooks/useCourses';
 import { toast } from 'sonner';
-import { updateCourse } from '@/services/course/courseManagementService';
+import { updateCourse } from '@/services/course/updateCourse';
 import type { Course } from '@/services/types';
 
 export const useEditCourse = (id: string | undefined) => {
   // Fetch the course data using our useCourseById hook
-  const { data: course, isLoading, error, isError } = useCourseById(id);
+  const { data: course, isLoading, error, isError, refetch } = useCourseById(id);
 
   // Local state for edited course data - initialize with default empty values
   const [editedCourse, setEditedCourse] = useState<Partial<Course>>({
@@ -55,14 +55,22 @@ export const useEditCourse = (id: string | undefined) => {
 
   const handleSave = async () => {
     try {
-      if (id && editedCourse) {
-        // Call the updateCourse function
-        await updateCourse(id, editedCourse);
-        toast.success("Course saved successfully");
+      if (!id) {
+        throw new Error("Course ID is missing");
       }
+      
+      if (editedCourse) {
+        // Call the updateCourse function with the right parameters
+        await updateCourse(id, editedCourse);
+        await refetch(); // Refresh the course data after update
+        toast.success("Course saved successfully");
+        return true;
+      }
+      return false;
     } catch (error) {
+      console.error("Error saving course:", error);
       toast.error("Error saving course");
-      throw error;
+      return false;
     }
   };
   
