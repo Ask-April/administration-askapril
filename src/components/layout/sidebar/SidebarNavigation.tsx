@@ -3,7 +3,10 @@ import React, { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SidebarMenuItem from "./SidebarMenuItem";
 import { useLocation } from "react-router-dom";
-import { BarChart3, BookOpen, BrainCircuit, Broadcast, Megaphone, UserPlus, Users } from "lucide-react";
+import { 
+  BarChart3, BookOpen, BrainCircuit, Megaphone, 
+  UserPlus, Users, MessageSquare 
+} from "lucide-react";
 
 interface SidebarNavigationProps {
   expanded: boolean;
@@ -82,13 +85,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       { name: "Sources", icon: <UserPlus size={16} />, path: "/leads/sources" }
     ],
     "Broadcasts": [
-      { name: "All Broadcasts", icon: <Broadcast size={16} />, path: "/broadcasts/all" },
+      { name: "All Broadcasts", icon: <Megaphone size={16} />, path: "/broadcasts/all" },
       { name: "Subscribers", icon: <Users size={16} />, path: "/broadcasts/subscribers" },
       { name: "Analytics", icon: <BarChart3 size={16} />, path: "/broadcasts/analytics" }
     ],
     "Communities": [
       { name: "All Communities", icon: <Users size={16} />, path: "/communities/all" },
-      { name: "Discussions", icon: <Broadcast size={16} />, path: "/communities/discussions" },
+      { name: "Discussions", icon: <MessageSquare size={16} />, path: "/communities/discussions" },
       { name: "Members", icon: <Users size={16} />, path: "/communities/members" }
     ],
     "Analytics": [
@@ -119,7 +122,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   return (
     <ScrollArea className="flex-1 overflow-hidden hover:overflow-auto">
       <nav className="grid gap-1 px-2 py-4">
-        {navItems.map((item) => (
+        {navItems && navItems.map((item) => (
           <div key={item.path} className="flex flex-col">
             <SidebarMenuItem
               item={item}

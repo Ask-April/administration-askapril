@@ -15,7 +15,7 @@ interface SidebarSubMenuProps {
 }
 
 const SidebarSubMenu: React.FC<SidebarSubMenuProps> = ({ expanded, items }) => {
-  if (!expanded) return null;
+  if (!expanded || !items) return null;
   
   return (
     <>

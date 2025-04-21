@@ -33,6 +33,8 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
   subMenuItems = {}, 
   location 
 }) => {
+  if (!item) return null;
+  
   if (item.hasSubMenu) {
     return (
       <Collapsible
@@ -77,7 +79,7 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({
         </CollapsibleTrigger>
         <CollapsibleContent className="pl-4 pr-2">
           {subMenuItems && subMenuItems[item.name] && (
-            <SidebarSubMenu expanded={expanded} items={subMenuItems[item.name]} />
+            <SidebarSubMenu expanded={expanded} items={subMenuItems[item.name] || []} />
           )}
         </CollapsibleContent>
       </Collapsible>
