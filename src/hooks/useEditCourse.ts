@@ -12,7 +12,6 @@ export const useEditCourse = (id: string | undefined) => {
   // Local state for edited course data - initialize with default empty values
   const [editedCourse, setEditedCourse] = useState<Partial<Course>>({
     title: "",
-    subtitle: "",
     description: "",
     category: "",
     image: "",
@@ -20,6 +19,7 @@ export const useEditCourse = (id: string | undefined) => {
     status: "draft",
     lessons: 0,
     students: 0,
+    subtitle: "",
     featured: false,
     priceVisible: true,
     hidden: false,
@@ -34,7 +34,6 @@ export const useEditCourse = (id: string | undefined) => {
     if (course) {
       setEditedCourse({
         title: course.title || "",
-        subtitle: course.subtitle || "",
         description: course.description || "",
         category: course.category || "",
         image: course.image || "",
@@ -42,6 +41,7 @@ export const useEditCourse = (id: string | undefined) => {
         status: course.status || "draft",
         lessons: course.lessons || 0,
         students: course.students || 0,
+        subtitle: course.subtitle || "",
         featured: course.featured || false,
         priceVisible: course.priceVisible !== false,
         hidden: course.hidden || false,

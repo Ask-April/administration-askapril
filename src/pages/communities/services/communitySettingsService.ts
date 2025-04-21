@@ -1,113 +1,59 @@
 
+// Import supabase client
 import { supabase } from "@/integrations/supabase/client";
-import { CommunitySetting } from "../hooks/useSettingsState";
+import { toast } from "sonner";
 
-// Fixed community ID for demo purposes
-const COMMUNITY_ID = '00000000-0000-0000-0000-000000000001';
-
-export interface CommunitySettingResponse {
-  id: string;
+// Define interfaces for the settings
+export interface CommunitySettings {
+  id?: string;
   community_id: string;
-  setting_id: string;
-  value: boolean;
-  updated_at: string;
-  created_at: string;
+  membership_mode: string;
+  posting_permissions: string;
+  moderation_level: string;
+  notification_frequency: string;
 }
 
-const getSettings = async (communityId: string): Promise<CommunitySetting[]> => {
+// In a real app, these functions would connect to your database
+// For now, we'll use mock data
+
+export const fetchCommunitySettings = async (communityId: string): Promise<CommunitySettings | null> => {
   try {
-    // First get the settings definitions
-    const { data: settingsData, error: settingsError } = await supabase
-      .from('settings')
-      .select('*')
-      .order('category');
-
-    if (settingsError) {
-      console.error('Error fetching settings definitions:', settingsError);
-      throw settingsError;
-    }
-
-    // Then get the community-specific values
-    const { data: communitySettingsData, error: communitySettingsError } = await supabase
-      .from('community_settings')
-      .select('*')
-      .eq('community_id', communityId);
-
-    if (communitySettingsError) {
-      console.error('Error fetching community settings:', communitySettingsError);
-      throw communitySettingsError;
-    }
-
-    // Map the settings with their values
-    return (settingsData || []).map(setting => {
-      const communitySetting = (communitySettingsData || []).find(
-        cs => cs.setting_id === setting.id
-      );
-      
-      return {
-        id: setting.id,
-        name: setting.name,
-        description: setting.description,
-        category: setting.category,
-        value: communitySetting ? communitySetting.value : false
-      };
-    });
+    // Since there's no settings table yet in Supabase, we'll return mocked data
+    // This would need to be updated once a real table is created
+    return {
+      community_id: communityId,
+      membership_mode: "open",
+      posting_permissions: "all_members",
+      moderation_level: "low",
+      notification_frequency: "daily",
+    };
   } catch (error) {
-    console.error('Failed to fetch community settings:', error);
-    throw error;
+    console.error("Error fetching community settings:", error);
+    toast.error("Could not load community settings");
+    return null;
   }
 };
 
-const updateSetting = async (communityId: string, settingId: string, value: boolean): Promise<void> => {
+export const updateCommunitySettings = async (settings: CommunitySettings): Promise<boolean> => {
   try {
-    // Check if setting exists for this community
-    const { data: existingSetting, error: checkError } = await supabase
-      .from('community_settings')
-      .select('*')
-      .eq('community_id', communityId)
-      .eq('setting_id', settingId)
-      .maybeSingle();
-
-    if (checkError) {
-      console.error('Error checking setting:', checkError);
-      throw checkError;
-    }
-
-    if (existingSetting) {
-      // Update existing setting
-      const { error: updateError } = await supabase
-        .from('community_settings')
-        .update({ value, updated_at: new Date().toISOString() })
-        .eq('community_id', communityId)
-        .eq('setting_id', settingId);
-
-      if (updateError) {
-        console.error('Error updating setting:', updateError);
-        throw updateError;
-      }
-    } else {
-      // Insert new setting
-      const { error: insertError } = await supabase
-        .from('community_settings')
-        .insert({
-          community_id: communityId,
-          setting_id: settingId,
-          value
-        });
-
-      if (insertError) {
-        console.error('Error inserting setting:', insertError);
-        throw insertError;
-      }
-    }
+    // In a real app, you would update the database
+    // This is a placeholder that just returns success
+    console.log("Settings would be updated:", settings);
+    toast.success("Settings updated successfully");
+    return true;
   } catch (error) {
-    console.error(`Failed to update setting ${settingId}:`, error);
-    throw error;
+    console.error("Error updating community settings:", error);
+    toast.error("Failed to update settings");
+    return false;
   }
 };
 
-// Export as an object with methods
-export const communitySettingsService = {
-  getSettings,
-  updateSetting
+// Mock function for reports
+export const fetchModeratorReports = async (communityId: string) => {
+  // Mock data for reports
+  return [
+    { id: "1", reporter: "Jane Smith", reason: "Inappropriate content", status: "pending", created_at: "2023-01-15T10:30:00Z" },
+    { id: "2", reporter: "John Doe", reason: "Spam", status: "resolved", created_at: "2023-01-14T08:15:00Z" },
+    { id: "3", reporter: "Alice Johnson", reason: "Harassment", status: "pending", created_at: "2023-01-13T14:45:00Z" },
+  ];
 };

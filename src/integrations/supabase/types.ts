@@ -401,25 +401,102 @@ export type Database = {
       }
       courses: {
         Row: {
+          category_id: string | null
           course_id: string
           description: string | null
+          external_id: string | null
+          external_metadata: Json | null
+          featured: boolean | null
+          has_certificate: boolean | null
+          has_enrollment_limit: boolean | null
+          hidden: boolean | null
+          image_url: string | null
+          max_enrollments: number | null
+          price_visible: boolean | null
           site_id: string
+          slug: string | null
           status: string | null
+          subtitle: string | null
           title: string | null
         }
         Insert: {
+          category_id?: string | null
           course_id?: string
           description?: string | null
+          external_id?: string | null
+          external_metadata?: Json | null
+          featured?: boolean | null
+          has_certificate?: boolean | null
+          has_enrollment_limit?: boolean | null
+          hidden?: boolean | null
+          image_url?: string | null
+          max_enrollments?: number | null
+          price_visible?: boolean | null
           site_id: string
+          slug?: string | null
           status?: string | null
+          subtitle?: string | null
           title?: string | null
         }
         Update: {
+          category_id?: string | null
           course_id?: string
           description?: string | null
+          external_id?: string | null
+          external_metadata?: Json | null
+          featured?: boolean | null
+          has_certificate?: boolean | null
+          has_enrollment_limit?: boolean | null
+          hidden?: boolean | null
+          image_url?: string | null
+          max_enrollments?: number | null
+          price_visible?: boolean | null
           site_id?: string
+          slug?: string | null
           status?: string | null
+          subtitle?: string | null
           title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "course_category"
+            referencedColumns: ["category_id"]
+          },
+        ]
+      }
+      daily_ripple_podcasts_comments: {
+        Row: {
+          avatar_url: string | null
+          comment_text: string
+          created_at: string | null
+          id: string
+          podcast_id: string | null
+          updated_at: string | null
+          user_id: string | null
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          comment_text: string
+          created_at?: string | null
+          id?: string
+          podcast_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          comment_text?: string
+          created_at?: string | null
+          id?: string
+          podcast_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          username?: string
         }
         Relationships: []
       }
@@ -979,6 +1056,47 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      modules_comments: {
+        Row: {
+          avatar_url: string | null
+          comment_text: string
+          created_at: string | null
+          id: string
+          module_id: string | null
+          updated_at: string | null
+          user_id: string | null
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          comment_text: string
+          created_at?: string | null
+          id?: string
+          module_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          comment_text?: string
+          created_at?: string | null
+          id?: string
+          module_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "modules_comments_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "course_module"
+            referencedColumns: ["module_id"]
           },
         ]
       }

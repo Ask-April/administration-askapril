@@ -17,6 +17,14 @@ export interface Course {
   site_id: string;
   created_at: string | null;
   updated_at: string | null;
+  subtitle: string | null;
+  featured: boolean | null;
+  priceVisible: boolean | null;
+  hidden: boolean | null;
+  hasCertificate: boolean | null;
+  certificateTemplate: string | null;
+  hasEnrollmentLimit: boolean | null;
+  maxEnrollments: number | null;
 }
 
 /* === USERS === */
@@ -57,4 +65,3 @@ export interface Profile {
 }
 
 /* === Additional models can be extended here, copying field definitions from Supabase tables === */
-
