@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useCourseById } from '@/hooks/useCourses';
 import { toast } from 'sonner';
 import { updateCourse } from '@/pages/api/courses';
-import { Course } from '@/services/types';
+import type { Course } from '@/services/types';
 
 export const useEditCourse = (id: string | undefined) => {
   // Fetch the course data using our useCourseById hook
@@ -13,20 +13,20 @@ export const useEditCourse = (id: string | undefined) => {
   const [editedCourse, setEditedCourse] = useState<Partial<Course>>({
     title: "",
     description: "",
-    category: "",
-    image: "",
-    duration: "",
+    category_id: "",
+    image_url: "",
     status: "draft",
-    lessons: 0,
-    students: 0,
-    subtitle: "",
+    site_id: "",
     featured: false,
-    priceVisible: true,
+    price_visible: true,
     hidden: false,
-    hasCertificate: false,
-    certificateTemplate: "",
-    hasEnrollmentLimit: false,
-    maxEnrollments: 100,
+    has_certificate: false,
+    has_enrollment_limit: false,
+    max_enrollments: 100,
+    subtitle: "",
+    external_id: "",
+    external_metadata: null,
+    slug: "",
   });
 
   // Update local state when the data is loaded
@@ -35,20 +35,20 @@ export const useEditCourse = (id: string | undefined) => {
       setEditedCourse({
         title: course.title || "",
         description: course.description || "",
-        category: course.category || "",
-        image: course.image || "",
-        duration: course.duration || "",
+        category_id: course.category_id || "",
+        image_url: course.image_url || "",
         status: course.status || "draft",
-        lessons: course.lessons || 0,
-        students: course.students || 0,
+        site_id: course.site_id || "",
+        featured: !!course.featured,
+        price_visible: course.price_visible !== false,
+        hidden: !!course.hidden,
+        has_certificate: !!course.has_certificate,
+        has_enrollment_limit: !!course.has_enrollment_limit,
+        max_enrollments: course.max_enrollments ?? 100,
         subtitle: course.subtitle || "",
-        featured: course.featured || false,
-        priceVisible: course.priceVisible !== false,
-        hidden: course.hidden || false,
-        hasCertificate: course.hasCertificate || false,
-        certificateTemplate: course.certificateTemplate || "",
-        hasEnrollmentLimit: course.hasEnrollmentLimit || false,
-        maxEnrollments: course.maxEnrollments || 100,
+        external_id: course.external_id || "",
+        external_metadata: course.external_metadata ?? null,
+        slug: course.slug || "",
       });
     }
   }, [course]);
@@ -60,7 +60,7 @@ export const useEditCourse = (id: string | undefined) => {
         await updateCourse(id, editedCourse);
       }
     } catch (error) {
-      console.error("Error saving course:", error);
+      toast.error("Error saving course");
       throw error;
     }
   };

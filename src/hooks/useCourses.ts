@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Course } from "@/services/types";
+import type { Course } from "@/services/types";
 
 export function useCourses() {
   return useQuery({
@@ -10,38 +10,35 @@ export function useCourses() {
       const { data, error } = await supabase
         .from('courses')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('course_id', { ascending: false });
 
       if (error) {
         console.error("Error fetching courses:", error);
         throw error;
       }
 
-      // Ensure returned data matches the Course type
-      const courses: Course[] = data.map(course => ({
+      // Map result to our Course type. Only fields present in schema are present.
+      const courses: Course[] = (data || []).map(course => ({
         course_id: course.course_id,
         title: course.title,
         description: course.description,
-        category: course.category,
-        image: course.image_url, // Map image_url to image property
-        duration: course.duration,
-        lessons: course.lessons,
+        category_id: course.category_id,
+        image_url: course.image_url,
         status: course.status,
-        students: course.students,
         site_id: course.site_id,
-        created_at: course.created_at,
-        updated_at: course.updated_at,
-        subtitle: course.subtitle,
         featured: course.featured,
-        priceVisible: course.price_visible, // Map price_visible to priceVisible
+        price_visible: course.price_visible,
         hidden: course.hidden,
-        hasCertificate: course.has_certificate, // Map has_certificate to hasCertificate
-        certificateTemplate: course.certificate_template,
-        hasEnrollmentLimit: course.has_enrollment_limit, // Map has_enrollment_limit to hasEnrollmentLimit
-        maxEnrollments: course.max_enrollments // Map max_enrollments to maxEnrollments
+        has_certificate: course.has_certificate,
+        has_enrollment_limit: course.has_enrollment_limit,
+        max_enrollments: course.max_enrollments,
+        subtitle: course.subtitle,
+        external_id: course.external_id,
+        external_metadata: course.external_metadata,
+        slug: course.slug,
       }));
 
-      return courses || [];
+      return courses;
     },
   });
 }
@@ -51,59 +48,43 @@ export function useCourseById(courseId: string | undefined) {
     queryKey: ["course", courseId],
     queryFn: async (): Promise<Course | null> => {
       if (!courseId) {
-        console.log("No course ID provided");
         return null;
       }
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('course_id', courseId)
+        .maybeSingle();
 
-      console.log("Fetching course with ID:", courseId);
-      
-      try {
-        const { data, error } = await supabase
-          .from('courses')
-          .select('*')
-          .eq('course_id', courseId)
-          .single();
-
-        if (error) {
-          if (error.code === 'PGRST116') {
-            console.log("No course found with ID:", courseId);
-            return null;
-          }
-          console.error("Error fetching course:", error);
-          throw error;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null;
         }
-
-        console.log("Course data retrieved:", data);
-        
-        // Ensure returned data matches the Course type
-        const course: Course = {
-          course_id: data.course_id,
-          title: data.title,
-          description: data.description,
-          category: data.category,
-          image: data.image_url, // Map image_url to image property
-          duration: data.duration,
-          lessons: data.lessons,
-          status: data.status,
-          students: data.students,
-          site_id: data.site_id,
-          created_at: data.created_at,
-          updated_at: data.updated_at,
-          subtitle: data.subtitle,
-          featured: data.featured,
-          priceVisible: data.price_visible, // Map price_visible to priceVisible
-          hidden: data.hidden,
-          hasCertificate: data.has_certificate, // Map has_certificate to hasCertificate
-          certificateTemplate: data.certificate_template,
-          hasEnrollmentLimit: data.has_enrollment_limit, // Map has_enrollment_limit to hasEnrollmentLimit
-          maxEnrollments: data.max_enrollments // Map max_enrollments to maxEnrollments
-        };
-        
-        return course || null;
-      } catch (error) {
-        console.error("Exception in useCourseById:", error);
         throw error;
       }
+
+      if (!data) return null;
+
+      const course: Course = {
+        course_id: data.course_id,
+        title: data.title,
+        description: data.description,
+        category_id: data.category_id,
+        image_url: data.image_url,
+        status: data.status,
+        site_id: data.site_id,
+        featured: data.featured,
+        price_visible: data.price_visible,
+        hidden: data.hidden,
+        has_certificate: data.has_certificate,
+        has_enrollment_limit: data.has_enrollment_limit,
+        max_enrollments: data.max_enrollments,
+        subtitle: data.subtitle,
+        external_id: data.external_id,
+        external_metadata: data.external_metadata,
+        slug: data.slug,
+      };
+      return course;
     },
     enabled: !!courseId,
     retry: 1,

@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Profile } from "@/services/types";
+import type { Profile } from "@/services/types";
 
 export type { Profile };
 
