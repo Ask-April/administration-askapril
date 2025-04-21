@@ -23,6 +23,13 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
     isGeneratingContent
   } = useCourseWizard();
 
+  // Handler for generating AI content
+  const handleGenerateContent = () => {
+    if (courseData.title && !isGeneratingContent) {
+      autoGenerateContent('description');
+    }
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Course Information</h2>
@@ -33,7 +40,7 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
             value={courseData.title}
             onChange={(value) => updateCourseData({ title: value })}
             errors={formErrors.title}
-            onGenerateContent={() => autoGenerateContent('description')}
+            onGenerateContent={handleGenerateContent}
             isGeneratingContent={isGeneratingContent}
           />
           <DescriptionField
@@ -57,8 +64,9 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
           {/* AI Generation Button if title exists */}
           {courseData.title && (
             <AIGenerateButton
-              onClick={() => autoGenerateContent('description')}
+              onClick={handleGenerateContent}
               isGenerating={isGeneratingContent}
+              isDisabled={!courseData.title || courseData.title.length < 3}
             />
           )}
         </div>

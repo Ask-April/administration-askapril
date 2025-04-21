@@ -36,9 +36,12 @@ export function useCourses() {
           subtitle: course.subtitle,
           // external_metadata removed
           slug: course.slug,
+          // Add virtual properties
+          image: course.image_url || "",
+          category: course.category_id || "",
         });
         
-        // Type checking for timestamps
+        // Safe type checking for timestamps
         if ('created_at' in course && typeof course.created_at === 'string') {
           c.created_at = course.created_at;
         }
@@ -93,9 +96,14 @@ export function useCourseById(courseId: string | undefined) {
         subtitle: data.subtitle,
         // external_metadata removed
         slug: data.slug,
+        // Add virtual properties
+        image: data.image_url || "",
+        category: data.category_id || "",
+        lessons: 0,
+        students: 0
       };
       
-      // Type checking for timestamps
+      // Safe type checking for timestamps
       if ('created_at' in data && typeof data.created_at === 'string') {
         course.created_at = data.created_at;
       }

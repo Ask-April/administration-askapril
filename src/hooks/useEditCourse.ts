@@ -4,8 +4,12 @@ import { useCourseById } from '@/hooks/useCourses';
 import { toast } from 'sonner';
 import { updateCourse } from '@/services/course/updateCourse';
 import type { Course } from '@/services/types';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useEditCourse = (id: string | undefined) => {
+  // Get query client for invalidation
+  const queryClient = useQueryClient();
+  
   // Fetch the course data using our useCourseById hook
   const { data: course, isLoading, error, isError, refetch } = useCourseById(id);
 
@@ -24,14 +28,17 @@ export const useEditCourse = (id: string | undefined) => {
     has_enrollment_limit: false,
     max_enrollments: 100,
     subtitle: "",
-    // external_metadata: null, // removed
     slug: "",
+    // Virtual properties
+    category: "",
+    image: "",
   });
 
   // Update local state when the data is loaded
   useEffect(() => {
     if (course) {
       setEditedCourse({
+        course_id: course.course_id,
         title: course.title || "",
         description: course.description || "",
         category_id: course.category_id || "",
@@ -45,8 +52,10 @@ export const useEditCourse = (id: string | undefined) => {
         has_enrollment_limit: !!course.has_enrollment_limit,
         max_enrollments: course.max_enrollments ?? 100,
         subtitle: course.subtitle || "",
-        // external_metadata: null, // removed
         slug: course.slug || "",
+        // Set virtual properties
+        category: course.category_id || "",
+        image: course.image_url || "",
       });
     }
   }, [course]);
@@ -57,17 +66,37 @@ export const useEditCourse = (id: string | undefined) => {
         throw new Error("Course ID is missing");
       }
       
+      if (!editedCourse.title) {
+        toast.error("Course title is required");
+        return false;
+      }
+      
       if (editedCourse) {
+        // Make sure virtual properties are synced with their DB counterparts
+        const courseToUpdate = {
+          ...editedCourse,
+          category_id: editedCourse.category || editedCourse.category_id,
+          image_url: editedCourse.image || editedCourse.image_url,
+        };
+        
         // Call the updateCourse function with the right parameters
-        await updateCourse(id, editedCourse);
-        await refetch(); // Refresh the course data after update
+        await updateCourse(id, courseToUpdate);
+        
+        // Invalidate both single course and courses list queries
+        queryClient.invalidateQueries({ queryKey: ["course", id] });
+        queryClient.invalidateQueries({ queryKey: ["courses"] });
+        queryClient.invalidateQueries({ queryKey: ["courses-list"] });
+        
+        // Also refetch the current course to get the latest data
+        await refetch();
+        
         toast.success("Course saved successfully");
         return true;
       }
       return false;
     } catch (error) {
       console.error("Error saving course:", error);
-      toast.error("Error saving course");
+      toast.error(`Error saving course: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return false;
     }
   };
@@ -82,4 +111,3 @@ export const useEditCourse = (id: string | undefined) => {
     handleSave
   };
 };
-

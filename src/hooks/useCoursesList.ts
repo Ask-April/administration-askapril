@@ -36,9 +36,12 @@ export function useCoursesList() {
           subtitle: course.subtitle,
           // external_metadata removed
           slug: course.slug,
+          // Add virtual properties
+          image: course.image_url || "",
+          category: course.category_id || "",
         });
         
-        // Type checking for timestamps
+        // Safe type checking for timestamps
         if ('created_at' in course && typeof course.created_at === 'string') {
           c.created_at = course.created_at;
         }

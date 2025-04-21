@@ -45,13 +45,13 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       // external_metadata removed
       slug: data.slug,
       // Add in any virtual properties that aren't stored in the DB
-      image: data.image_url,
-      category: data.category_id,
+      image: data.image_url || "",
+      category: data.category_id || "",
       lessons: 0, // Would need additional query to count lessons
       students: 0  // Would need additional query to count students
     };
 
-    // Optionally preserve created_at/updated_at if present on data object with type checking
+    // Safely handle created_at/updated_at timestamps with type checking
     if ('created_at' in data && typeof data.created_at === 'string') {
       course.created_at = data.created_at;
     }
