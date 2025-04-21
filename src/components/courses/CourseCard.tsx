@@ -11,29 +11,39 @@ import {
 } from "lucide-react";
 import { Course } from "@/services/types";
 
-interface CourseCardProps {
-  course: Course;
+export interface CourseCardProps {
+  course?: Course;
   onClick?: () => void;
+  // Individual props for direct usage
+  course_id?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  category?: string;
+  duration?: string;
+  students?: number;
+  lessons?: number;
+  status?: "published" | "draft";
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({
-  course,
-  onClick,
-}) => {
-  // Extract properties from course object
+const CourseCard: React.FC<CourseCardProps> = (props) => {
   const {
-    course_id: id,
-    title,
-    description,
-    image_url: image,
-    status = "published",
-  } = course;
+    course,
+    onClick,
+    // Extract individual props with defaults
+    course_id = course?.course_id,
+    title = course?.title || "Untitled Course",
+    description = course?.description || "No description provided.",
+    image = course?.image_url || course?.image,
+    status = course?.status || "draft",
+    category = course?.category || "Uncategorized",
+    duration = course?.duration || "N/A",
+    students = course?.students || 0,
+    lessons = course?.lessons || 0,
+  } = props;
   
-  // Default or computed values
-  const category = course.category || "Uncategorized";
-  const duration = course.duration || "N/A";
-  const students = course.students || 0;
-  const lessons = course.lessons || 0;
+  // If no course_id is provided, use a fallback ID
+  const id = course_id || "unknown";
 
   return (
     <motion.div
@@ -82,11 +92,11 @@ const CourseCard: React.FC<CourseCardProps> = ({
           </div>
           
           <h3 className="mb-1 line-clamp-1 text-base font-medium transition-colors duration-200 group-hover:text-accent">
-            {title || "Untitled Course"}
+            {title}
           </h3>
           
           <p className="mb-3 line-clamp-2 text-xs text-muted-foreground">
-            {description || "No description provided."}
+            {description}
           </p>
           
           <div className="flex items-center justify-between text-xs text-muted-foreground">

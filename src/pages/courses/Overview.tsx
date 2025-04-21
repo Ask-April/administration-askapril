@@ -1,3 +1,4 @@
+
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import CourseCard from "@/components/courses/CourseCard";
@@ -185,7 +186,8 @@ const Overview = () => {
             {sortedCourses.map((course) => (
               <CourseCard
                 key={course.course_id}
-                id={course.course_id}
+                course={course}
+                course_id={course.course_id}
                 title={course.title || 'Untitled Course'}
                 description={course.description || 'No description available.'}
                 image={course.image_url || course.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"}
@@ -193,7 +195,7 @@ const Overview = () => {
                 duration={course.duration || '0 hours'}
                 students={course.students || 0}
                 lessons={course.lessons || 0}
-                status={course.status as "published" | "draft" || "draft"}
+                status={(course.status as "published" | "draft") || "draft"}
               />
             ))}
           </div>

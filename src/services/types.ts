@@ -125,7 +125,7 @@ export interface CourseSection {
 
 export interface CourseLesson {
   id: string;
-  section_id: string;
+  section_id?: string;
   title: string;
   type: string;
   position: number;
