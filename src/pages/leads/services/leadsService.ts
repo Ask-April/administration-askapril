@@ -1,5 +1,5 @@
 
-import { Lead } from "@/services/types";
+import { Lead, Source } from "@/services/types";
 
 // Mock data for leads
 const mockLeads: Lead[] = [
@@ -34,6 +34,42 @@ const mockLeads: Lead[] = [
   }
 ];
 
+// Mock data for sources
+const mockSources: Source[] = [
+  {
+    id: "website",
+    name: "Website Form",
+    count: 325,
+    conversion: "42%",
+    trend: "up",
+    change: "15%"
+  },
+  {
+    id: "referral",
+    name: "Referral",
+    count: 164,
+    conversion: "68%",
+    trend: "up",
+    change: "24%"
+  },
+  {
+    id: "social",
+    name: "Social Media",
+    count: 243,
+    conversion: "31%",
+    trend: "down",
+    change: "8%"
+  },
+  {
+    id: "email",
+    name: "Email Campaign",
+    count: 197,
+    conversion: "25%",
+    trend: "down",
+    change: "12%"
+  }
+];
+
 export const leadsService = {
   getAllLeads: async (): Promise<Lead[]> => {
     // Simulate network delay
@@ -58,5 +94,11 @@ export const leadsService = {
   deleteLead: async (id: string): Promise<void> => {
     console.log(`Deleting lead ${id}`);
     return Promise.resolve();
+  },
+  
+  getLeadSources: async (): Promise<Source[]> => {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return mockSources;
   }
 };

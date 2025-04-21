@@ -104,3 +104,38 @@ export interface CommunitySetting {
   category: string;
   value: boolean;
 }
+
+// ---- LEAD SOURCES ---- //
+export interface Source {
+  id: string;
+  name: string;
+  count: number;
+  conversion: string;
+  trend: 'up' | 'down';
+  change: string;
+}
+
+// ---- COURSE CURRICULUM ---- //
+export interface CourseSection {
+  id: string;
+  course_id: string;
+  title: string;
+  position: number;
+  lessons: CourseLesson[];
+}
+
+export interface CourseLesson {
+  id: string;
+  section_id: string;
+  title: string;
+  type: string;
+  position: number;
+  content?: string;
+  duration?: number;
+  video_url?: string;
+  content_url?: string;
+  is_preview?: boolean;
+  is_draft?: boolean;
+  is_compulsory?: boolean;
+  enable_discussion?: boolean;
+}

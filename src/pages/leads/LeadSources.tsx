@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from "react";
 import PageTransition from "@/components/layout/PageTransition";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, ExternalLink, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Source } from "@/services/types";
+import { leadsService } from "./services/leadsService";
 
 const LeadSources = () => {
   const [sources, setSources] = useState<Source[]>([]);
@@ -22,39 +22,9 @@ const LeadSources = () => {
     try {
       setLoading(true);
       
-      // Since we don't have a dedicated 'sources' table, let's aggregate data from the leads table
-      const { data, error } = await supabase
-        .from('leads')
-        .select('source')
-        .not('source', 'is', null);
-      
-      if (error) {
-        throw error;
-      }
-
-      if (data) {
-        // Group leads by source and create Source objects
-        const sourceCounts: {[key: string]: number} = {};
-        data.forEach(lead => {
-          if (lead.source) {
-            sourceCounts[lead.source] = (sourceCounts[lead.source] || 0) + 1;
-          }
-        });
-
-        const sourceData: Source[] = Object.keys(sourceCounts).map(name => ({
-          id: name, // Using the name as ID since we don't have real source IDs
-          name: name,
-          count: sourceCounts[name],
-          conversion: Math.floor(Math.random() * 50 + 10) + '%', // Demo data
-          trend: Math.random() > 0.5 ? 'up' : 'down', // Demo data
-          change: Math.floor(Math.random() * 20 + 1) + '%' // Demo data
-        }));
-
-        // Sort by count in descending order
-        sourceData.sort((a, b) => b.count - a.count);
-        
-        setSources(sourceData);
-      }
+      // Use the mock service instead of direct Supabase queries
+      const sourceData = await leadsService.getLeadSources();
+      setSources(sourceData);
     } catch (error) {
       console.error('Error fetching sources:', error);
       toast({
