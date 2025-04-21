@@ -20,7 +20,6 @@ export interface CourseCardProps {
   description?: string;
   image?: string;
   category?: string;
-  duration?: string;
   students?: number;
   lessons?: number;
   status?: "published" | "draft";
@@ -37,7 +36,6 @@ const CourseCard: React.FC<CourseCardProps> = (props) => {
     image = course?.image_url || course?.image,
     status = course?.status || "draft",
     category = course?.category || "Uncategorized",
-    duration = course?.duration || "N/A",
     students = course?.students || 0,
     lessons = course?.lessons || 0,
   } = props;
@@ -101,10 +99,6 @@ const CourseCard: React.FC<CourseCardProps> = (props) => {
           
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
-              <div className="flex items-center">
-                <Clock className="mr-1 h-3.5 w-3.5" />
-                {duration}
-              </div>
               <div className="flex items-center">
                 <Users className="mr-1 h-3.5 w-3.5" />
                 {students}

@@ -1,4 +1,3 @@
-
 export interface CourseData {
   title: string;
   description: string;
@@ -10,6 +9,7 @@ export interface CourseData {
   created_at?: string;
   updated_at?: string;
 }
+
 export interface CurriculumSection {
   title: string;
   position: number;
@@ -26,6 +26,7 @@ export interface CurriculumSection {
     position: number;
   }[];
 }
+
 export interface CourseWizardContextValue {
   currentStep: string;
   setCurrentStep: (step: string) => void;

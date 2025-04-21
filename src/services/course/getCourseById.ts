@@ -45,9 +45,9 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       external_id: data.external_id,
       external_metadata: data.external_metadata,
       slug: data.slug,
-      // Only add these properties if they exist in the data
-      ...(data.created_at && { created_at: data.created_at }),
-      ...(data.updated_at && { updated_at: data.updated_at }),
+      // Safely assign these properties if they exist
+      ...(data.created_at !== undefined && { created_at: data.created_at }),
+      ...(data.updated_at !== undefined && { updated_at: data.updated_at }),
       // Add in any virtual properties that aren't stored in the DB
       image: data.image_url,
       category: data.category_id,
