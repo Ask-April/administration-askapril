@@ -1,15 +1,17 @@
+
 import React from "react";
 import { Profile } from "@/hooks/auth/use-profile";
 import NavbarActions from "./navbar/NavbarActions";
 import SearchBar from "./navbar/SearchBar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+
 interface NavbarProps {
   profile: Profile | null;
 }
-const Navbar: React.FC<NavbarProps> = ({
-  profile
-}) => {
-  return <header className="border-b border-border h-16 fixed top-0 right-0 left-0 z-30 transition-all duration-300 flex items-center px-4 sm:px-6 pl-[78px] bg-slate-950">
+
+const Navbar: React.FC<NavbarProps> = ({ profile }) => {
+  return (
+    <header className="bg-background border-b border-border h-16 fixed top-0 right-0 left-0 z-30 transition-all duration-300 flex items-center px-4 sm:px-6 pl-[78px]">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
           {/* Show sidebar trigger on mobile only */}
@@ -21,6 +23,8 @@ const Navbar: React.FC<NavbarProps> = ({
         </div>
         <NavbarActions profile={profile} />
       </div>
-    </header>;
+    </header>
+  );
 };
+
 export default Navbar;
