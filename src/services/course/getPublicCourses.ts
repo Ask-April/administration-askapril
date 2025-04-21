@@ -35,14 +35,15 @@ export const getPublicCourses = async (): Promise<Course[]> => {
         has_enrollment_limit: item.has_enrollment_limit,
         max_enrollments: item.max_enrollments,
         subtitle: item.subtitle,
+        // external_metadata removed
         slug: item.slug,
         image: item.image_url,
         category: item.category_id,
         lessons: 0,
         students: 0
       };
-      if ('created_at' in item && item.created_at) course.created_at = String(item.created_at);
-      if ('updated_at' in item && item.updated_at) course.updated_at = String(item.updated_at);
+      if ('created_at' in item) course.created_at = item.created_at;
+      if ('updated_at' in item) course.updated_at = item.updated_at;
       return course;
     });
 
@@ -52,3 +53,4 @@ export const getPublicCourses = async (): Promise<Course[]> => {
     throw error;
   }
 };
+
