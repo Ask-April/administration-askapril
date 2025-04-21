@@ -33,7 +33,6 @@ export function useCoursesList() {
         has_enrollment_limit: course.has_enrollment_limit,
         max_enrollments: course.max_enrollments,
         subtitle: course.subtitle,
-        external_id: course.external_id,
         external_metadata: course.external_metadata,
         slug: course.slug,
       }));

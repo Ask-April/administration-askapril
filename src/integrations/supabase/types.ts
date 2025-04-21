@@ -458,7 +458,6 @@ export type Database = {
           category_id: string | null
           course_id: string
           description: string | null
-          external_id: string | null
           external_metadata: Json | null
           featured: boolean | null
           has_certificate: boolean | null
@@ -477,7 +476,6 @@ export type Database = {
           category_id?: string | null
           course_id?: string
           description?: string | null
-          external_id?: string | null
           external_metadata?: Json | null
           featured?: boolean | null
           has_certificate?: boolean | null
@@ -496,7 +494,6 @@ export type Database = {
           category_id?: string | null
           course_id?: string
           description?: string | null
-          external_id?: string | null
           external_metadata?: Json | null
           featured?: boolean | null
           has_certificate?: boolean | null

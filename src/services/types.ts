@@ -16,7 +16,6 @@ export interface Course {
   has_enrollment_limit: boolean | null;
   max_enrollments: number | null;
   subtitle: string | null;
-  external_id: string | null;
   external_metadata: any | null;
   slug: string | null;
   created_at?: string;

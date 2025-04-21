@@ -33,7 +33,6 @@ export function useCourses() {
         has_enrollment_limit: course.has_enrollment_limit,
         max_enrollments: course.max_enrollments,
         subtitle: course.subtitle,
-        external_id: course.external_id,
         external_metadata: course.external_metadata,
         slug: course.slug,
       }));
@@ -80,7 +79,6 @@ export function useCourseById(courseId: string | undefined) {
         has_enrollment_limit: data.has_enrollment_limit,
         max_enrollments: data.max_enrollments,
         subtitle: data.subtitle,
-        external_id: data.external_id,
         external_metadata: data.external_metadata,
         slug: data.slug,
       };

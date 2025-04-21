@@ -24,7 +24,6 @@ export const useEditCourse = (id: string | undefined) => {
     has_enrollment_limit: false,
     max_enrollments: 100,
     subtitle: "",
-    external_id: "",
     external_metadata: null,
     slug: "",
   });
@@ -46,7 +45,6 @@ export const useEditCourse = (id: string | undefined) => {
         has_enrollment_limit: !!course.has_enrollment_limit,
         max_enrollments: course.max_enrollments ?? 100,
         subtitle: course.subtitle || "",
-        external_id: course.external_id || "",
         external_metadata: course.external_metadata ?? null,
         slug: course.slug || "",
       });

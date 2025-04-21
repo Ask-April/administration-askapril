@@ -42,7 +42,6 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       has_enrollment_limit: data.has_enrollment_limit,
       max_enrollments: data.max_enrollments,
       subtitle: data.subtitle,
-      external_id: data.external_id,
       external_metadata: data.external_metadata,
       slug: data.slug,
       created_at: data.created_at,
