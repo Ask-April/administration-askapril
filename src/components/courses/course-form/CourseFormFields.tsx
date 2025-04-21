@@ -93,7 +93,7 @@ const CourseFormFields: React.FC<CourseFormFieldsProps> = ({ form }) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {/* Placeholder - actual options are populated in CategorySelect */}
+                  {/* We're removing the placeholder SelectItem here as it's handled by SelectValue */}
                 </SelectContent>
               </Select>
               <FormMessage />

@@ -39,7 +39,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors
         </SelectTrigger>
         <SelectContent>
           {categories.length === 0 && (
-            <SelectItem value="" disabled>
+            <SelectItem value="no-categories" disabled>
               No categories available
             </SelectItem>
           )}

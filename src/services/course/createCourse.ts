@@ -12,7 +12,7 @@ export const createCourse = async (courseData: {
   image: string;
   status: "draft" | "published";
   lessons: number;
-  students: number;
+  students?: number;
 }): Promise<Course> => {
   console.log("Creating course with data:", courseData);
 
@@ -53,11 +53,11 @@ export const createCourse = async (courseData: {
   // Map to our Course type
   const course: Course = {
     ...data,
-    // Add virtual properties
-    image: data.image_url,
-    category: data.category_id,
+    // Add virtual properties and ensure string types for category and image
+    image: data.image_url || "",
+    category: data.category_id || "",
     lessons: courseData.lessons,
-    students: 0
+    students: courseData.students || 0
   };
 
   return course;
