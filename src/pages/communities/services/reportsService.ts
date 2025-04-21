@@ -51,6 +51,12 @@ export const getAllReports = async (): Promise<ContentReport[]> => {
   return mockReports;
 };
 
+// Function to fetch content reports - renamed from getAllReports
+export const fetchContentReports = async (): Promise<ContentReport[]> => {
+  // In a real implementation, we would fetch from the database
+  return mockReports;
+};
+
 export const updateReportStatus = async (reportId: string, status: ContentReport['status']): Promise<boolean> => {
   console.log(`Updating report ${reportId} status to ${status}`);
   
@@ -61,6 +67,14 @@ export const updateReportStatus = async (reportId: string, status: ContentReport
 
 export const dismissReport = async (reportId: string): Promise<boolean> => {
   console.log(`Dismissing report ${reportId}`);
+  
+  // In a real implementation, we would update the database
+  return true;
+};
+
+// Add the removeReport function that's being used in ReportsView
+export const removeReport = async (reportId: string): Promise<boolean> => {
+  console.log(`Removing report ${reportId}`);
   
   // In a real implementation, we would update the database
   return true;
