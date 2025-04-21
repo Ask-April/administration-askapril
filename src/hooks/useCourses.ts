@@ -34,11 +34,10 @@ export function useCourses() {
           has_enrollment_limit: course.has_enrollment_limit,
           max_enrollments: course.max_enrollments,
           subtitle: course.subtitle,
-          // external_metadata removed
           slug: course.slug,
         });
-        if ('created_at' in course) c.created_at = course.created_at;
-        if ('updated_at' in course) c.updated_at = course.updated_at;
+        if ('created_at' in course && course.created_at) c.created_at = String(course.created_at);
+        if ('updated_at' in course && course.updated_at) c.updated_at = String(course.updated_at);
         return c;
       });
 
@@ -84,11 +83,10 @@ export function useCourseById(courseId: string | undefined) {
         has_enrollment_limit: data.has_enrollment_limit,
         max_enrollments: data.max_enrollments,
         subtitle: data.subtitle,
-        // external_metadata removed
         slug: data.slug,
       };
-      if ('created_at' in data) course.created_at = data.created_at;
-      if ('updated_at' in data) course.updated_at = data.updated_at;
+      if ('created_at' in data && data.created_at) course.created_at = String(data.created_at);
+      if ('updated_at' in data && data.updated_at) course.updated_at = String(data.updated_at);
       return course;
     },
     enabled: !!courseId,

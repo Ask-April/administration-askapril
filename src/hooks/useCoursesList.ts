@@ -34,11 +34,10 @@ export function useCoursesList() {
           has_enrollment_limit: course.has_enrollment_limit,
           max_enrollments: course.max_enrollments,
           subtitle: course.subtitle,
-          // external_metadata removed
           slug: course.slug,
         });
-        if ('created_at' in course) c.created_at = course.created_at;
-        if ('updated_at' in course) c.updated_at = course.updated_at;
+        if ('created_at' in course && course.created_at) c.created_at = String(course.created_at);
+        if ('updated_at' in course && course.updated_at) c.updated_at = String(course.updated_at);
         return c;
       });
 

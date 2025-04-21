@@ -42,7 +42,6 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       has_enrollment_limit: data.has_enrollment_limit,
       max_enrollments: data.max_enrollments,
       subtitle: data.subtitle,
-      // external_metadata removed
       slug: data.slug,
       // Add in any virtual properties that aren't stored in the DB
       image: data.image_url,
@@ -52,8 +51,8 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
     };
 
     // Optionally preserve created_at/updated_at if present on data object
-    if ('created_at' in data) course.created_at = data.created_at;
-    if ('updated_at' in data) course.updated_at = data.updated_at;
+    if ('created_at' in data && data.created_at) course.created_at = String(data.created_at);
+    if ('updated_at' in data && data.updated_at) course.updated_at = String(data.updated_at);
 
     return course;
   } catch (error) {
