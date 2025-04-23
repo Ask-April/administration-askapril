@@ -1,5 +1,6 @@
 
 import React from "react";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
 import LoadingSpinner from "./LoadingSpinner";
@@ -11,25 +12,34 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, loading, profile } = useRequireAuth();
-  
+
   // If loading, show a loading indicator
   if (loading) {
     return <LoadingSpinner />;
   }
-  
+
   // If no user after loading (should redirect, but just in case)
   if (!user) {
     return null;
   }
-  
+
   return (
-    <div className="min-h-screen flex w-full">
-      <Sidebar />
-      <MainContent profile={profile}>
-        {children}
-      </MainContent>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        {/* Sidebar */}
+        <Sidebar />
+        {/* Main content/children */}
+        <MainContent profile={profile}>
+          {/* Toggle button (visible on mobile) */}
+          <div className="md:hidden fixed top-4 left-4 z-[60]">
+            <SidebarTrigger />
+          </div>
+          {children}
+        </MainContent>
+      </div>
+    </SidebarProvider>
   );
 };
 
 export default Layout;
+
