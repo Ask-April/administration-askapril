@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { cn } from "@/lib/utils";
 import {
   BarChart3,
   BookOpen,
-  ChevronLeft,
-  ChevronRight,
   LayoutDashboard,
   Settings,
   Users,
@@ -28,49 +26,21 @@ import {
   BellRing,
   ArrowUpRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import SidebarLogo from "./sidebar/SidebarLogo";
 import SidebarNavigation from "./sidebar/SidebarNavigation";
 import SidebarUser from "./sidebar/SidebarUser";
+import { useSidebar } from "@/components/ui/sidebar";
 
 interface SidebarProps {
   className?: string;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ className }) => {
-  const [expanded, setExpanded] = useState(true);
-  const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const [openMenus, setOpenMenus] = React.useState<string[]>([]);
   const { user } = useAuth();
-
-  const toggleSidebar = () => {
-    setExpanded(!expanded);
-    // Update the layout padding when sidebar state changes
-    const mainContent = document.querySelector("div.flex-1.flex.flex-col");
-    if (mainContent) {
-      if (!expanded) {
-        mainContent.classList.remove("pl-[78px]");
-        mainContent.classList.add("pl-64");
-      } else {
-        mainContent.classList.remove("pl-64");
-        mainContent.classList.add("pl-[78px]");
-      }
-    }
-  };
-
-  // Set initial padding based on sidebar state
-  useEffect(() => {
-    const mainContent = document.querySelector("div.flex-1.flex.flex-col");
-    if (mainContent) {
-      if (expanded) {
-        mainContent.classList.remove("pl-[78px]");
-        mainContent.classList.add("pl-64");
-      } else {
-        mainContent.classList.remove("pl-64");
-        mainContent.classList.add("pl-[78px]");
-      }
-    }
-  }, []);
+  const { state } = useSidebar();
+  const expanded = state === "expanded";
 
   const toggleMenu = (menu: string) => {
     setOpenMenus((prevOpenMenus) =>
@@ -121,10 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   ];
 
   // Sub menu items for each main nav item that has a submenu
-  const subMenuItems: Record<
-    string,
-    { name: string; icon: JSX.Element; path: string }[]
-  > = {
+  const subMenuItems = {
     Courses: [
       {
         name: "Overview",
@@ -242,27 +209,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   };
 
   return (
-    <>
-      <aside
-        className={cn(
-          "bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out fixed inset-y-0 z-40 flex flex-col",
-          expanded ? "w-64" : "w-[78px]",
-          className
-        )}
-      >
+    <div className="hidden md:block">
+      <div className="bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col h-full">
         <div className="flex h-16 items-center justify-between px-4">
           <SidebarLogo expanded={expanded} />
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className="h-8 w-8 text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors duration-200"
-          >
-            {expanded ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-          </Button>
         </div>
-
         <SidebarNavigation
           expanded={expanded}
           openMenus={openMenus}
@@ -270,19 +221,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           mainNavItems={mainNavItems}
           subMenuItems={subMenuItems}
         />
-
         <div className="mt-auto p-4">
           <SidebarUser expanded={expanded} user={user} />
         </div>
-      </aside>
-
-      {expanded && (
-        <div
-          className="md:hidden fixed inset-0 z-30 bg-background/80 backdrop-blur-sm"
-          onClick={toggleSidebar}
-        />
-      )}
-    </>
+      </div>
+    </div>
   );
 };
 
