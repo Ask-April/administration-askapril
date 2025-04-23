@@ -1,42 +1,39 @@
+
 import React from "react";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSidebar } from "@/components/ui/sidebar";
+import SidebarLogo from "./SidebarLogo";
+import SidebarNavigation from "./SidebarNavigation";
+import SidebarUser from "./SidebarUser";
 import {
-  BarChart3,
-  BookOpen,
   LayoutDashboard,
-  Settings,
+  BookOpen,
+  UserPlus,
+  Radio,
   Users,
-  User,
+  PieChart,
   Package,
   List,
   FileText,
   Ticket,
   Image,
   ChartBar,
-  UserPlus,
   Filter,
-  Radio,
-  MessageSquare,
-  PieChart,
-  LineChart,
-  CheckCircle,
   Tag,
   FileInput,
   MapPin,
-  BellRing,
+  Settings,
+  User,
+  MessageSquare,
   ArrowUpRight,
+  CheckCircle
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import SidebarLogo from "./sidebar/SidebarLogo";
-import SidebarNavigation from "./sidebar/SidebarNavigation";
-import SidebarUser from "./sidebar/SidebarUser";
-import { useSidebar } from "@/components/ui/sidebar";
 
-interface SidebarProps {
+interface SidebarControllerProps {
   className?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ className }) => {
+const SidebarController: React.FC<SidebarControllerProps> = ({ className }) => {
   const [openMenus, setOpenMenus] = React.useState<string[]>([]);
   const { user } = useAuth();
   const { state } = useSidebar();
@@ -209,24 +206,22 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   };
 
   return (
-    <div className="hidden md:block">
-      <div className="bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col h-full">
-        <div className="flex h-16 items-center justify-between px-4">
-          <SidebarLogo expanded={expanded} />
-        </div>
-        <SidebarNavigation
-          expanded={expanded}
-          openMenus={openMenus}
-          toggleMenu={toggleMenu}
-          mainNavItems={mainNavItems}
-          subMenuItems={subMenuItems}
-        />
-        <div className="mt-auto p-4">
-          <SidebarUser expanded={expanded} user={user} />
-        </div>
+    <div className="bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col h-full">
+      <div className="flex h-16 items-center justify-between px-4">
+        <SidebarLogo expanded={expanded} />
+      </div>
+      <SidebarNavigation
+        expanded={expanded}
+        openMenus={openMenus}
+        toggleMenu={toggleMenu}
+        mainNavItems={mainNavItems}
+        subMenuItems={subMenuItems}
+      />
+      <div className="mt-auto p-4">
+        <SidebarUser expanded={expanded} user={user} />
       </div>
     </div>
   );
 };
 
-export default Sidebar;
+export default SidebarController;

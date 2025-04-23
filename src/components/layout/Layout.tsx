@@ -1,10 +1,9 @@
-
 import React from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
 import LoadingSpinner from "./LoadingSpinner";
 import { useRequireAuth } from "@/hooks/use-require-auth";
+import SidebarContainer from "./sidebar/SidebarContainer";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -27,7 +26,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         {/* Sidebar */}
-        <Sidebar />
+        <SidebarContainer />
         {/* Main content/children */}
         <MainContent profile={profile}>
           {/* Toggle button (visible on mobile) */}
@@ -42,4 +41,3 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 export default Layout;
-
