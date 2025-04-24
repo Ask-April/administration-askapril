@@ -4,11 +4,13 @@ import SidebarController from "./SidebarController";
 import { useSidebar } from "@/components/ui/sidebar";
 
 const SidebarContainer: React.FC = () => {
-  const { isMobile } = useSidebar();
-
-  // Show sidebar only on desktop (md+) as before, hidden on mobile.
+  const { state } = useSidebar();
+  
+  // Show sidebar based on sidebar state
+  // On mobile, it will only show if state is "expanded"
+  // On desktop (md+), it's always visible
   return (
-    <div className="hidden md:block h-full">
+    <div className={`${state === "expanded" ? "block" : "hidden"} md:block fixed inset-y-0 left-0 z-50 md:relative h-full`}>
       <SidebarController />
     </div>
   );
