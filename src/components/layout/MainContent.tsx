@@ -14,13 +14,10 @@ const MainContent: React.FC<MainContentProps> = ({ children, profile }) => {
   const { state } = useSidebar();
   const isMobile = useIsMobile();
   
-  // Only apply sidebar padding on desktop
-  const sidebarPadding = !isMobile ? "md:pl-64" : "";
-  
   return (
-    <div className={`flex-1 flex flex-col w-full transition-all duration-300 ${sidebarPadding}`}>
+    <div className={`flex-1 flex flex-col w-full transition-all duration-300 ${!isMobile ? "md:pl-64" : ""}`}>
       <Navbar profile={profile} />
-      <main className="pt-16 flex-1 overflow-auto">
+      <main className="pt-16 px-4 md:px-6 flex-1 overflow-auto">
         {children}
       </main>
     </div>

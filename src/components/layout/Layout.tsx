@@ -1,4 +1,3 @@
-
 import React from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import MainContent from "./MainContent";
@@ -13,24 +12,19 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, loading, profile } = useRequireAuth();
 
-  // If loading, show a loading indicator
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  // If no user after loading (should redirect, but just in case)
   if (!user) {
     return null;
   }
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex w-full">
-        {/* Sidebar */}
+      <div className="min-h-screen flex w-full overflow-hidden">
         <SidebarContainer />
-        {/* Main content/children */}
         <MainContent profile={profile}>
-          {/* Toggle button (visible on mobile) */}
           <div className="md:hidden fixed top-4 left-4 z-[60]">
             <SidebarTrigger />
           </div>

@@ -9,9 +9,6 @@ const SidebarContainer: React.FC = () => {
   const { state } = useSidebar();
   const isMobile = useIsMobile();
   
-  // Only show sidebar if:
-  // 1. On mobile: when state is "expanded"
-  // 2. On desktop: always show
   const shouldShowSidebar = isMobile ? state === "expanded" : true;
   
   if (!shouldShowSidebar) {
@@ -19,15 +16,32 @@ const SidebarContainer: React.FC = () => {
   }
 
   return (
-    <div className={`${isMobile ? 'fixed inset-y-0 left-0 z-50' : 'relative'} h-full`}>
-      <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
+    <div 
+      className={`
+        ${isMobile ? 'fixed inset-y-0 left-0 z-50 w-[280px] shadow-lg' : 'relative'} 
+        h-full backdrop-blur-lg
+      `}
+    >
+      <div className="flex flex-col h-full bg-sidebar/95 text-sidebar-foreground border-r border-sidebar-border">
         <SidebarController />
         
-        {/* Search bar at the bottom of sidebar */}
+        {/* Search bar at the bottom of sidebar with improved mobile spacing */}
         <div className="mt-auto p-4 w-full">
           <SearchBar sidebarVariant={true} />
         </div>
       </div>
+      
+      {/* Backdrop for mobile */}
+      {isMobile && (
+        <div 
+          className="fixed inset-0 bg-black/20 -z-10"
+          onClick={() => {
+            // Close sidebar on backdrop click for mobile
+            const sidebar = document.querySelector('[data-sidebar="trigger"]') as HTMLButtonElement;
+            if (sidebar) sidebar.click();
+          }}
+        />
+      )}
     </div>
   );
 };
