@@ -12,12 +12,14 @@ const SidebarContainer: React.FC = () => {
   // Only show sidebar if:
   // 1. On mobile: when state is "expanded"
   // 2. On desktop: always show
-  const shouldShow = isMobile ? state === "expanded" : true;
+  const shouldShowSidebar = isMobile ? state === "expanded" : true;
   
-  if (!shouldShow) return null;
+  if (!shouldShowSidebar) {
+    return null;
+  }
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 md:relative h-full">
+    <div className={`${isMobile ? 'fixed inset-y-0 left-0 z-50' : 'relative'} h-full`}>
       <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
         <SidebarController />
         

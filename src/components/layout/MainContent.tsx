@@ -15,7 +15,7 @@ const MainContent: React.FC<MainContentProps> = ({ children, profile }) => {
   const isMobile = useIsMobile();
   
   // Only apply sidebar padding on desktop
-  const sidebarPadding = !isMobile ? "pl-64" : "";
+  const sidebarPadding = !isMobile ? "md:pl-64" : "";
   
   return (
     <div className={`flex-1 flex flex-col w-full transition-all duration-300 ${sidebarPadding}`}>

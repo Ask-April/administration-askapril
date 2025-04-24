@@ -24,7 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full">
         {/* Sidebar */}
         <SidebarContainer />
