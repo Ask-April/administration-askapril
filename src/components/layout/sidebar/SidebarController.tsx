@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSidebar } from "@/components/ui/sidebar";
 import SidebarLogo from "./SidebarLogo";
@@ -34,17 +33,13 @@ interface SidebarControllerProps {
 }
 
 const SidebarController: React.FC<SidebarControllerProps> = ({ className }) => {
-  const [openMenus, setOpenMenus] = React.useState<string[]>([]);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const { user } = useAuth();
   const { state } = useSidebar();
   const expanded = state === "expanded";
 
   const toggleMenu = (menu: string) => {
-    setOpenMenus((prevOpenMenus) =>
-      prevOpenMenus.includes(menu)
-        ? prevOpenMenus.filter((item) => item !== menu)
-        : [...prevOpenMenus, menu]
-    );
+    setOpenMenu(openMenu === menu ? null : menu);
   };
 
   // Main navigation items
@@ -206,13 +201,13 @@ const SidebarController: React.FC<SidebarControllerProps> = ({ className }) => {
   };
 
   return (
-    <div className="bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col h-full">
-      <div className="flex h-16 items-center justify-between px-4">
+    <div className="bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out flex flex-col h-full">
+      <div className="flex h-16 items-center justify-center px-4">
         <SidebarLogo expanded={expanded} />
       </div>
       <SidebarNavigation
         expanded={expanded}
-        openMenus={openMenus}
+        openMenu={openMenu}
         toggleMenu={toggleMenu}
         mainNavItems={mainNavItems}
         subMenuItems={subMenuItems}

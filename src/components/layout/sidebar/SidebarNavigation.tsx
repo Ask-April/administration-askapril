@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 
 interface SidebarNavigationProps {
   expanded: boolean;
-  openMenus: string[];
+  openMenu: string | null;
   toggleMenu: (menu: string) => void;
   mainNavItems: {
     name: string;
@@ -19,14 +19,14 @@ interface SidebarNavigationProps {
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
   expanded, 
-  openMenus, 
+  openMenu, 
   toggleMenu, 
   mainNavItems,
   subMenuItems 
 }) => {
   const location = useLocation();
   
-  const isMenuOpen = (menu: string) => openMenus.includes(menu);
+  const isMenuOpen = (menu: string) => openMenu === menu;
   
   return (
     <ScrollArea className="flex-1 overflow-hidden hover:overflow-auto">

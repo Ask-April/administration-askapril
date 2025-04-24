@@ -1,27 +1,24 @@
+
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+
 interface SidebarLogoProps {
   expanded: boolean;
+  className?: string;
 }
-const SidebarLogo: React.FC<SidebarLogoProps> = ({ expanded }) => {
+
+const SidebarLogo: React.FC<SidebarLogoProps> = ({ expanded, className }) => {
   return (
     <AnimatePresence initial={false} mode="wait">
       {expanded ? (
         <motion.div
           key="full-logo"
-          initial={{
-            opacity: 0,
-          }}
-          animate={{
-            opacity: 1,
-          }}
-          exit={{
-            opacity: 0,
-          }}
-          transition={{
-            duration: 0.2,
-          }}
-          className="flex items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className={cn("flex items-center gap-2", className)}
         >
           <img
             alt="AskApril.AI Logo"
@@ -32,19 +29,11 @@ const SidebarLogo: React.FC<SidebarLogoProps> = ({ expanded }) => {
       ) : (
         <motion.div
           key="icon-logo"
-          initial={{
-            opacity: 0,
-          }}
-          animate={{
-            opacity: 1,
-          }}
-          exit={{
-            opacity: 0,
-          }}
-          transition={{
-            duration: 0.2,
-          }}
-          className="mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className={cn("mx-auto", className)}
         >
           <img
             src="/lovable-uploads/d69fe8cc-396d-4df5-9d0f-2f686f1cbea9.png"
@@ -56,4 +45,5 @@ const SidebarLogo: React.FC<SidebarLogoProps> = ({ expanded }) => {
     </AnimatePresence>
   );
 };
+
 export default SidebarLogo;
