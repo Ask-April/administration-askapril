@@ -1,5 +1,6 @@
+
 import React from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import MainContent from "./MainContent";
 import LoadingSpinner from "./LoadingSpinner";
 import { useRequireAuth } from "@/hooks/use-require-auth";
