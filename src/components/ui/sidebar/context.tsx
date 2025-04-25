@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { SidebarContext } from "./types"
+import type { SidebarContext } from "./types"
 
 const SidebarContext = React.createContext<SidebarContext | null>(null)
 

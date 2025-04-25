@@ -71,7 +71,7 @@ export const useDashboardStats = () => {
           enroll_date,
           student_id,
           course_id,
-          courses:course_id (title, image)
+          courses:course_id (title, image_url)
         `)
         .order("enroll_date", { ascending: false })
         .limit(4);
@@ -85,7 +85,7 @@ export const useDashboardStats = () => {
       const { data: topCourses, error: topCoursesError } = await supabase
         .from("courses")
         .select("*")
-        .order("students", { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(3);
 
       if (topCoursesError) {
@@ -100,7 +100,7 @@ export const useDashboardStats = () => {
           enrollment_id,
           progress_percent,
           course_id,
-          courses:course_id (title, image)
+          courses:course_id (title, image_url)
         `)
         .order("progress_percent", { ascending: false })
         .limit(3);
