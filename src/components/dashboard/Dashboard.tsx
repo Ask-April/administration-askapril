@@ -68,16 +68,16 @@ const sampleActivities = [
 const Dashboard = () => {
   return (
     <PageTransition>
-      <div className="flex flex-col gap-4 p-2 md:gap-8 md:p-8">
+      <div className="flex flex-col gap-6 p-6 md:gap-8 md:p-8">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm md:text-base text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
             Welcome back! Here's an overview of your learning platform.
           </p>
         </div>
         
         <Suspense fallback={
-          <div className="grid gap-3 grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {Array(4).fill(0).map((_, i) => <StatCardSkeleton key={i} />)}
           </div>
         }>
@@ -93,7 +93,7 @@ const Dashboard = () => {
           
           <div className="col-span-full lg:col-span-4">
             <Suspense fallback={
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {Array(3).fill(0).map((_, i) => <CourseProgressSkeleton key={i} />)}
               </div>
             }>
@@ -105,7 +105,7 @@ const Dashboard = () => {
           </div>
         </div>
         
-        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Suspense fallback={<RecentActivitySkeleton />}>
             <RecentActivity />
           </Suspense>
