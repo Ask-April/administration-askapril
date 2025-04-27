@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Course } from "../types";
 
@@ -9,10 +8,7 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   console.log("Updating course with id:", id, "and data:", courseData);
   
   // Prepare the data for database update - handle virtual properties
-  const dbData = {
-    ...courseData,
-    updated_at: new Date().toISOString()
-  };
+  const dbData = { ...courseData };
   
   // Remove virtual properties that don't exist in the database
   delete dbData.image;

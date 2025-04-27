@@ -98,7 +98,8 @@ export const useEditCourse = (id: string | undefined) => {
       return false;
     } catch (error) {
       console.error("Error saving course:", error);
-      toast.error(`Error saving course: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Error saving course: ${errorMessage}`);
       return false;
     }
   };

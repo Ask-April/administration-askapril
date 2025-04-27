@@ -1,3 +1,4 @@
+
 import { toast } from 'sonner';
 import { courseService } from '@/services/course';
 import { CourseData } from './types';

@@ -39,10 +39,7 @@ export async function getCourseById(id: string) {
 export async function updateCourse(id: string, courseData: Partial<Course>) {
   const { data, error } = await supabase
     .from('courses')
-    .update({
-      ...courseData,
-      updated_at: new Date().toISOString()
-    })
+    .update(courseData)
     .eq('course_id', id)
     .select()
     .single();
