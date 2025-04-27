@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Course } from "../types";
 
@@ -17,9 +18,14 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   delete dbData.students;
   delete dbData.certificateTemplate; // Explicitly remove this virtual property
   
-  // If we have a category value, map it to category_id
+  // Handle category mapping - but ensure it's a valid UUID or null (not empty string)
   if (courseData.category) {
     dbData.category_id = courseData.category;
+  }
+  
+  // If category_id is an empty string, set it to null to avoid UUID validation errors
+  if (dbData.category_id === '') {
+    dbData.category_id = null;
   }
   
   // If we have an image value, map it to image_url

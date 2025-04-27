@@ -74,10 +74,11 @@ export const useEditCourse = (id: string | undefined) => {
       }
       
       if (editedCourse) {
-        // Make sure virtual properties are synced with their DB counterparts
+        // Prepare course data for update
         const courseToUpdate = {
           ...editedCourse,
-          category_id: editedCourse.category || editedCourse.category_id,
+          // Ensure category is properly handled
+          category_id: editedCourse.category || editedCourse.category_id || null,
           image_url: editedCourse.image || editedCourse.image_url,
         };
         

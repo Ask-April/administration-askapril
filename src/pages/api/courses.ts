@@ -37,9 +37,15 @@ export async function getCourseById(id: string) {
 
 // Update a course
 export async function updateCourse(id: string, courseData: Partial<Course>) {
+  // Handle empty UUID fields to avoid database errors
+  const sanitizedData = { ...courseData };
+  if (sanitizedData.category_id === '') {
+    sanitizedData.category_id = null;
+  }
+
   const { data, error } = await supabase
     .from('courses')
-    .update(courseData)
+    .update(sanitizedData)
     .eq('course_id', id)
     .select()
     .single();
