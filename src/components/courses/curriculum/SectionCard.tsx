@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,13 +10,29 @@ interface SectionCardProps {
   onDeleteSection: (sectionId: string) => void;
   onAddLesson: (section: Section) => void;
   onDeleteLesson: (sectionId: string, lessonId: string) => void;
+  onOpenLessonModal: (lessonId: string) => void;
+  onDragStart: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
+  changeLessonType: (lessonId: string, newType: string) => void;
+  updateLessonTitle: (lessonId: string, newTitle: string) => void;
 }
 
 const SectionCard: React.FC<SectionCardProps> = ({
   section,
   onDeleteSection,
   onAddLesson,
-  onDeleteLesson
+  onDeleteLesson,
+  onOpenLessonModal,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  changeLessonType,
+  updateLessonTitle
 }) => {
   return (
     <Card className="relative group">
@@ -42,6 +57,14 @@ const SectionCard: React.FC<SectionCardProps> = ({
               lesson={lesson}
               sectionId={section.id}
               onDelete={onDeleteLesson}
+              onOpenLessonModal={onOpenLessonModal}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              onDrop={onDrop}
+              changeLessonType={changeLessonType}
+              updateLessonTitle={updateLessonTitle}
             />
           ))}
           
