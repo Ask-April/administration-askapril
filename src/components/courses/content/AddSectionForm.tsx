@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ContentOrganizationHook } from "@/hooks/useContentOrganization";
@@ -15,6 +15,10 @@ const AddSectionForm: React.FC<AddSectionFormProps> = ({ hook }) => {
     handleAddSection 
   } = hook;
 
+  const onAddSection = () => {
+    handleAddSection();
+  };
+
   return (
     <div className="flex items-center space-x-2 mb-4">
       <Input
@@ -23,7 +27,7 @@ const AddSectionForm: React.FC<AddSectionFormProps> = ({ hook }) => {
         placeholder="Enter section title"
         className="flex-grow"
       />
-      <Button onClick={handleAddSection}>Add Section</Button>
+      <Button onClick={onAddSection}>Add Section</Button>
     </div>
   );
 };

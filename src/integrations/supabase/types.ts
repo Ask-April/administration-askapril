@@ -289,6 +289,45 @@ export type Database = {
           },
         ]
       }
+      community_engagement: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          likes: number | null
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string | null
+          user_id: string | null
+          views: number | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          likes?: number | null
+          tags?: string[] | null
+          title: string
+          type: string
+          updated_at?: string | null
+          user_id?: string | null
+          views?: number | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          likes?: number | null
+          tags?: string[] | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
       contact: {
         Row: {
           contact_id: string
@@ -670,6 +709,39 @@ export type Database = {
           },
         ]
       }
+      enhanced_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          expertise: string[] | null
+          id: string
+          learning_goals: string[] | null
+          preferences: Json | null
+          social_links: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          expertise?: string[] | null
+          id: string
+          learning_goals?: string[] | null
+          preferences?: Json | null
+          social_links?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          expertise?: string[] | null
+          id?: string
+          learning_goals?: string[] | null
+          preferences?: Json | null
+          social_links?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       enrollment: {
         Row: {
           course_id: string | null
@@ -870,6 +942,47 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      learning_progress: {
+        Row: {
+          areas_for_improvement: string[] | null
+          completion_percentage: number | null
+          course_id: string | null
+          id: string
+          last_activity: string | null
+          strengths: string[] | null
+          time_spent: number | null
+          user_id: string | null
+        }
+        Insert: {
+          areas_for_improvement?: string[] | null
+          completion_percentage?: number | null
+          course_id?: string | null
+          id?: string
+          last_activity?: string | null
+          strengths?: string[] | null
+          time_spent?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          areas_for_improvement?: string[] | null
+          completion_percentage?: number | null
+          course_id?: string | null
+          id?: string
+          last_activity?: string | null
+          strengths?: string[] | null
+          time_spent?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_progress_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["course_id"]
           },
         ]
       }

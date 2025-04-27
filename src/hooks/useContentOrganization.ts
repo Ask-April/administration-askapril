@@ -9,6 +9,8 @@ export const useContentOrganization = () => {
   const {
     sections,
     setSections,
+    newSectionTitle,
+    setNewSectionTitle,
     handleAddSection,
     handleDeleteSection,
     updateSectionTitle
@@ -21,8 +23,11 @@ export const useContentOrganization = () => {
     setCurrentSectionId,
     selectedLesson,
     setSelectedLesson,
+    isLessonModalOpen,
+    setIsLessonModalOpen,
     handleAddLesson,
     handleDeleteLesson,
+    openLessonModal,
     updateLessonTitle,
     changeLessonType
   } = useLessons(sections, setSections);
@@ -119,7 +124,7 @@ export const useContentOrganization = () => {
     
     setSections(updatedSections);
     toast.success("Lesson content saved successfully");
-    setIsAddLessonSidebarOpen(false);
+    setIsLessonModalOpen(false);
     setSelectedLesson(null);
   };
 
@@ -127,6 +132,8 @@ export const useContentOrganization = () => {
     // Section management
     sections,
     setSections,
+    newSectionTitle,
+    setNewSectionTitle,
     handleAddSection,
     handleDeleteSection,
     updateSectionTitle,
@@ -136,6 +143,11 @@ export const useContentOrganization = () => {
     handleDeleteLesson,
     updateLessonTitle,
     changeLessonType,
+    openLessonModal,
+    
+    // Modal management
+    isLessonModalOpen,
+    setIsLessonModalOpen,
 
     // Drag and drop
     draggedItem,

@@ -10,6 +10,7 @@ export const useLessons = (sections: any[], setSections: (sections: any[]) => vo
     sectionId: string;
     lesson: Lesson;
   } | null>(null);
+  const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
   const handleAddLesson = (sectionId: string) => {
     setCurrentSectionId(sectionId);
@@ -28,6 +29,11 @@ export const useLessons = (sections: any[], setSections: (sections: any[]) => vo
     });
     
     setSections(updatedSections);
+  };
+
+  const openLessonModal = (sectionId: string, lesson: Lesson) => {
+    setSelectedLesson({ sectionId, lesson });
+    setIsLessonModalOpen(true);
   };
 
   const updateLessonTitle = (sectionId: string, lessonId: string, newTitle: string) => {
@@ -74,8 +80,11 @@ export const useLessons = (sections: any[], setSections: (sections: any[]) => vo
     setCurrentSectionId,
     selectedLesson,
     setSelectedLesson,
+    isLessonModalOpen,
+    setIsLessonModalOpen,
     handleAddLesson,
     handleDeleteLesson,
+    openLessonModal,
     updateLessonTitle,
     changeLessonType
   };

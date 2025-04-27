@@ -25,22 +25,25 @@ export const useSections = () => {
       ]
     }
   ]);
+  
+  const [newSectionTitle, setNewSectionTitle] = useState<string>('');
 
   const handleDeleteSection = (sectionId: string) => {
     setSections(sections.filter(section => section.id !== sectionId));
   };
 
-  const handleAddSection = (title: string) => {
-    if (!title.trim()) return;
+  const handleAddSection = () => {
+    if (!newSectionTitle.trim()) return;
     
     const newSection = {
       id: `section-${Date.now()}`,
-      title: title.trim(),
+      title: newSectionTitle.trim(),
       position: sections.length + 1,
       lessons: []
     };
     
     setSections([...sections, newSection]);
+    setNewSectionTitle('');
   };
 
   const updateSectionTitle = (sectionId: string, newTitle: string) => {
@@ -58,6 +61,8 @@ export const useSections = () => {
   return {
     sections,
     setSections,
+    newSectionTitle,
+    setNewSectionTitle,
     handleAddSection,
     handleDeleteSection,
     updateSectionTitle
