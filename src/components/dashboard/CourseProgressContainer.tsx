@@ -1,17 +1,6 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-
-interface CourseProgressItem {
-  id: string;
-  title: string;
-  completedLessons: number;
-  totalLessons: number;
-  progress: number;
-}
 
 interface ActivityItem {
   id: string;
@@ -19,47 +8,13 @@ interface ActivityItem {
   title: string;
   description: string;
   date: string;
-  amount?: string; // Make amount optional
-  image?: string;  // Add image property
+  amount?: string;
+  image?: string;
 }
 
 interface CourseProgressContainerProps {
-  courses: CourseProgressItem[];
   activities: ActivityItem[];
 }
-
-const ProgressBar = ({ progress }: { progress: number }) => {
-  return (
-    <div className="w-full bg-muted rounded-full h-2">
-      <div
-        className="bg-primary h-2 rounded-full"
-        style={{ width: `${progress}%` }}
-      ></div>
-    </div>
-  );
-};
-
-const CourseItem = ({ course }: { course: CourseProgressItem }) => {
-  return (
-    <div className="flex flex-col space-y-2 p-4 border rounded-md">
-      <div className="flex justify-between items-center">
-        <h3 className="font-medium text-sm">{course.title}</h3>
-        <Button variant="ghost" size="sm" className="h-6 text-xs">
-          Resume <ArrowRight className="ml-1 w-3 h-3" />
-        </Button>
-      </div>
-      <div className="space-y-1">
-        <ProgressBar progress={course.progress} />
-        <div className="flex justify-between items-center text-xs text-muted-foreground">
-          <span>
-            {course.completedLessons} of {course.totalLessons} lessons
-          </span>
-          <span>{course.progress}% complete</span>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const ActivityItem = ({ activity }: { activity: ActivityItem }) => {
   return (
@@ -96,49 +51,26 @@ const ActivityItem = ({ activity }: { activity: ActivityItem }) => {
 };
 
 const CourseProgressContainer: React.FC<CourseProgressContainerProps> = ({
-  courses,
   activities,
 }) => {
   return (
-    <Card className="col-span-12 md:col-span-4">
-      <Tabs defaultValue="courses">
-        <div className="px-4 pt-4">
-          <TabsList className="w-full">
-            <TabsTrigger value="courses" className="flex-1">
-              My Courses
-            </TabsTrigger>
-            <TabsTrigger value="activity" className="flex-1">
-              Activity
-            </TabsTrigger>
-          </TabsList>
+    <Card className="col-span-12 md:col-span-4 h-full">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between border-b pb-3 mb-2">
+          <h2 className="font-medium">Recent Activity</h2>
         </div>
-        <CardContent>
-          <TabsContent value="courses" className="space-y-4 mt-4">
-            {courses.length === 0 ? (
-              <div className="text-center py-6">
-                <p className="text-muted-foreground">No courses in progress</p>
-              </div>
-            ) : (
-              courses.map((course) => (
-                <CourseItem key={course.id} course={course} />
-              ))
-            )}
-          </TabsContent>
-          <TabsContent value="activity" className="mt-4">
-            {activities.length === 0 ? (
-              <div className="text-center py-6">
-                <p className="text-muted-foreground">No recent activity</p>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {activities.map((activity) => (
-                  <ActivityItem key={activity.id} activity={activity} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </CardContent>
-      </Tabs>
+        {activities.length === 0 ? (
+          <div className="text-center py-6">
+            <p className="text-muted-foreground">No recent activity</p>
+          </div>
+        ) : (
+          <div className="space-y-1 max-h-[400px] overflow-y-auto">
+            {activities.map((activity) => (
+              <ActivityItem key={activity.id} activity={activity} />
+            ))}
+          </div>
+        )}
+      </CardContent>
     </Card>
   );
 };

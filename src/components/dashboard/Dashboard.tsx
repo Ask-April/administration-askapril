@@ -14,31 +14,7 @@ import {
   RecentActivitySkeleton 
 } from "@/components/ui/loading-states";
 
-// Sample data for CourseProgressContainer
-const sampleCourseProgress = [
-  {
-    id: "1",
-    title: "React Fundamentals",
-    completedLessons: 3,
-    totalLessons: 10,
-    progress: 30
-  },
-  {
-    id: "2",
-    title: "Advanced TypeScript",
-    completedLessons: 7,
-    totalLessons: 12,
-    progress: 58
-  },
-  {
-    id: "3",
-    title: "UI/UX Design Principles",
-    completedLessons: 2,
-    totalLessons: 8,
-    progress: 25
-  }
-];
-
+// Sample data for activity feed
 const sampleActivities = [
   {
     id: "1",
@@ -62,6 +38,21 @@ const sampleActivities = [
     description: "UI/UX Design Principles",
     date: "3 days ago",
     amount: "49.99"
+  },
+  {
+    id: "4",
+    type: "achievement",
+    title: "Achievement Unlocked",
+    description: "Completed 5 courses",
+    date: "Last week",
+    image: "/placeholder.svg"
+  },
+  {
+    id: "5",
+    type: "forum",
+    title: "Forum Activity",
+    description: "Replied to discussion thread",
+    date: "Last week"
   }
 ];
 
@@ -84,23 +75,16 @@ const Dashboard = () => {
           <StatCards />
         </Suspense>
         
-        <div className="grid gap-4 md:grid-cols-8 lg:grid-cols-12">
+        <div className="grid gap-4 md:grid-cols-8 lg:grid-cols-12 h-[500px]">
           <div className="col-span-full lg:col-span-8">
             <Suspense fallback={<ChartSkeleton />}>
               <DashboardTabs />
             </Suspense>
           </div>
           
-          <div className="col-span-full lg:col-span-4">
-            <Suspense fallback={
-              <div className="space-y-4">
-                {Array(3).fill(0).map((_, i) => <CourseProgressSkeleton key={i} />)}
-              </div>
-            }>
-              <CourseProgressContainer 
-                courses={sampleCourseProgress} 
-                activities={sampleActivities} 
-              />
+          <div className="col-span-full lg:col-span-4 h-full">
+            <Suspense fallback={<CourseProgressSkeleton />}>
+              <CourseProgressContainer activities={sampleActivities} />
             </Suspense>
           </div>
         </div>
