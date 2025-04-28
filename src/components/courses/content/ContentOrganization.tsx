@@ -10,11 +10,13 @@ import { CourseSection } from "@/services/types";
 interface ContentOrganizationProps {
   sections: CourseSection[];
   updateSections: (sections: CourseSection[]) => void;
+  showAddSection?: boolean;
 }
 
 const ContentOrganization: React.FC<ContentOrganizationProps> = ({ 
   sections, 
-  updateSections 
+  updateSections,
+  showAddSection = true
 }) => {
   // Use our custom hook for all state and logic
   const contentOrgHook = useContentOrganization(sections, updateSections);
@@ -48,6 +50,10 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
 
   return (
     <div className="space-y-4">
+      {showAddSection && (
+        <AddSectionForm hook={contentOrgHook} />
+      )}
+      
       <div className="space-y-4">
         {sections.map((section) => (
           <SectionItem

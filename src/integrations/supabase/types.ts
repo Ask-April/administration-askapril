@@ -132,27 +132,6 @@ export type Database = {
           },
         ]
       }
-      app_integration: {
-        Row: {
-          app_name: string | null
-          config_data: string | null
-          integration_id: string
-          site_id: string | null
-        }
-        Insert: {
-          app_name?: string | null
-          config_data?: string | null
-          integration_id?: string
-          site_id?: string | null
-        }
-        Update: {
-          app_name?: string | null
-          config_data?: string | null
-          integration_id?: string
-          site_id?: string | null
-        }
-        Relationships: []
-      }
       assignment: {
         Row: {
           assignment_id: string
