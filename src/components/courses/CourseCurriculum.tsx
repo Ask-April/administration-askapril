@@ -7,6 +7,7 @@ import { PlusCircle, AlertOctagon } from "lucide-react";
 import ContentOrganization from "./content/ContentOrganization";
 import { useCourseWizard } from "./wizard/CourseWizardContext";
 import { CurriculumSection } from "./wizard/types";
+import { CourseSection } from "@/services/types";
 
 interface CourseCurriculumProps {
   courseData: any;
@@ -65,6 +66,21 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
     if (e.key === 'Enter' && newSectionTitle.trim()) {
       handleAddSection();
     }
+  };
+
+  // Convert CurriculumSection[] to CourseSection[] by adding course_id
+  const getCourseSections = (): CourseSection[] => {
+    return curriculumSections.map(section => ({
+      ...section,
+      course_id: courseId
+    }));
+  };
+
+  // Update curriculum sections while preserving course_id
+  const handleUpdateSections = (sections: CourseSection[]) => {
+    // Convert back to CurriculumSection[] for the wizard context
+    const updatedCurriculumSections = sections.map(({ course_id, ...rest }) => rest as CurriculumSection);
+    updateCurriculumSections(updatedCurriculumSections);
   };
 
   return (
@@ -130,8 +146,8 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
           </div>
           
           <ContentOrganization 
-            sections={curriculumSections}
-            updateSections={updateCurriculumSections}
+            sections={getCourseSections()}
+            updateSections={handleUpdateSections}
           />
         </div>
       )}

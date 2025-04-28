@@ -1,19 +1,18 @@
-
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { CurriculumSection } from "@/components/courses/wizard/types";
+import { CourseSection, CourseLesson } from "@/services/types";
 
 export const useContentOrganization = (
-  initialSections: CurriculumSection[],
-  updateSections: (sections: CurriculumSection[]) => void
+  initialSections: CourseSection[],
+  updateSections: (sections: CourseSection[]) => void
 ) => {
-  const [sections, setSections] = useState<CurriculumSection[]>(initialSections);
+  const [sections, setSections] = useState<CourseSection[]>(initialSections);
   const [newSectionTitle, setNewSectionTitle] = useState<string>("");
   const [isAddLessonSidebarOpen, setIsAddLessonSidebarOpen] = useState(false);
   const [currentSectionId, setCurrentSectionId] = useState<string | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<{
     sectionId: string;
-    lesson: any;
+    lesson: CourseLesson;
   } | null>(null);
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
   const [draggedItem, setDraggedItem] = useState<any>(null);
@@ -39,11 +38,12 @@ export const useContentOrganization = (
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
     
-    const newSection: CurriculumSection = {
+    const newSection: CourseSection = {
       id: crypto.randomUUID(),
       title: newSectionTitle.trim(),
       position: sections.length,
-      lessons: []
+      lessons: [],
+      course_id: sections[0]?.course_id || ''
     };
     
     setSections([...sections, newSection]);
@@ -80,10 +80,10 @@ export const useContentOrganization = (
     }
   };
 
-  const openLessonModal = (sectionId: string, lesson: any) => {
+  const openLessonModal = (sectionId: string, lesson: CourseLesson) => {
     setSelectedLesson({ sectionId, lesson });
     setContent(lesson.content || "");
-    setContentUrl(lesson.contentUrl || "");
+    setContentUrl(lesson.content_url || "");
     setIsLessonModalOpen(true);
   };
 
@@ -120,7 +120,6 @@ export const useContentOrganization = (
     toast.success(`Lesson type changed to ${newType}`);
   };
 
-  // Drag and drop handling
   const handleDragStart = (e: React.DragEvent, item: any, type: 'section' | 'lesson', sectionId?: string) => {
     setDraggedItem({ item, sectionId });
     setDragType(type);
@@ -145,10 +144,8 @@ export const useContentOrganization = (
   const handleDrop = (e: React.DragEvent, targetId: string, type: 'section' | 'lesson', sectionId?: string) => {
     e.preventDefault();
     
-    // Don't do anything if not dragging or dropping on the same item
     if (!draggedItem || draggedItem.item.id === targetId) return;
     
-    // Handle section reordering
     if (dragType === 'section' && type === 'section') {
       const reorderedSections = [...sections];
       const draggedIndex = sections.findIndex(s => s.id === draggedItem.item.id);
@@ -157,7 +154,6 @@ export const useContentOrganization = (
       const [movedSection] = reorderedSections.splice(draggedIndex, 1);
       reorderedSections.splice(targetIndex, 0, movedSection);
       
-      // Update positions
       const updatedSections = reorderedSections.map((section, index) => ({
         ...section,
         position: index
@@ -168,7 +164,6 @@ export const useContentOrganization = (
       return;
     }
     
-    // Handle lesson reordering within the same section
     if (dragType === 'lesson' && type === 'lesson' && draggedItem.sectionId === sectionId) {
       const section = sections.find(s => s.id === sectionId);
       if (!section) return;
@@ -180,7 +175,6 @@ export const useContentOrganization = (
       const [movedLesson] = reorderedLessons.splice(draggedIndex, 1);
       reorderedLessons.splice(targetIndex, 0, movedLesson);
       
-      // Update positions
       const updatedLessons = reorderedLessons.map((lesson, index) => ({
         ...lesson,
         position: index
@@ -198,7 +192,6 @@ export const useContentOrganization = (
       return;
     }
     
-    // Handle moving a lesson between sections
     if (dragType === 'lesson' && type === 'section') {
       const sourceSection = sections.find(s => s.id === draggedItem.sectionId);
       const targetSection = sections.find(s => s.id === targetId);
@@ -207,10 +200,8 @@ export const useContentOrganization = (
       const lessonToMove = sourceSection.lessons.find(l => l.id === draggedItem.item.id);
       if (!lessonToMove) return;
       
-      // Remove from source section
       const updatedSourceLessons = sourceSection.lessons.filter(l => l.id !== draggedItem.item.id);
       
-      // Add to target section
       const updatedTargetLessons = [
         ...targetSection.lessons,
         { ...lessonToMove, position: targetSection.lessons.length }
@@ -234,7 +225,6 @@ export const useContentOrganization = (
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log("File selected:", e.target.files);
-    // In a real implementation, you would handle file uploads here
     toast.info("File upload functionality will be implemented in the future");
   };
 
@@ -255,16 +245,17 @@ export const useContentOrganization = (
     const section = sections.find(s => s.id === currentSectionId);
     if (!section) return;
 
-    const newLesson = {
+    const newLesson: CourseLesson = {
       id: crypto.randomUUID(),
+      section_id: currentSectionId,
       title: lessonName,
       type: selectedType,
-      isPreview: enableFreePreview,
-      isDraft: setAsDraft,
-      isCompulsory: setAsCompulsory,
-      enableDiscussion: enableDiscussion,
+      is_preview: enableFreePreview,
+      is_draft: setAsDraft,
+      is_compulsory: setAsCompulsory,
+      enable_discussion: enableDiscussion,
       content: content,
-      contentUrl: contentUrl,
+      content_url: contentUrl,
       position: section.lessons.length
     };
 
@@ -296,7 +287,7 @@ export const useContentOrganization = (
               title: selectedLesson.lesson.title,
               type: selectedLesson.lesson.type,
               content: content,
-              contentUrl: contentUrl
+              content_url: contentUrl
             };
           }
           return lesson;
@@ -314,7 +305,6 @@ export const useContentOrganization = (
   };
 
   return {
-    // Section management
     sections,
     setSections,
     newSectionTitle,
@@ -323,17 +313,14 @@ export const useContentOrganization = (
     handleDeleteSection,
     updateSectionTitle,
 
-    // Lesson management
     handleAddLesson,
     handleDeleteLesson,
     changeLessonType,
     openLessonModal,
     
-    // Modal management
     isLessonModalOpen,
     setIsLessonModalOpen,
 
-    // Drag and drop
     draggedItem,
     dragOverItem,
     handleDragStart,
@@ -342,7 +329,6 @@ export const useContentOrganization = (
     handleDragLeave,
     handleDrop,
 
-    // Lesson form
     lessonName,
     setLessonName,
     selectedType,
@@ -362,14 +348,12 @@ export const useContentOrganization = (
     fileInputRef,
     handleFileChange,
 
-    // Modal and drawer management
     isAddLessonSidebarOpen,
     setIsAddLessonSidebarOpen,
     currentSectionId,
     selectedLesson,
     setSelectedLesson,
 
-    // Form actions
     handleSaveNewLesson,
     handleLessonContentSave
   };
