@@ -30,13 +30,17 @@ const WizardNavigation: React.FC = () => {
       return;
     }
     
-    const success = await saveCurrentStep();
-    if (!success) return;
-    
-    if (currentStep === "info") setCurrentStep("curriculum");
-    else if (currentStep === "curriculum") setCurrentStep("pricing");
-    else if (currentStep === "pricing") setCurrentStep("settings");
-    else if (currentStep === "settings") await finishWizard();
+    // For non-final steps, we just update the UI state
+    if (currentStep !== "settings") {
+      await saveCurrentStep();
+      
+      if (currentStep === "info") setCurrentStep("curriculum");
+      else if (currentStep === "curriculum") setCurrentStep("pricing");
+      else if (currentStep === "pricing") setCurrentStep("settings");
+    } else {
+      // For the final step, we save everything to the database
+      await finishWizard();
+    }
   };
 
   return (
@@ -63,7 +67,7 @@ const WizardNavigation: React.FC = () => {
         {isLoading ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            {currentStep === "settings" ? "Finishing..." : "Saving..."}
+            {currentStep === "settings" ? "Creating course..." : "Saving..."}
           </>
         ) : currentStep === "settings" ? (
           <>

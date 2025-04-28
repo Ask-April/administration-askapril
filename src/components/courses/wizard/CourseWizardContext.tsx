@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -8,7 +9,8 @@ import {
 } from './types';
 import { validateCurrentStep } from './validation';
 import { generateAIContent } from './contentGeneration';
-import { saveCurrentStepData, finalizeCourse } from './courseOperations';
+import { finalizeCourse } from './courseOperations';
+import { courseService } from '@/services/course';
 
 const defaultCourseData: CourseData = {
   title: '',
@@ -75,6 +77,7 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   }, [courseData, updateCourseData, updateCurriculumSections]);
 
+  // Save current step - now just validates and updates UI state without DB calls (except for final step)
   const saveCurrentStep = async (): Promise<boolean> => {
     if (!validateCurrentStepCallback()) {
       return false;
@@ -82,35 +85,81 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     setIsLoading(true);
     try {
-      const courseId = await saveCurrentStepData(
-        currentStep, 
-        courseData, 
-        curriculumSections, 
-        createdCourseId
-      );
-      
-      if (courseId && !createdCourseId) {
-        setCreatedCourseId(courseId);
-      }
-      
+      // Only proceed with UI state updates, no DB operations until final step
       setIsLoading(false);
       setHasUnsavedChanges(false);
       return true;
     } catch (error) {
+      console.error('Error in saveCurrentStep:', error);
       setIsLoading(false);
       return false;
     }
   };
 
+  // Modified to create the course on the final step
   const finishWizard = async () => {
+    if (!validateCurrentStepCallback()) {
+      return false;
+    }
+
     try {
       setIsLoading(true);
-      if (createdCourseId) {
-        await finalizeCourse(createdCourseId);
-        navigate('/courses/overview');
+      
+      // Create the course - final submission with all collected data
+      const course = await courseService.createCourse({
+        title: courseData.title,
+        description: courseData.description,
+        category: courseData.category,
+        image: courseData.image,
+        status: courseData.status,
+        lessons: courseData.lessons,
+        students: 0
+      });
+
+      // If we successfully created the course and have curriculum sections, save those too
+      if (course && course.course_id && curriculumSections.length > 0) {
+        try {
+          // Transform curriculum sections as needed by the API
+          const transformedSections = curriculumSections.map(section => ({
+            id: section.id || crypto.randomUUID(),
+            course_id: course.course_id,
+            title: section.title,
+            position: section.position,
+            lessons: section.lessons.map((lesson) => ({
+              id: lesson.id || crypto.randomUUID(),
+              section_id: section.id,
+              title: lesson.title,
+              type: lesson.type || 'video',
+              position: lesson.position,
+              content: lesson.content,
+              content_url: lesson.contentUrl,
+              video_url: lesson.videoUrl,
+              duration: lesson.duration || 0,
+              is_preview: lesson.isPreview || false,
+              is_draft: lesson.isDraft || false,
+              is_compulsory: lesson.isCompulsory || true,
+              enable_discussion: lesson.enableDiscussion || false
+            }))
+          }));
+
+          // Save curriculum if we have any sections
+          if (transformedSections.length > 0) {
+            await courseService.saveCurriculum(course.course_id, transformedSections);
+          }
+        } catch (error) {
+          console.error('Error saving curriculum:', error);
+          toast.error('Course created but there was an issue saving the curriculum');
+        }
       }
+
+      toast.success('Course created successfully!');
+      navigate('/courses/overview');
+      return true;
     } catch (error) {
       console.error('Error in finishWizard:', error);
+      toast.error('Failed to create course. Please try again.');
+      setIsLoading(false);
+      return false;
     } finally {
       setIsLoading(false);
     }
