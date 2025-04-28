@@ -42,7 +42,7 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       has_enrollment_limit: data.has_enrollment_limit,
       max_enrollments: data.max_enrollments,
       subtitle: data.subtitle,
-      pricing_metadata: data.pricing_metadata || {}, // Add the pricing_metadata field
+      pricing_metadata: data.pricing_metadata || {}, // Ensure this property exists
       slug: data.slug,
       // Add in any virtual properties that aren't stored in the DB
       image: data.image_url || "",

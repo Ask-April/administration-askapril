@@ -35,7 +35,7 @@ export const getCoursesByCategory = async (categoryId: string): Promise<Course[]
         has_enrollment_limit: item.has_enrollment_limit,
         max_enrollments: item.max_enrollments,
         subtitle: item.subtitle,
-        pricing_metadata: item.pricing_metadata || {}, // Add the pricing_metadata field
+        pricing_metadata: item.pricing_metadata || {}, // Ensure this property exists
         slug: item.slug,
         image: item.image_url,
         category: item.category_id,

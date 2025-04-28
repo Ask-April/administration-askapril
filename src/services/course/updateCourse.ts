@@ -56,7 +56,7 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
     // Add virtual properties back
     image: data.image_url,
     category: data.category_id,
-    pricing_data: data.pricing_metadata || {}, // Handle potentially missing pricing_metadata
+    pricing_metadata: data.pricing_metadata || {}, // Ensure pricing_metadata exists
     // Other virtual props would need to be populated if needed
     lessons: 0,
     students: 0

@@ -55,7 +55,7 @@ export function useCoursesList() {
           has_enrollment_limit: course.has_enrollment_limit,
           max_enrollments: course.max_enrollments,
           subtitle: course.subtitle,
-          pricing_metadata: course.pricing_metadata || {}, // Add the pricing_metadata field
+          pricing_metadata: course.pricing_metadata || {}, // Ensure this property exists
           slug: course.slug,
           // Add virtual properties
           image: course.image_url || "",
@@ -138,7 +138,7 @@ export function useCourseById(courseId: string | undefined) {
         has_enrollment_limit: data.has_enrollment_limit,
         max_enrollments: data.max_enrollments,
         subtitle: data.subtitle,
-        pricing_metadata: data.pricing_metadata || {}, // Add the pricing_metadata field
+        pricing_metadata: data.pricing_metadata || {}, // Ensure this property exists
         slug: data.slug,
         // Add virtual properties
         image: data.image_url || "",

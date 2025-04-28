@@ -53,7 +53,7 @@ export const createCourse = async (courseData: {
     category: data.category_id || "",
     lessons: courseData.lessons,
     students: courseData.students || 0,
-    pricing_metadata: data.pricing_metadata || {} // Add pricing_metadata
+    pricing_metadata: data.pricing_metadata || {} // Ensure pricing_metadata exists
   };
 
   return course;
