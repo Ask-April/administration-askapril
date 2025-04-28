@@ -1,12 +1,29 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Course } from "@/services/types";
+import type { Course, Category } from "@/services/types";
 
 export function useCoursesList() {
   return useQuery({
     queryKey: ["courses-list"],
     queryFn: async (): Promise<Course[]> => {
+      // First, fetch all categories to create a lookup map
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('course_category')
+        .select('category_id, name');
+
+      if (categoriesError) {
+        console.error("Error fetching categories:", categoriesError);
+        throw categoriesError;
+      }
+
+      // Create a map of category_id to category name for quick lookup
+      const categoryMap = new Map<string, string>();
+      (categoriesData || []).forEach(category => {
+        categoryMap.set(category.category_id, category.name || 'Uncategorized');
+      });
+
+      // Then fetch all courses
       const { data, error } = await supabase
         .from('courses')
         .select('*')
@@ -17,8 +34,12 @@ export function useCoursesList() {
         throw error;
       }
 
-      // Ensure returned data matches the Course type
+      // Map the data to the Course type with the category name
       const courses: Course[] = (data || []).map(course => {
+        const categoryName = course.category_id 
+          ? categoryMap.get(course.category_id) || 'Uncategorized' 
+          : 'Uncategorized';
+
         const c: Course = ({
           course_id: course.course_id,
           title: course.title,
@@ -34,11 +55,10 @@ export function useCoursesList() {
           has_enrollment_limit: course.has_enrollment_limit,
           max_enrollments: course.max_enrollments,
           subtitle: course.subtitle,
-          // external_metadata removed
           slug: course.slug,
           // Add virtual properties
           image: course.image_url || "",
-          category: course.category_id || "",
+          category: categoryName, // Use the category name instead of the ID
         });
         
         // Safe type checking for timestamps
@@ -54,5 +74,89 @@ export function useCoursesList() {
 
       return courses;
     },
+  });
+}
+
+export function useCourseById(courseId: string | undefined) {
+  return useQuery({
+    queryKey: ["course", courseId],
+    queryFn: async (): Promise<Course | null> => {
+      if (!courseId) {
+        return null;
+      }
+      
+      // First, fetch the category data for mapping
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('course_category')
+        .select('category_id, name');
+
+      if (categoriesError) {
+        console.error("Error fetching categories:", categoriesError);
+        throw categoriesError;
+      }
+
+      // Create a map of category_id to category name
+      const categoryMap = new Map<string, string>();
+      (categoriesData || []).forEach(category => {
+        categoryMap.set(category.category_id, category.name || 'Uncategorized');
+      });
+      
+      // Now fetch the course
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('course_id', courseId)
+        .maybeSingle();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null;
+        }
+        throw error;
+      }
+
+      if (!data) return null;
+
+      // Get the category name if available
+      const categoryName = data.category_id 
+        ? categoryMap.get(data.category_id) || 'Uncategorized' 
+        : 'Uncategorized';
+
+      const course: Course = {
+        course_id: data.course_id,
+        title: data.title,
+        description: data.description,
+        category_id: data.category_id,
+        image_url: data.image_url,
+        status: data.status,
+        site_id: data.site_id,
+        featured: data.featured,
+        price_visible: data.price_visible,
+        hidden: data.hidden,
+        has_certificate: data.has_certificate,
+        has_enrollment_limit: data.has_enrollment_limit,
+        max_enrollments: data.max_enrollments,
+        subtitle: data.subtitle,
+        slug: data.slug,
+        // Add virtual properties
+        image: data.image_url || "",
+        category: categoryName, // Use the category name instead of the ID
+        lessons: 0,
+        students: 0
+      };
+      
+      // Safe type checking for timestamps
+      if ('created_at' in data && typeof data.created_at === 'string') {
+        course.created_at = data.created_at;
+      }
+      if ('updated_at' in data && typeof data.updated_at === 'string') {
+        course.updated_at = data.updated_at;
+      }
+      
+      return course;
+    },
+    enabled: !!courseId,
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
   });
 }
