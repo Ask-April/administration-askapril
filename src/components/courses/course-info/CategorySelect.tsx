@@ -51,7 +51,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors
           )}
           {categories.map((cat) => (
             <SelectItem key={cat.category_id} value={cat.category_id}>
-              {cat.name} {cat.description && `- ${cat.description}`}
+              {cat.name}
             </SelectItem>
           ))}
         </SelectContent>
