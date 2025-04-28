@@ -55,7 +55,7 @@ const CourseProgressContainer: React.FC<CourseProgressContainerProps> = ({
 }) => {
   return (
     <Card className="col-span-12 md:col-span-4 h-full">
-      <CardContent className="p-4">
+      <CardContent className="p-6">
         <div className="flex items-center justify-between border-b pb-3 mb-2">
           <h2 className="font-medium">Recent Activity</h2>
         </div>

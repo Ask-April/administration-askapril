@@ -7,6 +7,11 @@ import { CurriculumSection } from "@/components/courses/wizard/types";
 import { curriculumService } from "@/services/course/curriculumService";
 import { toast } from "sonner";
 
+// Define CourseSection type that matches what ContentOrganization expects
+interface CourseSection extends CurriculumSection {
+  course_id?: string;
+}
+
 interface ContentTabProps {
   editedCourse?: any;
   setEditedCourse?: (course: any) => void;
@@ -16,7 +21,7 @@ const ContentTab: React.FC<ContentTabProps> = ({
   editedCourse, 
   setEditedCourse 
 }) => {
-  const [sections, setSections] = useState<CurriculumSection[]>([]);
+  const [sections, setSections] = useState<CourseSection[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Fetch curriculum sections when component mounts
@@ -26,7 +31,14 @@ const ContentTab: React.FC<ContentTabProps> = ({
         try {
           setIsLoading(true);
           const curriculumData = await curriculumService.getCurriculum(editedCourse.course_id);
-          setSections(curriculumData);
+          
+          // Add course_id to each section to make it compatible with CourseSection type
+          const sectionsWithCourseId = curriculumData.map(section => ({
+            ...section,
+            course_id: editedCourse.course_id
+          }));
+          
+          setSections(sectionsWithCourseId);
         } catch (error) {
           console.error("Error fetching curriculum:", error);
           toast.error("Failed to load course curriculum");
@@ -40,7 +52,7 @@ const ContentTab: React.FC<ContentTabProps> = ({
   }, [editedCourse?.course_id]);
 
   // Handle updating sections
-  const updateSections = async (updatedSections: CurriculumSection[]) => {
+  const updateSections = async (updatedSections: CourseSection[]) => {
     setSections(updatedSections);
     
     // Save curriculum changes if we have a course ID
