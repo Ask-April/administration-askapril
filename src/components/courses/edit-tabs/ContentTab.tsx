@@ -12,11 +12,15 @@ import { Input } from "@/components/ui/input";
 interface ContentTabProps {
   editedCourse?: any;
   setEditedCourse?: (course: any) => void;
+  temporarySections?: CourseSection[];
+  setTemporarySections?: (sections: CourseSection[]) => void;
 }
 
 const ContentTab: React.FC<ContentTabProps> = ({ 
   editedCourse, 
-  setEditedCourse 
+  setEditedCourse,
+  temporarySections,
+  setTemporarySections
 }) => {
   const [sections, setSections] = useState<CourseSection[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -28,15 +32,26 @@ const ContentTab: React.FC<ContentTabProps> = ({
       if (editedCourse?.course_id) {
         try {
           setIsLoading(true);
-          const curriculumData = await curriculumService.getCurriculum(editedCourse.course_id);
           
-          // Make sure each section has the required course_id property
-          const sectionsWithCourseId = curriculumData.map(section => ({
-            ...section,
-            course_id: editedCourse.course_id
-          }));
-          
-          setSections(sectionsWithCourseId);
+          // Use temporary sections if available, otherwise fetch from API
+          if (temporarySections && temporarySections.length > 0) {
+            setSections(temporarySections);
+            setIsLoading(false);
+          } else {
+            const curriculumData = await curriculumService.getCurriculum(editedCourse.course_id);
+            
+            // Make sure each section has the required course_id property
+            const sectionsWithCourseId = curriculumData.map(section => ({
+              ...section,
+              course_id: editedCourse.course_id
+            }));
+            
+            setSections(sectionsWithCourseId);
+            // Also update the temporary sections
+            if (setTemporarySections) {
+              setTemporarySections(sectionsWithCourseId);
+            }
+          }
         } catch (error) {
           console.error("Error fetching curriculum:", error);
           toast.error("Failed to load course curriculum");
@@ -47,20 +62,15 @@ const ContentTab: React.FC<ContentTabProps> = ({
     };
     
     fetchCurriculum();
-  }, [editedCourse?.course_id]);
+  }, [editedCourse?.course_id, temporarySections, setTemporarySections]);
 
   // Handle updating sections
   const updateSections = async (updatedSections: CourseSection[]) => {
     setSections(updatedSections);
     
-    // Save curriculum changes if we have a course ID
-    if (editedCourse?.course_id) {
-      try {
-        await curriculumService.saveCurriculum(editedCourse.course_id, updatedSections);
-      } catch (error) {
-        console.error("Error saving curriculum:", error);
-        toast.error("Failed to save curriculum changes");
-      }
+    // Update temporary sections but don't save to the database yet
+    if (setTemporarySections) {
+      setTemporarySections(updatedSections);
     }
   };
 
@@ -124,6 +134,7 @@ const ContentTab: React.FC<ContentTabProps> = ({
             <ContentOrganization 
               sections={sections} 
               updateSections={updateSections} 
+              showAddSection={true} 
             />
           )}
         </CardContent>

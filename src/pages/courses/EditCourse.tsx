@@ -9,6 +9,8 @@ import PageTransition from "@/components/layout/PageTransition";
 import { toast } from "sonner";
 import { useEditCourse } from "@/hooks/useEditCourse";
 import { EmptyState, LoadingSkeleton } from "@/components/ui/loading-states";
+import { CourseSection } from "@/services/types";
+import { curriculumService } from "@/services/course/curriculumService";
 import { 
   OverviewTab,
   DetailsTab, 
@@ -24,6 +26,8 @@ const EditCourse = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSaving, setIsSaving] = useState(false);
+  const [temporarySections, setTemporarySections] = useState<CourseSection[]>([]);
+  const [hasPendingChanges, setHasPendingChanges] = useState(false);
 
   // Use our custom hook to manage course editing
   const { 
@@ -45,9 +49,25 @@ const EditCourse = () => {
   const saveChanges = async () => {
     setIsSaving(true);
     try {
+      // First save the course details
       const success = await handleSave();
+      
+      // Then save the curriculum if we have pending section changes
+      if (success && id && temporarySections.length > 0) {
+        try {
+          await curriculumService.saveCurriculum(id, temporarySections);
+          toast.success("Course content saved successfully!");
+          setHasPendingChanges(false);
+        } catch (error) {
+          console.error("Failed to save curriculum:", error);
+          toast.error("Failed to save course content");
+          return false;
+        }
+      }
+      
       if (success) {
         toast.success("Course saved successfully!");
+        return true;
       }
     } catch (error) {
       console.error("Failed to save changes:", error);
@@ -55,6 +75,12 @@ const EditCourse = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // Update the temporary sections and mark that we have pending changes
+  const handleUpdateTemporarySections = (sections: CourseSection[]) => {
+    setTemporarySections(sections);
+    setHasPendingChanges(true);
   };
 
   if (isLoading) {
@@ -113,7 +139,7 @@ const EditCourse = () => {
                 ) : (
                   <>
                     <Save className="h-4 w-4 mr-2" />
-                    Save Changes
+                    Save Changes {hasPendingChanges && "•"}
                   </>
                 )}
               </Button>
@@ -146,6 +172,8 @@ const EditCourse = () => {
             <ContentTab 
               editedCourse={editedCourse}
               setEditedCourse={setEditedCourse}
+              temporarySections={temporarySections}
+              setTemporarySections={handleUpdateTemporarySections}
             />
           </TabsContent>
 

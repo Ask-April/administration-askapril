@@ -6,6 +6,9 @@ import AddSectionForm from "./AddSectionForm";
 import AddLessonSidebar from "./AddLessonSidebar";
 import { useContentOrganization } from "@/hooks/useContentOrganization";
 import { CourseSection } from "@/services/types";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
 
 interface ContentOrganizationProps {
   sections: CourseSection[];
@@ -51,7 +54,22 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
   return (
     <div className="space-y-4">
       {showAddSection && (
-        <AddSectionForm hook={contentOrgHook} />
+        <div className="flex items-center space-x-2 mb-4">
+          <Input
+            value={newSectionTitle}
+            onChange={(e) => setNewSectionTitle(e.target.value)}
+            placeholder="Enter section title"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && newSectionTitle.trim()) {
+                handleAddSection();
+              }
+            }}
+          />
+          <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add Section
+          </Button>
+        </div>
       )}
       
       <div className="space-y-4">
