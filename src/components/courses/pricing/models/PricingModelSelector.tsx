@@ -1,15 +1,30 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 
 interface PricingModelSelectorProps {
   pricingModel: string;
   setPricingModel: (model: string) => void;
+  editedCourse?: any;
+  updateCourseData?: (field: string, value: any) => void;
 }
 
 const PricingModelSelector: React.FC<PricingModelSelectorProps> = ({
   pricingModel,
-  setPricingModel
+  setPricingModel,
+  editedCourse,
+  updateCourseData
 }) => {
+  // When pricing model changes, update the pricing_data.model property
+  useEffect(() => {
+    if (updateCourseData && editedCourse) {
+      const currentPricingData = editedCourse.pricing_data || {};
+      updateCourseData('pricing_data', {
+        ...currentPricingData,
+        model: pricingModel
+      });
+    }
+  }, [pricingModel, updateCourseData, editedCourse]);
+
   return (
     <div className="border rounded-md p-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

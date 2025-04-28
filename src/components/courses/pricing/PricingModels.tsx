@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   PricingModelSelector,
   FreePricingModel,
@@ -18,12 +18,21 @@ const PricingModels: React.FC<PricingModelsProps> = ({
   updateCourseData
 }) => {
   const [pricingModel, setPricingModel] = useState('one-time');
+  
+  // Initialize from course data if available
+  useEffect(() => {
+    if (editedCourse?.pricing_data?.model) {
+      setPricingModel(editedCourse.pricing_data.model);
+    }
+  }, [editedCourse]);
 
   return (
     <div className="space-y-4">
       <PricingModelSelector 
         pricingModel={pricingModel}
         setPricingModel={setPricingModel}
+        editedCourse={editedCourse}
+        updateCourseData={updateCourseData}
       />
       
       {pricingModel === 'free' && (

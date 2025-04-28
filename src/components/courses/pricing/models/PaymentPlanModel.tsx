@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -13,10 +13,34 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
   editedCourse,
   updateCourseData
 }) => {
+  // Initialize pricing_data if it doesn't exist
+  useEffect(() => {
+    if (!editedCourse?.pricing_data) {
+      updateCourseData && updateCourseData('pricing_data', {
+        model: 'payment-plan',
+        totalPrice: '299.99',
+        installments: '3',
+        installmentPeriod: '30',
+        requireDownPayment: false,
+        downPaymentPercent: '25'
+      });
+    }
+  }, [editedCourse, updateCourseData]);
+
+  const updatePricingData = (field: string, value: any) => {
+    if (updateCourseData && editedCourse?.pricing_data) {
+      const updatedPricingData = {
+        ...editedCourse.pricing_data,
+        [field]: value
+      };
+      updateCourseData('pricing_data', updatedPricingData);
+    }
+  };
+
   // Calculate the payment amount with 2 decimal places
   const calculatePaymentAmount = () => {
-    const total = parseFloat(editedCourse?.totalPrice || 299.99);
-    const installments = parseFloat(editedCourse?.installments || 3);
+    const total = parseFloat(editedCourse?.pricing_data?.totalPrice || '299.99');
+    const installments = parseFloat(editedCourse?.pricing_data?.installments || '3');
     return (total / installments).toFixed(2);
   };
 
@@ -33,8 +57,8 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
             <Input 
               id="total-price" 
               type="number" 
-              value={editedCourse?.totalPrice || "299.99"}
-              onChange={(e) => updateCourseData && updateCourseData('totalPrice', e.target.value)}
+              value={editedCourse?.pricing_data?.totalPrice || "299.99"}
+              onChange={(e) => updatePricingData('totalPrice', e.target.value)}
               className="rounded-l-none" 
             />
           </div>
@@ -45,8 +69,8 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
           <Input 
             id="installments" 
             type="number" 
-            value={editedCourse?.installments || "3"}
-            onChange={(e) => updateCourseData && updateCourseData('installments', e.target.value)}
+            value={editedCourse?.pricing_data?.installments || "3"}
+            onChange={(e) => updatePricingData('installments', e.target.value)}
             className="mt-1" 
           />
         </div>
@@ -56,8 +80,8 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
           <Input 
             id="installment-period" 
             type="number" 
-            value={editedCourse?.installmentPeriod || "30"}
-            onChange={(e) => updateCourseData && updateCourseData('installmentPeriod', e.target.value)}
+            value={editedCourse?.pricing_data?.installmentPeriod || "30"}
+            onChange={(e) => updatePricingData('installmentPeriod', e.target.value)}
             className="mt-1" 
           />
         </div>
@@ -70,12 +94,12 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
               <span>${calculatePaymentAmount()}</span>
             </p>
             <p className="flex justify-between mb-1">
-              <span>{parseInt(editedCourse?.installments || 3) - 1} additional payments:</span>
-              <span>${calculatePaymentAmount()} every {editedCourse?.installmentPeriod || 30} days</span>
+              <span>{parseInt(editedCourse?.pricing_data?.installments || '3') - 1} additional payments:</span>
+              <span>${calculatePaymentAmount()} every {editedCourse?.pricing_data?.installmentPeriod || '30'} days</span>
             </p>
             <p className="flex justify-between font-medium mt-2 pt-2 border-t">
               <span>Total:</span>
-              <span>${parseFloat(editedCourse?.totalPrice || 299.99).toFixed(2)}</span>
+              <span>${parseFloat(editedCourse?.pricing_data?.totalPrice || '299.99').toFixed(2)}</span>
             </p>
           </div>
         </div>
@@ -89,20 +113,20 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
           </div>
           <Switch 
             id="down-payment"
-            checked={editedCourse?.requireDownPayment || false}
-            onCheckedChange={(checked) => updateCourseData && updateCourseData('requireDownPayment', checked)}
+            checked={editedCourse?.pricing_data?.requireDownPayment || false}
+            onCheckedChange={(checked) => updatePricingData('requireDownPayment', checked)}
           />
         </div>
         
-        {editedCourse?.requireDownPayment && (
+        {editedCourse?.pricing_data?.requireDownPayment && (
           <div>
             <Label htmlFor="down-payment-percent">Down Payment Percentage</Label>
             <div className="flex mt-1">
               <Input 
                 id="down-payment-percent" 
                 type="number" 
-                value={editedCourse?.downPaymentPercent || "25"}
-                onChange={(e) => updateCourseData && updateCourseData('downPaymentPercent', e.target.value)}
+                value={editedCourse?.pricing_data?.downPaymentPercent || "25"}
+                onChange={(e) => updatePricingData('downPaymentPercent', e.target.value)}
               />
               <div className="flex items-center border rounded-r-md px-3 bg-muted">
                 <span>%</span>

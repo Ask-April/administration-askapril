@@ -1,4 +1,3 @@
-
 // Types synchronized with Supabase tables schema
 
 // ---- COURSES ---- //
@@ -17,7 +16,7 @@ export interface Course {
   has_enrollment_limit: boolean | null;
   max_enrollments: number | null;
   subtitle: string | null;
-  // external_metadata: any | null; // removed from DB and type
+  pricing_metadata?: any | null; // Add this to store pricing information
   slug: string | null;
   created_at?: string;
   updated_at?: string;
@@ -26,7 +25,8 @@ export interface Course {
   category?: string;
   lessons?: number;
   students?: number;
-  certificateTemplate?: string; // Added this property
+  certificateTemplate?: string;
+  pricing_data?: any; // Added for UI pricing data management
 }
 
 // ---- USERS ---- //

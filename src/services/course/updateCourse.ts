@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Course } from "../types";
 
@@ -17,6 +16,12 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   delete dbData.lessons;
   delete dbData.students;
   delete dbData.certificateTemplate; // Explicitly remove this virtual property
+  
+  // Handle pricing data - store as JSON metadata
+  if (dbData.pricing_data) {
+    dbData.pricing_metadata = dbData.pricing_data;
+    delete dbData.pricing_data;
+  }
   
   // Handle category mapping - but ensure it's a valid UUID or null (not empty string)
   if (courseData.category) {
@@ -51,6 +56,7 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
     // Add virtual properties back
     image: data.image_url,
     category: data.category_id,
+    pricing_data: data.pricing_metadata,
     // Other virtual props would need to be populated if needed
     lessons: 0,
     students: 0

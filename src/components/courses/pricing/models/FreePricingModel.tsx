@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 
 interface FreePricingModelProps {
@@ -11,6 +11,28 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
   editedCourse,
   updateCourseData
 }) => {
+  // Initialize pricing_data if it doesn't exist
+  useEffect(() => {
+    if (!editedCourse?.pricing_data) {
+      updateCourseData && updateCourseData('pricing_data', {
+        model: 'free',
+        completelyFree: true,
+        freeTrial: false,
+        freemium: false
+      });
+    }
+  }, [editedCourse, updateCourseData]);
+
+  const updatePricingData = (field: string, value: any) => {
+    if (updateCourseData && editedCourse?.pricing_data) {
+      const updatedPricingData = {
+        ...editedCourse.pricing_data,
+        [field]: value
+      };
+      updateCourseData('pricing_data', updatedPricingData);
+    }
+  };
+
   return (
     <div className="border rounded-md p-4">
       <h4 className="font-medium mb-4">Free Course Options</h4>
@@ -24,8 +46,8 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
           </div>
           <Switch 
             id="completely-free"
-            checked={editedCourse?.completelyFree || true}
-            onCheckedChange={(checked) => updateCourseData && updateCourseData('completelyFree', checked)}
+            checked={editedCourse?.pricing_data?.completelyFree !== false}
+            onCheckedChange={(checked) => updatePricingData('completelyFree', checked)}
           />
         </div>
         
@@ -38,8 +60,8 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
           </div>
           <Switch 
             id="free-trial"
-            checked={editedCourse?.freeTrial || false}
-            onCheckedChange={(checked) => updateCourseData && updateCourseData('freeTrial', checked)}
+            checked={editedCourse?.pricing_data?.freeTrial || false}
+            onCheckedChange={(checked) => updatePricingData('freeTrial', checked)}
           />
         </div>
         
@@ -52,8 +74,8 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
           </div>
           <Switch 
             id="freemium"
-            checked={editedCourse?.freemium || false}
-            onCheckedChange={(checked) => updateCourseData && updateCourseData('freemium', checked)}
+            checked={editedCourse?.pricing_data?.freemium || false}
+            onCheckedChange={(checked) => updatePricingData('freemium', checked)}
           />
         </div>
       </div>

@@ -33,6 +33,7 @@ export const useEditCourse = (id: string | undefined) => {
     category: "",
     image: "",
     certificateTemplate: "", // Keep tracking this in state, but don't send to database
+    pricing_data: {}, // Add pricing data object
   });
 
   // Update local state when the data is loaded
@@ -54,9 +55,11 @@ export const useEditCourse = (id: string | undefined) => {
         max_enrollments: course.max_enrollments ?? 100,
         subtitle: course.subtitle || "",
         slug: course.slug || "",
+        pricing_metadata: course.pricing_metadata || {},
         // Set virtual properties
         category: course.category_id || "",
         image: course.image_url || "",
+        pricing_data: course.pricing_metadata || {},
         certificateTemplate: course.certificateTemplate || "", // Keep for UI purposes
       });
     }
@@ -80,6 +83,8 @@ export const useEditCourse = (id: string | undefined) => {
           // Ensure category is properly handled
           category_id: editedCourse.category || editedCourse.category_id || null,
           image_url: editedCourse.image || editedCourse.image_url,
+          // Include pricing data
+          pricing_data: editedCourse.pricing_data
         };
         
         // Call the updateCourse function with the right parameters
