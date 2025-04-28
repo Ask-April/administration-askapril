@@ -1,16 +1,16 @@
 
 import React, { useEffect } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import LessonForm from "../lesson-form/LessonForm";
 
-interface LessonEditModalProps {
+interface LessonEditDrawerProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   selectedLesson: any | null;
@@ -24,7 +24,7 @@ interface LessonEditModalProps {
   handleLessonContentSave: () => void;
 }
 
-const LessonEditModal: React.FC<LessonEditModalProps> = ({
+const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
   isOpen,
   setIsOpen,
   selectedLesson,
@@ -87,15 +87,15 @@ const LessonEditModal: React.FC<LessonEditModalProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetContent className="w-full sm:max-w-md md:max-w-xl overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>
             {selectedLesson?.title
               ? `Edit Lesson: ${selectedLesson.title}`
               : "New Lesson"}
-          </DialogTitle>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
 
         <div className="py-4">
           <LessonForm
@@ -120,20 +120,22 @@ const LessonEditModal: React.FC<LessonEditModalProps> = ({
           />
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={!lessonName || !selectedType}
-          >
-            Save Lesson
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <SheetFooter className="pt-4 mt-6 border-t">
+          <div className="flex justify-end gap-2 w-full">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={!lessonName || !selectedType}
+            >
+              Save Lesson
+            </Button>
+          </div>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 };
 
-export default LessonEditModal;
+export default LessonEditDrawer;

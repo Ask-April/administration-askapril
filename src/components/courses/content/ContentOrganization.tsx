@@ -1,7 +1,7 @@
 
 import React from "react";
 import SectionItem from "./SectionItem";
-import LessonEditModal from "./LessonEditModal";
+import LessonEditDrawer from "./LessonEditDrawer";
 import AddSectionForm from "./AddSectionForm";
 import AddLessonSidebar from "./AddLessonSidebar";
 import { useContentOrganization } from "@/hooks/useContentOrganization";
@@ -68,8 +68,8 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
         ))}
       </div>
       
-      {/* Lesson Content Edit Modal */}
-      <LessonEditModal
+      {/* Lesson Content Edit Drawer */}
+      <LessonEditDrawer
         isOpen={isLessonModalOpen}
         setIsOpen={setIsLessonModalOpen}
         selectedLesson={selectedLesson}
