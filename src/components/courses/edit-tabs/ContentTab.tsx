@@ -6,11 +6,7 @@ import { ContentOrganization } from "@/components/courses/content";
 import { CurriculumSection } from "@/components/courses/wizard/types";
 import { curriculumService } from "@/services/course/curriculumService";
 import { toast } from "sonner";
-
-// Define CourseSection type that matches what ContentOrganization expects
-interface CourseSection extends CurriculumSection {
-  course_id?: string;
-}
+import { CourseSection } from "@/services/types";
 
 interface ContentTabProps {
   editedCourse?: any;
@@ -32,7 +28,7 @@ const ContentTab: React.FC<ContentTabProps> = ({
           setIsLoading(true);
           const curriculumData = await curriculumService.getCurriculum(editedCourse.course_id);
           
-          // Add course_id to each section to make it compatible with CourseSection type
+          // Make sure each section has the required course_id property
           const sectionsWithCourseId = curriculumData.map(section => ({
             ...section,
             course_id: editedCourse.course_id

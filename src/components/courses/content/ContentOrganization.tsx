@@ -4,12 +4,12 @@ import SectionItem from "./SectionItem";
 import LessonEditModal from "./LessonEditModal";
 import AddSectionForm from "./AddSectionForm";
 import AddLessonSidebar from "./AddLessonSidebar";
-import { CurriculumSection } from "../wizard/types";
 import { useContentOrganization } from "@/hooks/useContentOrganization";
+import { CourseSection } from "@/services/types";
 
 interface ContentOrganizationProps {
-  sections: CurriculumSection[];
-  updateSections: (sections: CurriculumSection[]) => void;
+  sections: CourseSection[];
+  updateSections: (sections: CourseSection[]) => void;
 }
 
 const ContentOrganization: React.FC<ContentOrganizationProps> = ({ 
