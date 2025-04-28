@@ -8,7 +8,6 @@ import {
   CourseWizardContextValue 
 } from './types';
 import { validateCurrentStep } from './validation';
-import { generateAIContent } from './contentGeneration';
 import { finalizeCourse } from './courseOperations';
 import { courseService } from '@/services/course';
 
@@ -32,7 +31,6 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [createdCourseId, setCreatedCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
-  const [isGeneratingContent, setIsGeneratingContent] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [focusFirstInput, setFocusFirstInput] = useState(false);
 
@@ -64,18 +62,6 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
     setFormErrors(validation.errors);
     return validation.isValid;
   }, [currentStep, courseData, curriculumSections]);
-
-  // Auto-generate content using AI
-  const autoGenerateContent = useCallback(async (field: string) => {
-    setIsGeneratingContent(true);
-    try {
-      await generateAIContent(field, courseData, updateCourseData, updateCurriculumSections);
-    } catch (error) {
-      console.error(`Error in autoGenerateContent:`, error);
-    } finally {
-      setIsGeneratingContent(false);
-    }
-  }, [courseData, updateCourseData, updateCurriculumSections]);
 
   // Save current step - now just validates and updates UI state without DB calls (except for final step)
   const saveCurrentStep = async (): Promise<boolean> => {
@@ -202,8 +188,6 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
         currentStepIndex,
         validateCurrentStep: validateCurrentStepCallback,
         formErrors,
-        autoGenerateContent,
-        isGeneratingContent,
         hasUnsavedChanges,
         focusFirstInput,
         setFocusFirstInput

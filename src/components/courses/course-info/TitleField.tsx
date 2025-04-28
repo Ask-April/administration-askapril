@@ -1,38 +1,20 @@
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 import { Input } from "@/components/ui/input";
-import { Sparkles } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import CourseFormField from "./CourseFormField";
-import { Button } from "@/components/ui/button";
 
 interface TitleFieldProps {
   value: string;
   onChange: (value: string) => void;
   errors?: string[];
-  onGenerateContent?: () => void;
-  isGeneratingContent?: boolean;
 }
 
 const TitleField: React.FC<TitleFieldProps> = ({ 
   value, 
   onChange, 
-  errors,
-  onGenerateContent,
-  isGeneratingContent 
+  errors
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [showAISuggestion, setShowAISuggestion] = useState(false);
-
-  // Show AI suggestion only for title field if length > 3
-  useEffect(() => {
-    if (value.length >= 3 && !showAISuggestion) {
-      setShowAISuggestion(true);
-    } else if (value.length < 3 && showAISuggestion) {
-      setShowAISuggestion(false);
-    }
-  }, [value, showAISuggestion]);
 
   return (
     <CourseFormField id="title" label="Course Title" required errors={errors}>
@@ -45,43 +27,6 @@ const TitleField: React.FC<TitleFieldProps> = ({
           onChange={(e) => onChange(e.target.value)} 
           className={errors ? "border-red-500" : ""}
         />
-        {showAISuggestion && onGenerateContent && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="absolute right-3 top-2.5 cursor-pointer">
-                  <HoverCard>
-                    <HoverCardTrigger asChild>
-                      <Button 
-                        type="button" 
-                        size="icon" 
-                        variant="ghost"
-                        onClick={onGenerateContent}
-                        disabled={isGeneratingContent}
-                        className="h-6 w-6"
-                      >
-                        <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-                      </Button>
-                    </HoverCardTrigger>
-                    <HoverCardContent className="w-80">
-                      <div className="flex justify-between space-x-4">
-                        <div>
-                          <h4 className="text-sm font-semibold">Generate with AI</h4>
-                          <p className="text-sm text-muted-foreground">
-                            Click to generate a course description based on your title.
-                          </p>
-                        </div>
-                      </div>
-                    </HoverCardContent>
-                  </HoverCard>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Generate description with AI</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
       </div>
     </CourseFormField>
   );

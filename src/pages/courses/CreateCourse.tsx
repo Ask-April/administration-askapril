@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import CoursePageHeader from "@/components/courses/CoursePageHeader";
@@ -8,7 +8,6 @@ import CourseInfoForm from "@/components/courses/CourseInfoForm";
 import CourseCurriculum from "@/components/courses/CourseCurriculum";
 import StepProgress from "@/components/courses/StepProgress";
 import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wizard/CourseWizardContext";
-import CourseAIAssistant from "@/components/courses/wizard/CourseAIAssistant";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 
@@ -97,13 +96,10 @@ const WizardContent: React.FC = () => {
     switch (currentStep) {
       case "info":
         return (
-          <div className="space-y-6">
-            <CourseInfoForm 
-              courseData={courseData} 
-              updateCourseData={updateCourseData} 
-            />
-            <CourseAIAssistant />
-          </div>
+          <CourseInfoForm 
+            courseData={courseData} 
+            updateCourseData={updateCourseData} 
+          />
         );
       case "curriculum":
         return <CourseCurriculum 

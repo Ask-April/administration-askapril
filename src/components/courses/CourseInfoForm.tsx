@@ -6,7 +6,6 @@ import TitleField from "./course-info/TitleField";
 import DescriptionField from "./course-info/DescriptionField";
 import CategorySelect from "./course-info/CategorySelect";
 import CourseImageUpload from "./course-info/CourseImageUpload";
-import AIGenerateButton from "./course-info/AIGenerateButton";
 
 interface CourseInfoFormProps {
   courseData: CourseData;
@@ -17,18 +16,7 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
   courseData,
   updateCourseData
 }) => {
-  const {
-    formErrors,
-    autoGenerateContent,
-    isGeneratingContent
-  } = useCourseWizard();
-
-  // Handler for generating AI content
-  const handleGenerateContent = () => {
-    if (courseData.title && !isGeneratingContent) {
-      autoGenerateContent('description');
-    }
-  };
+  const { formErrors } = useCourseWizard();
 
   return (
     <div>
@@ -40,8 +28,6 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
             value={courseData.title}
             onChange={(value) => updateCourseData({ title: value })}
             errors={formErrors.title}
-            onGenerateContent={handleGenerateContent}
-            isGeneratingContent={isGeneratingContent}
           />
           <DescriptionField
             value={courseData.description}
@@ -55,20 +41,12 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
             errors={formErrors.category}
           />
         </div>
-        {/* Right Column: Image Upload and AI */}
+        {/* Right Column: Image Upload */}
         <div className="space-y-6">
           <CourseImageUpload
             value={courseData.image}
             onChange={(url) => updateCourseData({ image: url })}
           />
-          {/* AI Generation Button if title exists */}
-          {courseData.title && (
-            <AIGenerateButton
-              onClick={handleGenerateContent}
-              isGenerating={isGeneratingContent}
-              isDisabled={!courseData.title || courseData.title.length < 3}
-            />
-          )}
         </div>
       </div>
     </div>

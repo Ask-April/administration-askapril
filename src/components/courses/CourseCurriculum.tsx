@@ -3,10 +3,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sparkles, PlusCircle, AlertOctagon } from "lucide-react";
+import { PlusCircle, AlertOctagon } from "lucide-react";
 import ContentOrganization from "./content/ContentOrganization";
 import { useCourseWizard } from "./wizard/CourseWizardContext";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 interface CourseCurriculumProps {
   courseData: any;
@@ -21,8 +20,6 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   onUpdateSections
 }) => {
   const { 
-    autoGenerateContent, 
-    isGeneratingContent, 
     curriculumSections,
     focusFirstInput,
     setFocusFirstInput,
@@ -104,29 +101,6 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
               <p className="text-muted-foreground mb-4">
                 Start by entering a section title above. Sections help organize your course content.
               </p>
-              {(courseData.title && courseData.description) && (
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <Button 
-                      variant="outline"
-                      className="flex items-center gap-2"
-                      onClick={() => autoGenerateContent('curriculum')}
-                      disabled={isGeneratingContent}
-                    >
-                      <Sparkles className="h-4 w-4" />
-                      {isGeneratingContent ? "Generating..." : "Generate Curriculum with AI"}
-                    </Button>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80">
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold">AI-Powered Curriculum</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Automatically generate a complete course structure based on your title and description.
-                      </p>
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
-              )}
             </div>
           </div>
         </div>
@@ -148,31 +122,6 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
           )}
           
           <ContentOrganization />
-          
-          {/* AI Generation Button */}
-          <div className="flex justify-center mt-6">
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="flex items-center gap-2"
-                  onClick={() => autoGenerateContent('curriculum')}
-                  disabled={isGeneratingContent || !courseData.title || !courseData.description}
-                >
-                  <Sparkles className="h-4 w-4" />
-                  {isGeneratingContent ? "Generating..." : "Regenerate Curriculum with AI"}
-                </Button>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80">
-                <div className="space-y-1">
-                  <h4 className="text-sm font-semibold">AI-Powered Curriculum</h4>
-                  <p className="text-sm text-muted-foreground">
-                    This will replace your current curriculum with a new AI-generated one.
-                  </p>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-          </div>
         </div>
       )}
     </div>
