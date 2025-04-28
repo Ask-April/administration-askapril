@@ -26,6 +26,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors
       try {
         const data = await categoryService.getCategories();
         setCategories(data || []);
+        console.log("Fetched categories:", data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {

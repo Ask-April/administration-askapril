@@ -16,8 +16,6 @@ export const createCourse = async (courseData: {
 }): Promise<Course> => {
   console.log("Creating course with data:", courseData);
 
-  const now = new Date().toISOString();
-
   const { data, error } = await supabase
     .from("courses")
     .insert([
@@ -27,7 +25,7 @@ export const createCourse = async (courseData: {
         category_id: courseData.category,
         image_url: courseData.image,
         status: courseData.status,
-        site_id: "", // Set the proper site_id if you have one in context
+        site_id: crypto.randomUUID(), // Generate site_id since it's required
         featured: false,
         price_visible: true,
         hidden: false,
@@ -37,9 +35,7 @@ export const createCourse = async (courseData: {
         subtitle: null,
         external_id: null,
         external_metadata: null,
-        slug: null,
-        created_at: now,
-        updated_at: now
+        slug: null
       },
     ])
     .select()
