@@ -6,6 +6,7 @@ import { CourseFormValues } from "@/components/courses/schema/courseFormSchema";
 import { EmptyState } from "@/components/ui/loading-states";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Plus } from "lucide-react";
+import { CourseSkeletonGrid } from "@/components/courses/CourseSkeleton";
 
 interface CourseOverviewGridProps {
   isLoading: boolean;
@@ -19,11 +20,7 @@ const CourseOverviewGrid: React.FC<CourseOverviewGridProps> = ({
   isLoading, error, refetch, sortedCourses, handleCreateCourse
 }) => {
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <CourseSkeletonGrid />;
   }
 
   if (error) {

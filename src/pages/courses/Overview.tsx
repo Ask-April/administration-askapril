@@ -1,26 +1,10 @@
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
-import CourseCard from "@/components/courses/CourseCard";
-import CreateCourseDialog from "@/components/courses/CreateCourseDialog";
 import { CourseFormValues } from "@/components/courses/schema/courseFormSchema";
 import { useCoursesList } from "@/hooks/useCoursesList";
 import { courseManagementService } from "@/services/course/courseManagementService";
 import { EmptyState } from "@/components/ui/loading-states";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
 import { 
   BookOpen,
   Filter, 
@@ -32,6 +16,7 @@ import { toast } from "sonner";
 import CourseOverviewHeader from "./components/CourseOverviewHeader";
 import CourseOverviewControls from "./components/CourseOverviewControls";
 import CourseOverviewGrid from "./components/CourseOverviewGrid";
+import { CourseSkeletonGrid } from "@/components/courses/CourseSkeleton";
 
 const Overview = () => {
   const { data: coursesData, isLoading, error, refetch } = useCoursesList();
