@@ -9,10 +9,10 @@ export const categoryService = {
   /**
    * Get all course categories
    */
-  getCategories: async (siteId: string) => {
+  getCategories: async () => {
     const { data, error } = await supabase
       .from('course_category')
-      .select('*');
+      .select('category_id, name, description');
     
     if (error) {
       console.error("Error fetching categories:", error);
@@ -25,11 +25,10 @@ export const categoryService = {
   /**
    * Create a new category
    */
-  createCategory: async (siteId: string, name: string, description: string) => {
+  createCategory: async (name: string, description: string) => {
     const { data, error } = await supabase
       .from('course_category')
       .insert({
-        site_id: siteId,
         name: name,
         description: description
       })

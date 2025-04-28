@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CourseFormField from "./CourseFormField";
-import { supabase } from "@/integrations/supabase/client";
+import { categoryService } from "@/services/course/categoryService";
 
 interface CategorySelectProps {
   value: string;
@@ -10,30 +10,27 @@ interface CategorySelectProps {
   errors?: string[];
 }
 
-interface CategoryDBRow {
+interface CategoryData {
   category_id: string;
   name: string;
-  description: string; // Added to match the updated table
+  description: string;
 }
 
 const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors }) => {
-  const [categories, setCategories] = useState<CategoryDBRow[]>([]);
+  const [categories, setCategories] = useState<CategoryData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function fetchCategories() {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('course_category')
-        .select('category_id, name, description');
-      
-      if (error) {
+      try {
+        const data = await categoryService.getCategories();
+        setCategories(data || []);
+      } catch (error) {
         console.error("Error fetching categories:", error);
-      } else if (data) {
-        setCategories(data);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
     }
     
     fetchCategories();
@@ -42,7 +39,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors
   return (
     <CourseFormField id="category" label="Category" required errors={errors}>
       <Select value={value} onValueChange={onChange} disabled={isLoading}>
-        <SelectTrigger className={errors ? "border-red-500" : ""}>
+        <SelectTrigger className={errors?.length ? "border-red-500" : ""}>
           <SelectValue placeholder={isLoading ? "Loading categories..." : "Select a category"} />
         </SelectTrigger>
         <SelectContent>
@@ -53,7 +50,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors
           )}
           {categories.map((cat) => (
             <SelectItem key={cat.category_id} value={cat.category_id}>
-              {cat.name}
+              {cat.name} {cat.description && `- ${cat.description}`}
             </SelectItem>
           ))}
         </SelectContent>

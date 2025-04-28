@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -7,6 +8,7 @@ import { courseFormSchema, CourseFormValues } from "./schema/courseFormSchema";
 import CourseFormFields from "./course-form/CourseFormFields";
 import CourseFormActions from "./course-form/CourseFormActions";
 import { createCourse } from "./services/courseFormService";
+import { useNavigate } from "react-router-dom";
 
 interface CreateCourseFormProps {
   onSuccess: () => void;
@@ -18,6 +20,7 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
   onCancel 
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
   
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseFormSchema),
@@ -34,9 +37,15 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
   async function onSubmit(values: CourseFormValues) {
     try {
       setIsSubmitting(true);
-      await createCourse(values);
+      const courseId = await createCourse(values);
       toast.success("Course created successfully!");
-      onSuccess();
+      
+      if (courseId) {
+        // If we want to redirect to edit page
+        navigate(`/courses/edit/${courseId}`);
+      } else {
+        onSuccess();
+      }
     } catch (error: any) {
       console.error("Unexpected error:", error);
       toast.error("An unexpected error occurred: " + (error.message || "Please try again"));
