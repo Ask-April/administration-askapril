@@ -1,3 +1,4 @@
+
 export interface CourseData {
   title: string;
   description: string;
@@ -11,9 +12,11 @@ export interface CourseData {
 }
 
 export interface CurriculumSection {
+  id?: string; // Added id property
   title: string;
   position: number;
   lessons: {
+    id?: string; // Added id property
     title: string;
     type: string;
     content?: string;
@@ -24,6 +27,7 @@ export interface CurriculumSection {
     isCompulsory?: boolean;
     enableDiscussion?: boolean;
     position: number;
+    duration?: number; // Added duration property
   }[];
 }
 
@@ -37,7 +41,7 @@ export interface CourseWizardContextValue {
   createdCourseId: string | null;
   isLoading: boolean;
   saveCurrentStep: () => Promise<boolean>;
-  finishWizard: () => Promise<void>;
+  finishWizard: () => Promise<boolean>; // Changed return type to match implementation
   cancelWizard: () => void;
   steps: { id: string; label: string }[];
   currentStepIndex: number;

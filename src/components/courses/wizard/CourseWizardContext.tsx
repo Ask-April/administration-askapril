@@ -97,7 +97,7 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
   };
 
   // Modified to create the course on the final step
-  const finishWizard = async () => {
+  const finishWizard = async (): Promise<boolean> => {
     if (!validateCurrentStepCallback()) {
       return false;
     }
