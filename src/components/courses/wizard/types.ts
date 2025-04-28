@@ -12,11 +12,11 @@ export interface CourseData {
 }
 
 export interface CurriculumSection {
-  id?: string;
+  id: string;
   title: string;
   position: number;
   lessons: {
-    id?: string;
+    id: string;
     title: string;
     type: string;
     content?: string;

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { PlusCircle, AlertOctagon } from "lucide-react";
 import ContentOrganization from "./content/ContentOrganization";
 import { useCourseWizard } from "./wizard/CourseWizardContext";
+import { CurriculumSection } from "./wizard/types";
 
 interface CourseCurriculumProps {
   courseData: any;
@@ -21,6 +22,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
 }) => {
   const { 
     curriculumSections,
+    updateCurriculumSections,
     focusFirstInput,
     setFocusFirstInput,
     formErrors
@@ -38,17 +40,22 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
     }
   }, [focusFirstInput, setFocusFirstInput]);
   
+  useEffect(() => {
+    setHasEnteredSection(curriculumSections.length > 0);
+  }, [curriculumSections]);
+  
   // Handle adding a new section
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
     
-    const newSection = {
+    const newSection: CurriculumSection = {
+      id: crypto.randomUUID(),
       title: newSectionTitle.trim(),
       position: curriculumSections.length,
       lessons: []
     };
     
-    onUpdateSections([...curriculumSections, newSection]);
+    updateCurriculumSections([...curriculumSections, newSection]);
     setNewSectionTitle("");
     setHasEnteredSection(true);
   };
@@ -109,19 +116,23 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
       {/* Content organization will show after adding at least one section */}
       {curriculumSections.length > 0 && (
         <div className="space-y-4">
-          {!hasEnteredSection && (
-            <div className="flex items-center space-x-2 mb-4">
-              <Input
-                value={newSectionTitle}
-                onChange={(e) => setNewSectionTitle(e.target.value)}
-                placeholder="Enter section title"
-                onKeyPress={handleKeyPress}
-              />
-              <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>Add Section</Button>
-            </div>
-          )}
+          <div className="flex items-center space-x-2 mb-4">
+            <Input
+              value={newSectionTitle}
+              onChange={(e) => setNewSectionTitle(e.target.value)}
+              placeholder="Enter section title"
+              onKeyPress={handleKeyPress}
+            />
+            <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Add Section
+            </Button>
+          </div>
           
-          <ContentOrganization />
+          <ContentOrganization 
+            sections={curriculumSections}
+            updateSections={updateCurriculumSections}
+          />
         </div>
       )}
     </div>

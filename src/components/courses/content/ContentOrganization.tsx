@@ -1,20 +1,25 @@
 
 import React from "react";
-import { useContentOrganization } from "@/hooks/useContentOrganization";
 import SectionItem from "./SectionItem";
 import LessonEditModal from "./LessonEditModal";
 import AddSectionForm from "./AddSectionForm";
 import AddLessonSidebar from "./AddLessonSidebar";
+import { CurriculumSection } from "../wizard/types";
+import { useContentOrganization } from "@/hooks/useContentOrganization";
 
 interface ContentOrganizationProps {
-  // Add props as needed
+  sections: CurriculumSection[];
+  updateSections: (sections: CurriculumSection[]) => void;
 }
 
-const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
-  // Use our extracted hook for all state and logic
-  const contentOrgHook = useContentOrganization();
+const ContentOrganization: React.FC<ContentOrganizationProps> = ({ 
+  sections, 
+  updateSections 
+}) => {
+  // Use our custom hook for all state and logic
+  const contentOrgHook = useContentOrganization(sections, updateSections);
   const { 
-    sections,
+    handleAddSection,
     handleDeleteSection,
     handleAddLesson,
     handleDeleteLesson,
@@ -36,13 +41,13 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = () => {
     setContentUrl,
     fileInputRef,
     handleFileChange,
-    handleLessonContentSave
+    handleLessonContentSave,
+    newSectionTitle,
+    setNewSectionTitle
   } = contentOrgHook;
 
   return (
     <div className="space-y-4">
-      <AddSectionForm hook={contentOrgHook} />
-      
       <div className="space-y-4">
         {sections.map((section) => (
           <SectionItem

@@ -1,25 +1,17 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pencil, Check, X, GripVertical } from "lucide-react";
-import { Lesson } from "@/hooks/useCurriculum";
+import { Pencil, Check, X, GripVertical, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import LessonItem from "./LessonItem";
-import { useEditCourse } from "@/hooks/useEditCourse";
-import LessonEditModal from "./LessonEditModal";
-
-interface Section {
-  id: string;
-  title: string;
-  position: number;
-  lessons: Lesson[];
-}
+import { CurriculumSection } from "../wizard/types";
 
 interface SectionItemProps {
-  section: Section;
+  section: CurriculumSection;
   onDeleteSection: (sectionId: string) => void;
-  onAddLesson: (sectionId: string, lessonType: string) => void;
+  onAddLesson: (sectionId: string) => void;
   onDeleteLesson: (sectionId: string, lessonId: string) => void;
-  onOpenLessonModal: (sectionId: string, lesson: Lesson) => void;
+  onOpenLessonModal: (sectionId: string, lesson: any) => void;
   onDragStart: (e: React.DragEvent, item: any, type: 'section' | 'lesson', sectionId?: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
@@ -127,13 +119,18 @@ const SectionItem: React.FC<SectionItemProps> = ({
             </div>
           ) : (
             <div
-              className="font-medium flex items-center gap-2 cursor-pointer" 
+              className="font-medium flex items-center gap-2" 
               onClick={(e) => {
                 e.stopPropagation();
                 toggleExpand();
               }}
             >
-              <span>{section.position}. {section.title}</span>
+              {expanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronUp className="h-4 w-4" />
+              )}
+              <span>{section.position + 1}. {section.title}</span>
               <Pencil 
                 className="h-3.5 w-3.5 text-muted-foreground cursor-pointer"
                 onClick={(e) => {
@@ -150,9 +147,10 @@ const SectionItem: React.FC<SectionItemProps> = ({
             size="sm"
             onClick={(e) => {
               e.stopPropagation();
-              onAddLesson(section.id, 'Video');
+              onAddLesson(section.id);
             }}
           >
+            <Plus className="h-4 w-4 mr-1" />
             Add Lesson
           </Button>
           <Button
@@ -164,6 +162,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
             }}
             className="text-destructive"
           >
+            <Trash2 className="h-4 w-4 mr-1" />
             Delete
           </Button>
         </div>
@@ -189,9 +188,6 @@ const SectionItem: React.FC<SectionItemProps> = ({
                 onDragLeave={onDragLeave}
                 onDrop={onDrop}
                 changeLessonType={changeLessonType}
-                updateLessonTitle={(lessonId, newTitle) => {
-                  // This will be handled by the parent component
-                }}
               />
             ))}
           </div>
