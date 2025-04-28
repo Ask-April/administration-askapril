@@ -448,18 +448,18 @@ export type Database = {
       course_category: {
         Row: {
           category_id: string
+          description: string
           name: string | null
-          site_id: string
         }
         Insert: {
           category_id?: string
+          description: string
           name?: string | null
-          site_id: string
         }
         Update: {
           category_id?: string
+          description?: string
           name?: string | null
-          site_id?: string
         }
         Relationships: []
       }

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,16 +9,47 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ImageUpload from "@/components/courses/ImageUpload";
 import { toast } from "sonner";
 import { Course } from "@/services/types";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DetailsTabProps {
   editedCourse: Partial<Course>;
   setEditedCourse: (course: Partial<Course>) => void;
 }
 
+interface Category {
+  category_id: string;
+  name: string;
+  description: string;
+}
+
 const DetailsTab: React.FC<DetailsTabProps> = ({
   editedCourse,
   setEditedCourse
 }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoadingCategories(true);
+      try {
+        const { data, error } = await supabase
+          .from('course_category')
+          .select('category_id, name, description');
+          
+        if (error) throw error;
+        if (data) setCategories(data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error("Failed to load categories");
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   // Function to update any course property
   const updateCourseData = (field: string, value: any) => {
     try {
@@ -106,17 +137,23 @@ const DetailsTab: React.FC<DetailsTabProps> = ({
                   <Select 
                     value={editedCourse.category || editedCourse.category_id || ""} 
                     onValueChange={handleCategoryChange}
+                    disabled={isLoadingCategories}
                   >
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={isLoadingCategories ? "Loading categories..." : "Select category"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="design">Design</SelectItem>
-                      <SelectItem value="development">Development</SelectItem>
-                      <SelectItem value="business">Business</SelectItem>
-                      <SelectItem value="marketing">Marketing</SelectItem>
-                      <SelectItem value="photography">Photography</SelectItem>
-                      <SelectItem value="music">Music</SelectItem>
+                      {categories.length === 0 ? (
+                        <SelectItem value="no-categories" disabled>
+                          No categories available
+                        </SelectItem>
+                      ) : (
+                        categories.map((category) => (
+                          <SelectItem key={category.category_id} value={category.category_id}>
+                            {category.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

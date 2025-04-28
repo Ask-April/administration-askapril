@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { Category } from "../types";
 
 /**
  * Service for managing course categories
@@ -11,8 +12,7 @@ export const categoryService = {
   getCategories: async (siteId: string) => {
     const { data, error } = await supabase
       .from('course_category')
-      .select('*')
-      .eq('site_id', siteId);
+      .select('*');
     
     if (error) {
       console.error("Error fetching categories:", error);
@@ -25,12 +25,13 @@ export const categoryService = {
   /**
    * Create a new category
    */
-  createCategory: async (siteId: string, name: string) => {
+  createCategory: async (siteId: string, name: string, description: string) => {
     const { data, error } = await supabase
       .from('course_category')
       .insert({
         site_id: siteId,
-        name: name
+        name: name,
+        description: description
       })
       .select()
       .single();

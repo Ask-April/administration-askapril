@@ -13,6 +13,7 @@ interface CategorySelectProps {
 interface CategoryDBRow {
   category_id: string;
   name: string;
+  description: string; // Added to match the updated table
 }
 
 const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors }) => {
@@ -24,10 +25,17 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors
       setIsLoading(true);
       const { data, error } = await supabase
         .from('course_category')
-        .select('category_id, name');
-      if (data) setCategories(data);
+        .select('category_id, name, description');
+      
+      if (error) {
+        console.error("Error fetching categories:", error);
+      } else if (data) {
+        setCategories(data);
+      }
+      
       setIsLoading(false);
     }
+    
     fetchCategories();
   }, []);
 

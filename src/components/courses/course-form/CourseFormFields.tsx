@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import {
   FormField,
@@ -19,12 +19,38 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import ImageUpload from "../ImageUpload";
 import { CourseFormValues } from "../schema/courseFormSchema";
+import { supabase } from "@/integrations/supabase/client";
 
-interface CourseFormFieldsProps {
-  form: UseFormReturn<CourseFormValues>;
+interface Category {
+  category_id: string;
+  name: string;
+  description: string;
 }
 
-const CourseFormFields: React.FC<CourseFormFieldsProps> = ({ form }) => {
+const CourseFormFields: React.FC<{ form: UseFormReturn<CourseFormValues> }> = ({ form }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoadingCategories(true);
+      try {
+        const { data, error } = await supabase
+          .from('course_category')
+          .select('category_id, name, description');
+          
+        if (error) throw error;
+        if (data) setCategories(data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <>
       <FormField
@@ -86,14 +112,25 @@ const CourseFormFields: React.FC<CourseFormFieldsProps> = ({ form }) => {
               <Select
                 onValueChange={field.onChange}
                 value={field.value}
+                disabled={isLoadingCategories}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder={isLoadingCategories ? "Loading categories..." : "Select category"} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {/* We're removing the placeholder SelectItem here as it's handled by SelectValue */}
+                  {categories.length === 0 ? (
+                    <SelectItem value="no-categories" disabled>
+                      No categories available
+                    </SelectItem>
+                  ) : (
+                    categories.map((category) => (
+                      <SelectItem key={category.category_id} value={category.category_id}>
+                        {category.name}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />

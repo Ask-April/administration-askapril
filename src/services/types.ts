@@ -1,3 +1,4 @@
+
 // Types synchronized with Supabase tables schema
 
 // ---- COURSES ---- //
@@ -53,6 +54,7 @@ export interface Category {
   category_id: string;
   site_id: string;
   name: string | null;
+  description: string; // Updated to match the table changes
 }
 
 // ---- PROFILES ---- //
