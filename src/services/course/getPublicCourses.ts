@@ -35,7 +35,7 @@ export const getPublicCourses = async (): Promise<Course[]> => {
         has_enrollment_limit: item.has_enrollment_limit,
         max_enrollments: item.max_enrollments,
         subtitle: item.subtitle,
-        // external_metadata removed
+        pricing_metadata: item.pricing_metadata || {}, // Add the pricing_metadata field
         slug: item.slug,
         image: item.image_url,
         category: item.category_id,
@@ -53,4 +53,3 @@ export const getPublicCourses = async (): Promise<Course[]> => {
     throw error;
   }
 };
-

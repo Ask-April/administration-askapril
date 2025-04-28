@@ -2073,7 +2073,6 @@ export type Database = {
           name: string | null
           password_hash: string | null
           signup_date: string | null
-          site_id: string
           user_id: string
         }
         Insert: {
@@ -2081,7 +2080,6 @@ export type Database = {
           name?: string | null
           password_hash?: string | null
           signup_date?: string | null
-          site_id: string
           user_id?: string
         }
         Update: {
@@ -2089,7 +2087,6 @@ export type Database = {
           name?: string | null
           password_hash?: string | null
           signup_date?: string | null
-          site_id?: string
           user_id?: string
         }
         Relationships: []

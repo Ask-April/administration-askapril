@@ -33,8 +33,7 @@ export const createCourse = async (courseData: {
         has_enrollment_limit: false,
         max_enrollments: null,
         subtitle: null,
-        external_id: null,
-        external_metadata: null,
+        pricing_metadata: {}, // Initialize empty pricing metadata
         slug: null
       },
     ])
@@ -53,7 +52,8 @@ export const createCourse = async (courseData: {
     image: data.image_url || "",
     category: data.category_id || "",
     lessons: courseData.lessons,
-    students: courseData.students || 0
+    students: courseData.students || 0,
+    pricing_metadata: data.pricing_metadata || {} // Add pricing_metadata
   };
 
   return course;
