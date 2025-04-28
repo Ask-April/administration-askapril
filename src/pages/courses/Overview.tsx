@@ -1,3 +1,4 @@
+
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { CourseFormValues } from "@/components/courses/schema/courseFormSchema";
@@ -70,24 +71,6 @@ const Overview = () => {
     if (sortBy === "a-z") return (a.title || '').localeCompare(b.title || '');
     return 0;
   });
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <EmptyState 
-        title="Error Loading Courses" 
-        description="There was an error loading your courses. Please try again."
-        action={<Button onClick={() => refetch()}>Retry</Button>}
-      />
-    );
-  }
 
   return (
     <PageTransition>
