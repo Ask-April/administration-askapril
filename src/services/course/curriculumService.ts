@@ -109,13 +109,16 @@ export const saveCurriculum = async (
       
       // First delete related lessons to avoid foreign key constraints
       for (const sectionId of sectionIdsToDelete) {
+        // Convert unknown type to string explicitly
+        const moduleId = String(sectionId);
+        
         const { error: lessonDeleteError } = await supabase
           .from("lessons")
           .delete()
-          .eq("module_id", sectionId);
+          .eq("module_id", moduleId);
         
         if (lessonDeleteError) {
-          console.error(`Error deleting lessons for section ${sectionId}:`, lessonDeleteError);
+          console.error(`Error deleting lessons for section ${moduleId}:`, lessonDeleteError);
           throw lessonDeleteError;
         }
       }
@@ -124,7 +127,7 @@ export const saveCurriculum = async (
       const { error: sectionDeleteError } = await supabase
         .from("course_module")
         .delete()
-        .in("module_id", sectionIdsToDelete);
+        .in("module_id", sectionIdsToDelete.map(id => String(id)));
       
       if (sectionDeleteError) {
         console.error("Error deleting sections:", sectionDeleteError);
