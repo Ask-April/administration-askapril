@@ -17,7 +17,7 @@ export interface Course {
   has_enrollment_limit: boolean | null;
   max_enrollments: number | null;
   subtitle: string | null;
-  pricing_metadata: any | null; // Ensure this property exists for database interaction
+  pricing_metadata: any | null; // JSON field for pricing data
   slug: string | null;
   created_at?: string;
   updated_at?: string;
