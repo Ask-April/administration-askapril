@@ -7,20 +7,24 @@ import OverviewChart from "./OverviewChart";
 
 const DashboardTabs = () => {
   return (
-    <Tabs defaultValue="overview" className="h-full w-full flex flex-col">
-      <TabsList className="mx-auto mb-4">
-        <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        <TabsTrigger value="reports">Reports</TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value="overview" className="flex-1 mt-0">
+    <Tabs defaultValue="overview" className="h-full w-full">
+      <div className="flex items-center justify-between">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
+        </TabsList>
+        <Button variant="outline" size="sm">
+          View All Reports
+        </Button>
+      </div>
+      <TabsContent value="overview" className="h-[400px] mt-4">
         <OverviewChart />
       </TabsContent>
-      <TabsContent value="analytics" className="flex-1">
+      <TabsContent value="analytics" className="h-[400px]">
         {/* Analytics content would go here */}
       </TabsContent>
-      <TabsContent value="reports" className="flex-1">
+      <TabsContent value="reports" className="h-[400px]">
         {/* Reports content would go here */}
       </TabsContent>
     </Tabs>
