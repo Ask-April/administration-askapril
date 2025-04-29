@@ -55,9 +55,16 @@ const EditCourse = () => {
       // Then save the curriculum if we have pending section changes
       if (success && id && temporarySections.length > 0) {
         try {
-          await curriculumService.saveCurriculum(id, temporarySections);
-          toast.success("Course content saved successfully!");
-          setHasPendingChanges(false);
+          console.log("Saving curriculum with sections:", temporarySections);
+          const saved = await curriculumService.saveCurriculum(id, temporarySections);
+          
+          if (saved) {
+            toast.success("Course content saved successfully!");
+            setHasPendingChanges(false);
+          } else {
+            toast.error("Failed to save course content. Please try again.");
+            return false;
+          }
         } catch (error) {
           console.error("Failed to save curriculum:", error);
           toast.error("Failed to save course content");
@@ -79,6 +86,7 @@ const EditCourse = () => {
 
   // Update the temporary sections and mark that we have pending changes
   const handleUpdateTemporarySections = (sections: CourseSection[]) => {
+    console.log("Updating temporary sections:", sections);
     setTemporarySections(sections);
     setHasPendingChanges(true);
   };
