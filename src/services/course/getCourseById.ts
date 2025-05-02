@@ -8,7 +8,7 @@ import { Course } from "../types";
 export const getCourseById = async (id: string): Promise<Course | null> => {
   try {
     const { data, error } = await supabase
-      .from("courses")
+      .from("courses" as any)
       .select("*")
       .eq("course_id", id)
       .single();
@@ -34,7 +34,7 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       category_id: data.category_id,
       image_url: data.image_url,
       status: data.status,
-      site_id: data.site_id,
+      site_id: data.site_id || crypto.randomUUID(), // Use existing site_id or generate one if missing
       featured: data.featured,
       price_visible: data.price_visible,
       hidden: data.hidden,

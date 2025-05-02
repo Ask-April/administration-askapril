@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Course } from "../types";
 
@@ -6,6 +7,18 @@ import { Course } from "../types";
  */
 export const updateCourse = async (id: string, courseData: Partial<Course>): Promise<Course> => {
   console.log("Updating course with id:", id, "and data:", courseData);
+  
+  // First, get the existing course to make sure we have site_id
+  const { data: existingCourse, error: fetchError } = await supabase
+    .from("courses" as any)
+    .select("site_id")
+    .eq("course_id", id)
+    .single();
+    
+  if (fetchError) {
+    console.error("Error fetching existing course:", fetchError);
+    throw fetchError;
+  }
   
   // Prepare the data for database update - handle virtual properties
   const dbData = { ...courseData };
@@ -39,8 +52,8 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   }
 
   const { data, error } = await supabase
-    .from("courses")
-    .update(dbData)
+    .from("courses" as any)
+    .update(dbData as any)
     .eq("course_id", id)
     .select()
     .single();
@@ -53,6 +66,7 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   // Map back to our Course type
   const course: Course = {
     ...data,
+    site_id: existingCourse.site_id || data.site_id, // Use existing site_id or the one from updated data
     // Add virtual properties back
     image: data.image_url,
     category: data.category_id,

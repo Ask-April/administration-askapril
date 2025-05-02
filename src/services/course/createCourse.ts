@@ -16,8 +16,16 @@ export const createCourse = async (courseData: {
 }): Promise<Course> => {
   console.log("Creating course with data:", courseData);
 
+  // Get the current user for the owner field
+  const { data: authData } = await supabase.auth.getSession();
+  const userId = authData.session?.user.id;
+
+  if (!userId) {
+    throw new Error("User must be authenticated to create a course");
+  }
+
   const { data, error } = await supabase
-    .from("courses")
+    .from("courses" as any)
     .insert([
       {
         title: courseData.title,
@@ -26,6 +34,7 @@ export const createCourse = async (courseData: {
         image_url: courseData.image,
         status: courseData.status,
         site_id: crypto.randomUUID(), // Generate site_id since it's required
+        owner: userId, // Add the owner field which is required
         featured: false,
         price_visible: true,
         hidden: false,
@@ -35,7 +44,7 @@ export const createCourse = async (courseData: {
         subtitle: null,
         pricing_metadata: {}, // Initialize empty pricing metadata
         slug: null
-      },
+      } as any,
     ])
     .select()
     .single();
@@ -45,9 +54,10 @@ export const createCourse = async (courseData: {
     throw error;
   }
 
-  // Map to our Course type
+  // Map to our Course type - make sure to include site_id
   const course: Course = {
     ...data,
+    site_id: data.site_id,
     // Add virtual properties and ensure string types for category and image
     image: data.image_url || "",
     category: data.category_id || "",

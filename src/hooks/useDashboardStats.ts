@@ -17,7 +17,6 @@ export const useDashboardStats = () => {
     queryKey: ["dashboardStats"],
     queryFn: async (): Promise<DashboardStats> => {
       // Get total students (from enrollment table)
-      // Cast "enrollment" as any to avoid TypeScript errors
       const { data: enrollmentData, error: enrollmentError } = await supabase
         .from("enrollment" as any)
         .select("student_id")
@@ -28,11 +27,11 @@ export const useDashboardStats = () => {
         throw enrollmentError;
       }
 
-      // Get unique students
-      const uniqueStudents = [...new Set(enrollmentData?.map(e => e.student_id) || [])];
+      // Get unique students - safely handle the data with type casting
+      const studentIds = enrollmentData as any[] || [];
+      const uniqueStudents = [...new Set(studentIds.map(e => e.student_id || ''))];
 
       // Get total courses
-      // Cast "courses" as any to avoid TypeScript errors
       const { count: totalCourses, error: coursesError } = await supabase
         .from("courses" as any)
         .select("*", { count: "exact", head: true });
@@ -43,7 +42,6 @@ export const useDashboardStats = () => {
       }
 
       // Get total completions from lesson_completion
-      // Cast "lesson_completion" as any to avoid TypeScript errors
       const { data: completionsData, error: completionsError } = await supabase
         .from("lesson_completion" as any)
         .select("student_id, lesson_id")
@@ -55,7 +53,6 @@ export const useDashboardStats = () => {
       }
 
       // Get total revenue
-      // Cast "orders" as any to avoid TypeScript errors
       const { data: revenueData, error: revenueError } = await supabase
         .from("orders" as any)
         .select("amount");
@@ -65,10 +62,11 @@ export const useDashboardStats = () => {
         throw revenueError;
       }
 
-      const totalRevenue = revenueData?.reduce((acc, order) => acc + (order.amount || 0), 0) || 0;
+      // Safely calculate total revenue using type casting
+      const revenueItems = revenueData as any[] || [];
+      const totalRevenue = revenueItems.reduce((acc, order) => acc + (Number(order.amount) || 0), 0);
 
       // Get recent enrollments
-      // Cast "enrollment" as any to avoid TypeScript errors
       const { data: recentEnrollments, error: recentError } = await supabase
         .from("enrollment" as any)
         .select(`
@@ -76,7 +74,7 @@ export const useDashboardStats = () => {
           enroll_date,
           student_id,
           course_id,
-          courses:course_id (title, image)
+          courses:course_id (title)
         `)
         .order("enroll_date", { ascending: false })
         .limit(4);
@@ -87,7 +85,6 @@ export const useDashboardStats = () => {
       }
 
       // Get top courses by enrollment count
-      // Cast "courses" as any to avoid TypeScript errors
       const { data: topCourses, error: topCoursesError } = await supabase
         .from("courses" as any)
         .select("*")
@@ -100,14 +97,13 @@ export const useDashboardStats = () => {
       }
 
       // Get user progress data
-      // Cast "enrollment" as any to avoid TypeScript errors
       const { data: studentProgress, error: progressError } = await supabase
         .from("enrollment" as any)
         .select(`
           enrollment_id,
           progress_percent,
           course_id,
-          courses:course_id (title, image)
+          courses:course_id (title)
         `)
         .order("progress_percent", { ascending: false })
         .limit(3);
@@ -120,11 +116,11 @@ export const useDashboardStats = () => {
       return {
         totalStudents: uniqueStudents.length,
         totalCourses: totalCourses || 0,
-        totalCompletions: completionsData?.length || 0,
+        totalCompletions: completionsData ? (completionsData as any[]).length : 0,
         totalRevenue,
-        recentEnrollments: recentEnrollments || [],
-        topCourses: topCourses || [],
-        studentProgress: studentProgress || []
+        recentEnrollments: recentEnrollments as any[] || [],
+        topCourses: topCourses as any[] || [],
+        studentProgress: studentProgress as any[] || []
       };
     },
   });
