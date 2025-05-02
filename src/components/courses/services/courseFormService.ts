@@ -17,8 +17,8 @@ export const createCourse = async (values: CourseFormValues): Promise<string | v
       throw new Error("Authentication required");
     }
     
-    // Generate a site_id since it's required
-    const site_id = crypto.randomUUID();
+    // Generate an ownership ID since it's required (previously site_id)
+    const ownership = crypto.randomUUID();
     
     // Prepare course data - add the owner field which is required
     const courseData = {
@@ -27,7 +27,7 @@ export const createCourse = async (values: CourseFormValues): Promise<string | v
       category_id: values.category || null, // Ensure null if empty string
       image_url: values.image || "https://images.unsplash.com/photo-1593720219276-0b1eacd0aef4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
       status: values.status,
-      site_id: site_id,
+      ownership: ownership, // Update from site_id to ownership
       owner: authData.session.user.id, // Add the owner field from the authenticated user
     };
     

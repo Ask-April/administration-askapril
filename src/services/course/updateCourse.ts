@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Course } from "../types";
 
@@ -7,10 +8,10 @@ import { Course } from "../types";
 export const updateCourse = async (id: string, courseData: Partial<Course>): Promise<Course> => {
   console.log("Updating course with id:", id, "and data:", courseData);
   
-  // First, get the existing course to make sure we have site_id
+  // First, get the existing course to make sure we have ownership
   const { data: existingCourseData, error: fetchError } = await supabase
     .from("courses" as any)
-    .select("site_id")
+    .select("ownership") // Select ownership instead of site_id
     .eq("course_id", id)
     .single();
     
@@ -51,6 +52,12 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   if (courseData.image) {
     dbData.image_url = courseData.image;
   }
+  
+  // Update site_id to ownership in the data
+  if (dbData.site_id) {
+    dbData.ownership = dbData.site_id;
+    delete dbData.site_id;
+  }
 
   const { data, error } = await supabase
     .from("courses" as any)
@@ -68,7 +75,7 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   const rawData = data as any;
   const course: Course = {
     ...rawData,
-    site_id: existingCourse.site_id || rawData.site_id, // Use existing site_id or the one from updated data
+    site_id: existingCourse.ownership || rawData.ownership, // Use existing ownership or the one from updated data
     // Add virtual properties back
     image: rawData.image_url,
     category: rawData.category_id,

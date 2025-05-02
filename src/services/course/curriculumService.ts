@@ -109,7 +109,7 @@ export const saveCurriculum = async (
       
       // First delete related lessons to avoid foreign key constraints
       for (const sectionId of sectionIdsToDelete) {
-        // Convert to string explicitly
+        // Make sure we have a string ID by explicitly converting it
         const moduleId = String(sectionId);
         
         const { error: lessonDeleteError } = await supabase
@@ -310,6 +310,7 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
   if (!lessonId) return null;
 
   try {
+    // Get full lesson details including content and other fields
     const { data, error } = await supabase
       .from('lessons')
       .select('*')
@@ -321,12 +322,15 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       return null;
     }
     
-    return data ? {
+    if (!data) return null;
+    
+    // Safely map the database fields to our CourseLesson type
+    return {
       id: data.lesson_id,
       section_id: data.module_id,
       title: data.title,
       type: data.type || '',
-      position: data.position,
+      position: data.position || 0,
       content: data.content || '',
       content_url: data.content_url || '',
       video_url: data.video_url || '',
@@ -335,7 +339,7 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       is_draft: data.is_draft || false,
       is_compulsory: data.is_compulsory || true,
       enable_discussion: data.enable_discussion || false
-    } : null;
+    };
   } catch (error) {
     console.error("Error in getLessonById:", error);
     return null;
