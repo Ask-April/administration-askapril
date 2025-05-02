@@ -48,17 +48,17 @@ export const getCurriculum = async (courseId: string): Promise<CourseSection[]> 
         lessons: lessons ? lessons.map((lesson: any): CourseLesson => ({
           id: lesson.lesson_id,
           section_id: module.module_id,
-          title: lesson.title,
+          title: lesson.title || '',
           type: lesson.type || 'video',
-          position: lesson.position,
-          content: lesson.content || '',
+          position: lesson.position || 0,
+          content: lesson.content || '', // Default to empty string if not in DB
           content_url: lesson.content_url || '',
-          video_url: lesson.video_url || '',
+          video_url: lesson.video_url || '', // Default to empty string if not in DB
           duration: lesson.duration || 0,
-          is_preview: Boolean(lesson.is_preview),
-          is_draft: Boolean(lesson.is_draft),
+          is_preview: lesson.is_preview === true, // Default to false if not in DB
+          is_draft: lesson.is_draft === true, // Default to false if not in DB
           is_compulsory: lesson.is_compulsory !== false, // Default to true if undefined
-          enable_discussion: Boolean(lesson.enable_discussion)
+          enable_discussion: lesson.enable_discussion === true // Default to false if not in DB
         })) : []
       };
 
