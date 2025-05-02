@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { CourseSection, CourseLesson } from "../types";
+import { CourseSection, CourseLesson } from "../../types";
 
 /**
  * Get curriculum for a course
@@ -55,10 +55,10 @@ export const getCurriculum = async (courseId: string): Promise<CourseSection[]> 
           content_url: lesson.content_url || '',
           video_url: lesson.video_url || '',
           duration: lesson.duration || 0,
-          is_preview: lesson.is_preview || false,
-          is_draft: lesson.is_draft || false,
-          is_compulsory: lesson.is_compulsory || true,
-          enable_discussion: lesson.enable_discussion || false
+          is_preview: Boolean(lesson.is_preview),
+          is_draft: Boolean(lesson.is_draft),
+          is_compulsory: lesson.is_compulsory !== false,
+          enable_discussion: Boolean(lesson.enable_discussion)
         })) : []
       };
 

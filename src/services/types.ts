@@ -10,6 +10,7 @@ export interface Course {
   image_url: string | null;
   status: string | null;
   site_id: string;         // This is kept for backward compatibility but uses 'ownership' in the DB
+  ownership?: string;      // Added ownership field to match DB schema
   owner?: string;         // Added owner field which is required by database
   featured: boolean | null;
   price_visible: boolean | null;

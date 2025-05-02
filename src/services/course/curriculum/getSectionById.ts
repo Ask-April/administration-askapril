@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { CourseSection } from "../types";
+import { CourseSection } from "../../types";
 
 /**
  * Find a specific section by ID in the curriculum

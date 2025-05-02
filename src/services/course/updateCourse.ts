@@ -71,6 +71,7 @@ export const updateCourse = async (courseId: string, courseData: Partial<Course>
       image_url: rawData.image_url,
       status: rawData.status,
       site_id: rawData.ownership || crypto.randomUUID(),
+      ownership: rawData.ownership,
       owner: rawData.owner,
       featured: !!rawData.featured,
       price_visible: rawData.price_visible !== false,

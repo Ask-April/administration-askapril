@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { CourseSection } from "../types";
+import { CourseSection } from "../../types";
 
 /**
  * Save curriculum for a course
@@ -137,7 +137,7 @@ const processSection = async (
  * Process lessons for a section (update, create, delete)
  */
 const processLessons = async (section: CourseSection): Promise<void> => {
-  const existingLessonIds = new Set();
+  const existingLessonIds = new Set<string>();
   
   // Get existing lessons for this section
   const { data: existingLessons, error: lessonsQueryError } = await supabase
