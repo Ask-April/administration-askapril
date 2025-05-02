@@ -42,7 +42,7 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
   const [lessonName, setLessonName] = React.useState("");
   const [selectedType, setSelectedType] = React.useState<string | null>(null);
   const [enableFreePreview, setEnableFreePreview] = React.useState(false);
-  const [setAsDraft, setSetAsDraft] = React.useState(true);
+  const [setAsDraft, setSetAsDraft] = React.useState(false);
   const [setAsCompulsory, setSetAsCompulsory] = React.useState(true);
   const [enableDiscussion, setEnableDiscussion] = React.useState(true);
 
@@ -92,7 +92,10 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
         content_url: contentUrl,
       };
       
+      // First update the selected lesson so it contains current content
       setSelectedLesson(updatedLesson);
+      
+      // Then call the save function
       handleLessonContentSave();
     }
   };

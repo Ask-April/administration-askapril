@@ -298,6 +298,7 @@ export const useContentOrganization = (
 
     if (!selectedLesson) return;
     
+    // Create a complete updated lesson object with all fields
     const updatedSections = sections.map(section => {
       if (section.id === selectedLesson.sectionId) {
         const updatedLessons = section.lessons.map(lesson => {
@@ -311,7 +312,10 @@ export const useContentOrganization = (
               is_compulsory: selectedLesson.lesson.is_compulsory,
               enable_discussion: selectedLesson.lesson.enable_discussion,
               content: content,
-              content_url: contentUrl
+              content_url: contentUrl,
+              video_url: selectedLesson.lesson.video_url || '',
+              duration: selectedLesson.lesson.duration || 0,
+              position: selectedLesson.lesson.position
             };
           }
           return lesson;
@@ -325,7 +329,12 @@ export const useContentOrganization = (
     setSections(updatedSections);
     toast.success("Lesson content saved successfully");
     setIsLessonModalOpen(false);
-    setSelectedLesson(null);
+    
+    // Don't clear the selectedLesson right away
+    // This prevents the content from immediately disappearing
+    setTimeout(() => {
+      setSelectedLesson(null);
+    }, 200);
   };
 
   return {
