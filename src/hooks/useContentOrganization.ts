@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { CourseSection, CourseLesson } from "@/services/types";
@@ -36,7 +37,7 @@ export const useContentOrganization = (
   const [contentUrl, setContentUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Update form state when selectedLesson changes
+  // Preserve content when selected lesson changes
   useEffect(() => {
     if (selectedLesson && !isNewLesson) {
       setContent(selectedLesson.lesson.content || "");
@@ -73,6 +74,12 @@ export const useContentOrganization = (
     // Reset content for new lesson
     setContent("");
     setContentUrl("");
+    setLessonName("");
+    setSelectedType("video");
+    setEnableFreePreview(false);
+    setSetAsDraft(false);
+    setSetAsCompulsory(true);
+    setEnableDiscussion(false);
     setIsLessonModalOpen(true);
   };
 
@@ -270,6 +277,8 @@ export const useContentOrganization = (
       enable_discussion: enableDiscussion,
       content: content,
       content_url: contentUrl,
+      video_url: '',
+      duration: 0,
       position: section.lessons.length
     };
 
@@ -298,24 +307,18 @@ export const useContentOrganization = (
 
     if (!selectedLesson) return;
     
+    const lessonToSave = selectedLesson.lesson;
+    
     // Create a complete updated lesson object with all fields
     const updatedSections = sections.map(section => {
       if (section.id === selectedLesson.sectionId) {
         const updatedLessons = section.lessons.map(lesson => {
-          if (lesson.id === selectedLesson.lesson.id) {
+          if (lesson.id === lessonToSave.id) {
             return { 
-              ...lesson, 
-              title: selectedLesson.lesson.title,
-              type: selectedLesson.lesson.type,
-              is_preview: selectedLesson.lesson.is_preview,
-              is_draft: selectedLesson.lesson.is_draft,
-              is_compulsory: selectedLesson.lesson.is_compulsory,
-              enable_discussion: selectedLesson.lesson.enable_discussion,
+              ...lesson,
+              ...selectedLesson.lesson,
               content: content,
-              content_url: contentUrl,
-              video_url: selectedLesson.lesson.video_url || '',
-              duration: selectedLesson.lesson.duration || 0,
-              position: selectedLesson.lesson.position
+              content_url: contentUrl
             };
           }
           return lesson;
@@ -334,7 +337,7 @@ export const useContentOrganization = (
     // This prevents the content from immediately disappearing
     setTimeout(() => {
       setSelectedLesson(null);
-    }, 200);
+    }, 300);
   };
 
   return {

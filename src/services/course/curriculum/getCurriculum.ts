@@ -45,7 +45,7 @@ export const getCurriculum = async (courseId: string): Promise<CourseSection[]> 
         course_id: module.course_id,
         title: module.title,
         position: module.position,
-        lessons: lessons ? lessons.map((lesson: any) => ({
+        lessons: lessons ? lessons.map((lesson: any): CourseLesson => ({
           id: lesson.lesson_id,
           section_id: module.module_id,
           title: lesson.title,

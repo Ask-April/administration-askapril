@@ -24,7 +24,7 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
     if (!data) return null;
     
     // Safely map the database fields to our CourseLesson type
-    return {
+    const lesson: CourseLesson = {
       id: data.lesson_id,
       section_id: data.module_id,
       title: data.title || '',
@@ -39,6 +39,8 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       is_compulsory: data.is_compulsory !== false, // Default to true if undefined
       enable_discussion: Boolean(data.enable_discussion)
     };
+    
+    return lesson;
   } catch (error) {
     console.error("Error in getLessonById:", error);
     return null;

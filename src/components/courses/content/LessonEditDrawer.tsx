@@ -40,7 +40,7 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
   isNewLesson = false,
 }) => {
   const [lessonName, setLessonName] = React.useState("");
-  const [selectedType, setSelectedType] = React.useState<string | null>(null);
+  const [selectedType, setSelectedType] = React.useState<string | null>("video");
   const [enableFreePreview, setEnableFreePreview] = React.useState(false);
   const [setAsDraft, setSetAsDraft] = React.useState(false);
   const [setAsCompulsory, setSetAsCompulsory] = React.useState(true);
@@ -51,14 +51,14 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
     if (isOpen) {
       if (selectedLesson && !isNewLesson) {
         // Update form with existing lesson data
-        setLessonName(selectedLesson.title || "");
-        setSelectedType(selectedLesson.type || null);
-        setEnableFreePreview(selectedLesson.is_preview || false);
-        setSetAsDraft(selectedLesson.is_draft || false);
-        setSetAsCompulsory(selectedLesson.is_compulsory || true);
-        setEnableDiscussion(selectedLesson.enable_discussion || true);
-        setContent(selectedLesson.content || "");
-        setContentUrl(selectedLesson.content_url || "");
+        setLessonName(selectedLesson.lesson?.title || "");
+        setSelectedType(selectedLesson.lesson?.type || "video");
+        setEnableFreePreview(selectedLesson.lesson?.is_preview || false);
+        setSetAsDraft(selectedLesson.lesson?.is_draft || false);
+        setSetAsCompulsory(selectedLesson.lesson?.is_compulsory || true);
+        setEnableDiscussion(selectedLesson.lesson?.enable_discussion || true);
+        setContent(selectedLesson.lesson?.content || "");
+        setContentUrl(selectedLesson.lesson?.content_url || "");
       } else if (isNewLesson) {
         // Reset form for new lesson
         resetForm();
@@ -82,14 +82,17 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
     if (selectedLesson || isNewLesson) {
       const updatedLesson = {
         ...(selectedLesson || {}),
-        title: lessonName,
-        type: selectedType,
-        is_preview: enableFreePreview,
-        is_draft: setAsDraft,
-        is_compulsory: setAsCompulsory,
-        enable_discussion: enableDiscussion,
-        content: content,
-        content_url: contentUrl,
+        lesson: {
+          ...(selectedLesson?.lesson || {}),
+          title: lessonName,
+          type: selectedType,
+          is_preview: enableFreePreview,
+          is_draft: setAsDraft,
+          is_compulsory: setAsCompulsory,
+          enable_discussion: enableDiscussion,
+          content: content,
+          content_url: contentUrl,
+        }
       };
       
       // First update the selected lesson so it contains current content
