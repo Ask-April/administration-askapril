@@ -27,36 +27,37 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
     }
 
     // Map the database response to our Course type
+    const rawData = data as any;
     const course: Course = {
-      course_id: data.course_id,
-      title: data.title,
-      description: data.description,
-      category_id: data.category_id,
-      image_url: data.image_url,
-      status: data.status,
-      site_id: data.site_id || crypto.randomUUID(), // Use existing site_id or generate one if missing
-      featured: data.featured,
-      price_visible: data.price_visible,
-      hidden: data.hidden,
-      has_certificate: data.has_certificate,
-      has_enrollment_limit: data.has_enrollment_limit,
-      max_enrollments: data.max_enrollments,
-      subtitle: data.subtitle,
-      pricing_metadata: data.pricing_metadata || {}, // Ensure this property exists
-      slug: data.slug,
+      course_id: rawData.course_id,
+      title: rawData.title,
+      description: rawData.description,
+      category_id: rawData.category_id,
+      image_url: rawData.image_url,
+      status: rawData.status,
+      site_id: rawData.site_id || crypto.randomUUID(), // Use existing site_id or generate one if missing
+      featured: !!rawData.featured,
+      price_visible: rawData.price_visible !== false,
+      hidden: !!rawData.hidden,
+      has_certificate: !!rawData.has_certificate,
+      has_enrollment_limit: !!rawData.has_enrollment_limit,
+      max_enrollments: rawData.max_enrollments,
+      subtitle: rawData.subtitle,
+      pricing_metadata: rawData.pricing_metadata || {}, // Ensure this property exists
+      slug: rawData.slug,
       // Add in any virtual properties that aren't stored in the DB
-      image: data.image_url || "",
-      category: data.category_id || "",
+      image: rawData.image_url || "",
+      category: rawData.category_id || "",
       lessons: 0, // Would need additional query to count lessons
       students: 0  // Would need additional query to count students
     };
 
     // Safely handle created_at/updated_at timestamps with type checking
-    if ('created_at' in data && typeof data.created_at === 'string') {
-      course.created_at = data.created_at;
+    if (rawData.created_at && typeof rawData.created_at === 'string') {
+      course.created_at = rawData.created_at;
     }
-    if ('updated_at' in data && typeof data.updated_at === 'string') {
-      course.updated_at = data.updated_at;
+    if (rawData.updated_at && typeof rawData.updated_at === 'string') {
+      course.updated_at = rawData.updated_at;
     }
 
     return course;

@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Course } from "../types";
 
@@ -9,7 +8,7 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   console.log("Updating course with id:", id, "and data:", courseData);
   
   // First, get the existing course to make sure we have site_id
-  const { data: existingCourse, error: fetchError } = await supabase
+  const { data: existingCourseData, error: fetchError } = await supabase
     .from("courses" as any)
     .select("site_id")
     .eq("course_id", id)
@@ -19,6 +18,8 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
     console.error("Error fetching existing course:", fetchError);
     throw fetchError;
   }
+  
+  const existingCourse = existingCourseData as any;
   
   // Prepare the data for database update - handle virtual properties
   const dbData = { ...courseData };
@@ -64,13 +65,14 @@ export const updateCourse = async (id: string, courseData: Partial<Course>): Pro
   }
 
   // Map back to our Course type
+  const rawData = data as any;
   const course: Course = {
-    ...data,
-    site_id: existingCourse.site_id || data.site_id, // Use existing site_id or the one from updated data
+    ...rawData,
+    site_id: existingCourse.site_id || rawData.site_id, // Use existing site_id or the one from updated data
     // Add virtual properties back
-    image: data.image_url,
-    category: data.category_id,
-    pricing_metadata: data.pricing_metadata || {}, // Ensure pricing_metadata exists
+    image: rawData.image_url,
+    category: rawData.category_id,
+    pricing_metadata: rawData.pricing_metadata || {}, // Ensure pricing_metadata exists
     // Other virtual props would need to be populated if needed
     lessons: 0,
     students: 0

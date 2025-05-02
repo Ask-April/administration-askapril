@@ -55,15 +55,29 @@ export const createCourse = async (courseData: {
   }
 
   // Map to our Course type - make sure to include site_id
+  const rawData = data as any;
   const course: Course = {
-    ...data,
-    site_id: data.site_id,
-    // Add virtual properties and ensure string types for category and image
-    image: data.image_url || "",
-    category: data.category_id || "",
+    course_id: rawData.course_id,
+    title: rawData.title,
+    description: rawData.description,
+    category_id: rawData.category_id,
+    image_url: rawData.image_url,
+    status: rawData.status,
+    site_id: rawData.site_id || crypto.randomUUID(), // Use existing site_id or generate one if missing
+    featured: !!rawData.featured,
+    price_visible: rawData.price_visible !== false,
+    hidden: !!rawData.hidden,
+    has_certificate: !!rawData.has_certificate,
+    has_enrollment_limit: !!rawData.has_enrollment_limit,
+    max_enrollments: rawData.max_enrollments,
+    subtitle: rawData.subtitle || "",
+    pricing_metadata: rawData.pricing_metadata || {}, // Ensure pricing_metadata exists
+    slug: rawData.slug,
+    // Add virtual properties
+    image: rawData.image_url || "",
+    category: rawData.category_id || "",
     lessons: courseData.lessons,
     students: courseData.students || 0,
-    pricing_metadata: data.pricing_metadata || {} // Ensure pricing_metadata exists
   };
 
   return course;

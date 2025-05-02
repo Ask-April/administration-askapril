@@ -45,7 +45,7 @@ export const createCourse = async (values: CourseFormValues): Promise<string | v
     }
     
     console.log("Course created successfully:", data);
-    return data[0]?.course_id;
+    return data && data.length > 0 ? (data[0] as any).course_id : undefined;
   } catch (error: any) {
     console.error("Error in createCourse:", error);
     throw error;
