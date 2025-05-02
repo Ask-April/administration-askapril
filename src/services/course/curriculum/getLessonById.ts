@@ -36,7 +36,7 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       duration: data.duration || 0,
       is_preview: Boolean(data.is_preview),
       is_draft: Boolean(data.is_draft),
-      is_compulsory: data.is_compulsory !== false,
+      is_compulsory: data.is_compulsory !== false, // Default to true if undefined
       enable_discussion: Boolean(data.enable_discussion)
     };
   } catch (error) {

@@ -2,6 +2,8 @@
 import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Plus, Trash2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 interface PaymentPlanModelProps {
@@ -18,11 +20,12 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
     if (!editedCourse?.pricing_data) {
       updateCourseData && updateCourseData('pricing_data', {
         model: 'payment-plan',
-        totalPrice: '299.99',
-        installments: '3',
-        installmentPeriod: '30',
-        requireDownPayment: false,
-        downPaymentPercent: '25'
+        fullPrice: '499.99',
+        installmentCount: 3,
+        installmentPrice: '179.99',
+        installmentPlans: [
+          { months: 3, price: '179.99' }
+        ]
       });
     }
   }, [editedCourse, updateCourseData]);
@@ -37,11 +40,28 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
     }
   };
 
-  // Calculate the payment amount with 2 decimal places
-  const calculatePaymentAmount = () => {
-    const total = parseFloat(editedCourse?.pricing_data?.totalPrice || '299.99');
-    const installments = parseFloat(editedCourse?.pricing_data?.installments || '3');
-    return (total / installments).toFixed(2);
+  const addInstallmentPlan = () => {
+    if (editedCourse?.pricing_data?.installmentPlans) {
+      const plans = [...editedCourse.pricing_data.installmentPlans];
+      plans.push({ months: 6, price: '99.99' });
+      updatePricingData('installmentPlans', plans);
+    }
+  };
+
+  const updateInstallmentPlan = (index: number, field: string, value: string | number) => {
+    if (editedCourse?.pricing_data?.installmentPlans) {
+      const plans = [...editedCourse.pricing_data.installmentPlans];
+      plans[index] = { ...plans[index], [field]: value };
+      updatePricingData('installmentPlans', plans);
+    }
+  };
+
+  const removeInstallmentPlan = (index: number) => {
+    if (editedCourse?.pricing_data?.installmentPlans) {
+      const plans = [...editedCourse.pricing_data.installmentPlans];
+      plans.splice(index, 1);
+      updatePricingData('installmentPlans', plans);
+    }
   };
 
   return (
@@ -49,88 +69,102 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
       <h4 className="font-medium mb-4">Payment Plan Settings</h4>
       <div className="space-y-4">
         <div>
-          <Label htmlFor="total-price">Total Price</Label>
+          <Label htmlFor="full-price">Full Price</Label>
           <div className="flex mt-1">
             <div className="flex items-center border rounded-l-md px-3 bg-muted">
               <span>$</span>
             </div>
             <Input 
-              id="total-price" 
+              id="full-price" 
               type="number" 
-              value={editedCourse?.pricing_data?.totalPrice || "299.99"}
-              onChange={(e) => updatePricingData('totalPrice', e.target.value)}
+              value={editedCourse?.pricing_data?.fullPrice || "499.99"}
+              onChange={(e) => updatePricingData('fullPrice', e.target.value)}
               className="rounded-l-none" 
             />
           </div>
         </div>
         
-        <div>
-          <Label htmlFor="installments">Number of Installments</Label>
-          <Input 
-            id="installments" 
-            type="number" 
-            value={editedCourse?.pricing_data?.installments || "3"}
-            onChange={(e) => updatePricingData('installments', e.target.value)}
-            className="mt-1" 
-          />
+        <div className="border rounded-md p-4">
+          <h5 className="font-medium mb-2">Installment Plans</h5>
+          {editedCourse?.pricing_data?.installmentPlans?.map((plan: any, index: number) => (
+            <div key={index} className="grid grid-cols-5 gap-2 items-end mb-2">
+              <div className="col-span-2">
+                <Label htmlFor={`months-${index}`}>Months</Label>
+                <Input 
+                  id={`months-${index}`} 
+                  type="number" 
+                  value={plan.months || 3}
+                  onChange={(e) => updateInstallmentPlan(index, 'months', parseInt(e.target.value))}
+                  min={1}
+                />
+              </div>
+              <div className="col-span-2">
+                <Label htmlFor={`price-${index}`}>Payment / Month</Label>
+                <div className="flex">
+                  <div className="flex items-center border rounded-l-md px-3 bg-muted">
+                    <span>$</span>
+                  </div>
+                  <Input 
+                    id={`price-${index}`} 
+                    type="number" 
+                    value={plan.price || "179.99"}
+                    onChange={(e) => updateInstallmentPlan(index, 'price', e.target.value)}
+                    className="rounded-l-none" 
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                {index > 0 && (
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-10 w-10 rounded-full"
+                    onClick={() => removeInstallmentPlan(index)}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="mt-2"
+            onClick={addInstallmentPlan}
+          >
+            <Plus className="h-4 w-4 mr-2" /> Add Installment Plan
+          </Button>
         </div>
         
-        <div>
-          <Label htmlFor="installment-period">Days Between Installments</Label>
-          <Input 
-            id="installment-period" 
-            type="number" 
-            value={editedCourse?.pricing_data?.installmentPeriod || "30"}
-            onChange={(e) => updatePricingData('installmentPeriod', e.target.value)}
-            className="mt-1" 
-          />
-        </div>
-        
-        <div className="border rounded-md p-4 bg-muted/30">
-          <h5 className="font-medium mb-2">Payment Breakdown</h5>
-          <div className="text-sm">
-            <p className="flex justify-between mb-1">
-              <span>Initial payment:</span>
-              <span>${calculatePaymentAmount()}</span>
-            </p>
-            <p className="flex justify-between mb-1">
-              <span>{parseInt(editedCourse?.pricing_data?.installments || '3') - 1} additional payments:</span>
-              <span>${calculatePaymentAmount()} every {editedCourse?.pricing_data?.installmentPeriod || '30'} days</span>
-            </p>
-            <p className="flex justify-between font-medium mt-2 pt-2 border-t">
-              <span>Total:</span>
-              <span>${parseFloat(editedCourse?.pricing_data?.totalPrice || '299.99').toFixed(2)}</span>
-            </p>
-          </div>
-        </div>
-
         <div className="flex items-center justify-between">
           <div>
-            <h5 className="font-medium">Require Down Payment</h5>
+            <h5 className="font-medium">Down Payment</h5>
             <p className="text-sm text-muted-foreground">
-              First payment is higher than subsequent payments
+              Require initial payment
             </p>
           </div>
           <Switch 
             id="down-payment"
-            checked={editedCourse?.pricing_data?.requireDownPayment || false}
-            onCheckedChange={(checked) => updatePricingData('requireDownPayment', checked)}
+            checked={editedCourse?.pricing_data?.downPayment || false}
+            onCheckedChange={(checked) => updatePricingData('downPayment', checked)}
           />
         </div>
         
-        {editedCourse?.pricing_data?.requireDownPayment && (
+        {editedCourse?.pricing_data?.downPayment && (
           <div>
-            <Label htmlFor="down-payment-percent">Down Payment Percentage</Label>
+            <Label htmlFor="down-payment-amount">Down Payment Amount</Label>
             <div className="flex mt-1">
-              <Input 
-                id="down-payment-percent" 
-                type="number" 
-                value={editedCourse?.pricing_data?.downPaymentPercent || "25"}
-                onChange={(e) => updatePricingData('downPaymentPercent', e.target.value)}
-              />
-              <div className="flex items-center border rounded-r-md px-3 bg-muted">
-                <span>%</span>
+              <div className="flex items-center border rounded-l-md px-3 bg-muted">
+                <span>$</span>
               </div>
+              <Input 
+                id="down-payment-amount" 
+                type="number" 
+                value={editedCourse?.pricing_data?.downPaymentAmount || "99.99"}
+                onChange={(e) => updatePricingData('downPaymentAmount', e.target.value)}
+                className="rounded-l-none" 
+              />
             </div>
           </div>
         )}

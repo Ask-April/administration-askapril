@@ -1,4 +1,12 @@
 
-export { default as PricingModels } from './PricingModels';
-export { default as DiscountsManager } from './DiscountsManager';
-export { default as PaymentSettings } from './PaymentSettings';
+import PricingModels from "./PricingModels";
+import DiscountsManager from "./DiscountsManager";
+import PricingOptions from "./PricingOptions";
+import PaymentSettings from "./PaymentSettings";
+
+export {
+  PricingModels,
+  DiscountsManager,
+  PricingOptions,
+  PaymentSettings
+};

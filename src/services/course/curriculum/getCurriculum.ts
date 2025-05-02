@@ -57,7 +57,7 @@ export const getCurriculum = async (courseId: string): Promise<CourseSection[]> 
           duration: lesson.duration || 0,
           is_preview: Boolean(lesson.is_preview),
           is_draft: Boolean(lesson.is_draft),
-          is_compulsory: lesson.is_compulsory !== false,
+          is_compulsory: lesson.is_compulsory !== false, // Default to true if undefined
           enable_discussion: Boolean(lesson.enable_discussion)
         })) : []
       };
