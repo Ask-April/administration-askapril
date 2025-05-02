@@ -20,8 +20,10 @@ export const useProfile = (user: User | null) => {
 
       try {
         // Now we use the correct Table definition for "profiles":
+        // Note: We're casting "profiles" as any due to TypeScript errors with the supabase client
+        // This is a workaround until the proper types are available
         const { data, error } = await supabase
-          .from("profiles")
+          .from("profiles" as any)
           .select("*")
           .eq("id", user.id)
           .maybeSingle();
@@ -36,22 +38,27 @@ export const useProfile = (user: User | null) => {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           };
+          
+          // Cast "profiles" as any to work around TypeScript errors
           const { data: created, error: createError } = await supabase
-            .from('profiles')
+            .from('profiles' as any)
             .insert(newProfile)
             .select()
             .maybeSingle();
+            
           if (createError) {
             toast.error("Failed to create your profile: " + createError.message);
             setProfile(null);
           } else {
-            setProfile(created as Profile);
+            // Cast the created data to our Profile type
+            setProfile(created as unknown as Profile);
           }
         } else if (error) {
           toast.error("Failed to load your profile: " + error.message);
           setProfile(null);
         } else if (data) {
-          setProfile(data as Profile);
+          // Cast the data to our Profile type
+          setProfile(data as unknown as Profile);
         } else {
           setProfile(null);
         }

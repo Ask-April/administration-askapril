@@ -5,6 +5,9 @@ import { CommunitySetting } from "@/services/types";
 // Export as a named constant to match import in useSettingsState
 export const communitySettingsService = {
   getSettings: async (communityId: string): Promise<CommunitySetting[]> => {
+    // Since there's a type error with the table name "settings" not being in the Supabase types,
+    // we'll continue using mock data for now until the database schema is updated
+    
     // Mock data for now
     return [
       {

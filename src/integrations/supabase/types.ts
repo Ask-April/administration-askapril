@@ -483,9 +483,9 @@ export type Database = {
           hidden: boolean | null
           image_url: string | null
           max_enrollments: number | null
+          owner: string
           price_visible: boolean | null
           pricing_metadata: Json | null
-          site_id: string
           slug: string | null
           status: string | null
           subtitle: string | null
@@ -503,9 +503,9 @@ export type Database = {
           hidden?: boolean | null
           image_url?: string | null
           max_enrollments?: number | null
+          owner: string
           price_visible?: boolean | null
           pricing_metadata?: Json | null
-          site_id: string
           slug?: string | null
           status?: string | null
           subtitle?: string | null
@@ -523,9 +523,9 @@ export type Database = {
           hidden?: boolean | null
           image_url?: string | null
           max_enrollments?: number | null
+          owner?: string
           price_visible?: boolean | null
           pricing_metadata?: Json | null
-          site_id?: string
           slug?: string | null
           status?: string | null
           subtitle?: string | null
