@@ -57,12 +57,14 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
         setSetAsDraft(selectedLesson.is_draft || false);
         setSetAsCompulsory(selectedLesson.is_compulsory || true);
         setEnableDiscussion(selectedLesson.enable_discussion || true);
+        setContent(selectedLesson.content || "");
+        setContentUrl(selectedLesson.content_url || "");
       } else if (isNewLesson) {
         // Reset form for new lesson
         resetForm();
       }
     }
-  }, [selectedLesson, isOpen, isNewLesson]);
+  }, [selectedLesson, isOpen, isNewLesson, setContent, setContentUrl]);
 
   const resetForm = () => {
     setLessonName("");
@@ -77,16 +79,19 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
 
   const handleSave = () => {
     // Update the selected lesson with the form values
-    if (selectedLesson) {
+    if (selectedLesson || isNewLesson) {
       const updatedLesson = {
-        ...selectedLesson,
+        ...(selectedLesson || {}),
         title: lessonName,
         type: selectedType,
         is_preview: enableFreePreview,
         is_draft: setAsDraft,
         is_compulsory: setAsCompulsory,
         enable_discussion: enableDiscussion,
+        content: content,
+        content_url: contentUrl,
       };
+      
       setSelectedLesson(updatedLesson);
       handleLessonContentSave();
     }

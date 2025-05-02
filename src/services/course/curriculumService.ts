@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CourseSection, CourseLesson } from "../types";
 
@@ -108,7 +109,7 @@ export const saveCurriculum = async (
       
       // First delete related lessons to avoid foreign key constraints
       for (const sectionId of sectionIdsToDelete) {
-        // Convert unknown type to string explicitly
+        // Convert to string explicitly
         const moduleId = String(sectionId);
         
         const { error: lessonDeleteError } = await supabase
@@ -279,16 +280,25 @@ export const getSectionById = async (sectionId: string): Promise<CourseSection |
   if (!sectionId) return null;
 
   try {
-    // For now, get all sections and filter client-side since we have a specific structure
-    // In the future, this could be a direct query to a sections table
-    const { data, error } = await supabase.from('course_sections').select('*').eq('id', sectionId).single();
+    // Query directly from course_module table
+    const { data, error } = await supabase
+      .from('course_module')
+      .select('*')
+      .eq('module_id', sectionId)
+      .maybeSingle();
     
     if (error) {
       console.error("Error getting section:", error);
       return null;
     }
     
-    return data as any as CourseSection;
+    return data ? {
+      id: data.module_id,
+      title: data.title,
+      position: data.position,
+      course_id: data.course_id,
+      lessons: []
+    } : null;
   } catch (error) {
     console.error("Error in getSectionById:", error);
     return null;
@@ -300,15 +310,32 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
   if (!lessonId) return null;
 
   try {
-    const { data, error } = await supabase.from('course_lessons').select('*').eq('id', lessonId).single();
+    const { data, error } = await supabase
+      .from('lessons')
+      .select('*')
+      .eq('lesson_id', lessonId)
+      .maybeSingle();
     
     if (error) {
       console.error("Error getting lesson:", error);
       return null;
     }
     
-    // Cast the data to string explicitly to fix the TypeScript error
-    return data as any as CourseLesson;
+    return data ? {
+      id: data.lesson_id,
+      section_id: data.module_id,
+      title: data.title,
+      type: data.type || '',
+      position: data.position,
+      content: data.content || '',
+      content_url: data.content_url || '',
+      video_url: data.video_url || '',
+      duration: data.duration || 0,
+      is_preview: data.is_preview || false,
+      is_draft: data.is_draft || false,
+      is_compulsory: data.is_compulsory || true,
+      enable_discussion: data.enable_discussion || false
+    } : null;
   } catch (error) {
     console.error("Error in getLessonById:", error);
     return null;
