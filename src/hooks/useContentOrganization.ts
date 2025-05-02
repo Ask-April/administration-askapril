@@ -15,6 +15,7 @@ export const useContentOrganization = (
     lesson: CourseLesson;
   } | null>(null);
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+  const [isNewLesson, setIsNewLesson] = useState(false);
   const [draggedItem, setDraggedItem] = useState<any>(null);
   const [dragOverItem, setDragOverItem] = useState<any>(null);
   const [dragType, setDragType] = useState<'section' | 'lesson' | null>(null);
@@ -34,6 +35,14 @@ export const useContentOrganization = (
   const [content, setContent] = useState('');
   const [contentUrl, setContentUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Update form state when selectedLesson changes
+  useEffect(() => {
+    if (selectedLesson && !isNewLesson) {
+      setContent(selectedLesson.lesson.content || "");
+      setContentUrl(selectedLesson.lesson.content_url || "");
+    }
+  }, [selectedLesson, isNewLesson]);
 
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
@@ -60,7 +69,11 @@ export const useContentOrganization = (
 
   const handleAddLesson = (sectionId: string) => {
     setCurrentSectionId(sectionId);
-    setIsAddLessonSidebarOpen(true);
+    setIsNewLesson(true);
+    // Reset content for new lesson
+    setContent("");
+    setContentUrl("");
+    setIsLessonModalOpen(true);
   };
 
   const handleDeleteLesson = (sectionId: string, lessonId: string) => {
@@ -81,6 +94,7 @@ export const useContentOrganization = (
   };
 
   const openLessonModal = (sectionId: string, lesson: CourseLesson) => {
+    setIsNewLesson(false);
     setSelectedLesson({ sectionId, lesson });
     setContent(lesson.content || "");
     setContentUrl(lesson.content_url || "");
@@ -270,12 +284,18 @@ export const useContentOrganization = (
     });
     
     setSections(updatedSections);
-    setIsAddLessonSidebarOpen(false);
+    setIsLessonModalOpen(false);
+    setIsNewLesson(false);
     toast.success(`Lesson "${lessonName}" added successfully`);
     resetForm();
   };
 
   const handleLessonContentSave = () => {
+    if (isNewLesson) {
+      handleSaveNewLesson();
+      return;
+    }
+
     if (!selectedLesson) return;
     
     const updatedSections = sections.map(section => {
@@ -286,6 +306,10 @@ export const useContentOrganization = (
               ...lesson, 
               title: selectedLesson.lesson.title,
               type: selectedLesson.lesson.type,
+              is_preview: selectedLesson.lesson.is_preview,
+              is_draft: selectedLesson.lesson.is_draft,
+              is_compulsory: selectedLesson.lesson.is_compulsory,
+              enable_discussion: selectedLesson.lesson.enable_discussion,
               content: content,
               content_url: contentUrl
             };
@@ -320,6 +344,8 @@ export const useContentOrganization = (
     
     isLessonModalOpen,
     setIsLessonModalOpen,
+    isNewLesson,
+    setIsNewLesson,
 
     draggedItem,
     dragOverItem,

@@ -274,8 +274,51 @@ export const saveCurriculum = async (
   }
 };
 
+// Find a specific section by ID in the curriculum
+export const getSectionById = async (sectionId: string): Promise<CourseSection | null> => {
+  if (!sectionId) return null;
+
+  try {
+    // For now, get all sections and filter client-side since we have a specific structure
+    // In the future, this could be a direct query to a sections table
+    const { data, error } = await supabase.from('course_sections').select('*').eq('id', sectionId).single();
+    
+    if (error) {
+      console.error("Error getting section:", error);
+      return null;
+    }
+    
+    return data as any as CourseSection;
+  } catch (error) {
+    console.error("Error in getSectionById:", error);
+    return null;
+  }
+};
+
+// Find a specific lesson by ID
+export const getLessonById = async (lessonId: string): Promise<CourseLesson | null> => {
+  if (!lessonId) return null;
+
+  try {
+    const { data, error } = await supabase.from('course_lessons').select('*').eq('id', lessonId).single();
+    
+    if (error) {
+      console.error("Error getting lesson:", error);
+      return null;
+    }
+    
+    // Cast the data to string explicitly to fix the TypeScript error
+    return data as any as CourseLesson;
+  } catch (error) {
+    console.error("Error in getLessonById:", error);
+    return null;
+  }
+};
+
 // Create an object with all exports
 export const curriculumService = {
   getCurriculum,
-  saveCurriculum
+  saveCurriculum,
+  getSectionById,
+  getLessonById
 };
