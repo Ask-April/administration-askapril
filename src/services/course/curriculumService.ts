@@ -9,7 +9,7 @@ export const getCurriculum = async (courseId: string): Promise<CourseSection[]> 
   try {
     // Fetch modules for the course
     const { data: modules, error: modulesError } = await supabase
-      .from("course_module")
+      .from("course_section") // Using course_section as the actual table name
       .select("*")
       .eq("course_id", courseId)
       .order("position", { ascending: true });
@@ -29,9 +29,9 @@ export const getCurriculum = async (courseId: string): Promise<CourseSection[]> 
     // For each module, fetch its lessons
     for (const module of modules) {
       const { data: lessons, error: lessonsError } = await supabase
-        .from("lessons")
+        .from("course_lesson") // Using course_lesson as the actual table name
         .select("*")
-        .eq("module_id", module.module_id)
+        .eq("section_id", module.module_id) // Using section_id as column name
         .order("position", { ascending: true });
 
       if (lessonsError) {
@@ -84,7 +84,7 @@ export const saveCurriculum = async (
     
     // First, get existing sections for this course to identify what needs deletion
     const { data: existingSections, error: fetchError } = await supabase
-      .from("course_module")
+      .from("course_section")
       .select("module_id")
       .eq("course_id", courseId);
     
@@ -113,9 +113,9 @@ export const saveCurriculum = async (
         const moduleId = String(sectionId);
         
         const { error: lessonDeleteError } = await supabase
-          .from("lessons")
+          .from("course_lesson")
           .delete()
-          .eq("module_id", moduleId);
+          .eq("section_id", moduleId); // Using section_id as column name
         
         if (lessonDeleteError) {
           console.error(`Error deleting lessons for section ${moduleId}:`, lessonDeleteError);
@@ -125,7 +125,7 @@ export const saveCurriculum = async (
       
       // Then delete the sections - make sure we convert all IDs to strings
       const { error: sectionDeleteError } = await supabase
-        .from("course_module")
+        .from("course_section")
         .delete()
         .in("module_id", sectionIdsToDelete.map(id => String(id)));
       
@@ -139,7 +139,7 @@ export const saveCurriculum = async (
     for (const section of sections) {
       // Check if section exists
       const { data: existingSection, error: sectionError } = await supabase
-        .from("course_module")
+        .from("course_section")
         .select("*")
         .eq("module_id", String(section.id))
         .maybeSingle();
@@ -153,7 +153,7 @@ export const saveCurriculum = async (
         // Update existing section
         console.log("Updating section:", section.id, section.title);
         const { error: updateError } = await supabase
-          .from("course_module")
+          .from("course_section")
           .update({
             title: section.title,
             position: section.position
@@ -168,7 +168,7 @@ export const saveCurriculum = async (
         // Create new section
         console.log("Creating new section:", section.id, section.title);
         const { error: insertError } = await supabase
-          .from("course_module")
+          .from("course_section")
           .insert({
             module_id: String(section.id),
             course_id: courseId,
@@ -187,9 +187,9 @@ export const saveCurriculum = async (
       
       // Get existing lessons for this section
       const { data: existingLessons, error: lessonsQueryError } = await supabase
-        .from("lessons")
+        .from("course_lesson")
         .select("lesson_id")
-        .eq("module_id", String(section.id));
+        .eq("section_id", String(section.id)); // Using section_id as column name
       
       if (lessonsQueryError) {
         console.error("Error fetching existing lessons:", lessonsQueryError);
@@ -209,7 +209,7 @@ export const saveCurriculum = async (
         if (!currentLessonIds.has(existingId)) {
           console.log("Deleting removed lesson:", existingId);
           const { error: deleteError } = await supabase
-            .from("lessons")
+            .from("course_lesson")
             .delete()
             .eq("lesson_id", String(existingId));
           
@@ -230,7 +230,7 @@ export const saveCurriculum = async (
           content_url: lesson.content_url || '',
           video_url: lesson.video_url || '',
           duration: lesson.duration || 0,
-          module_id: String(section.id),
+          section_id: String(section.id), // Using section_id as column name
           is_preview: lesson.is_preview || false,
           is_draft: lesson.is_draft || false,
           is_compulsory: lesson.is_compulsory || true,
@@ -242,7 +242,7 @@ export const saveCurriculum = async (
           // Update existing lesson
           console.log("Updating lesson:", lesson.id, lesson.title);
           const { error: updateError } = await supabase
-            .from("lessons")
+            .from("course_lesson")
             .update(lessonData)
             .eq("lesson_id", String(lesson.id));
           
@@ -254,7 +254,7 @@ export const saveCurriculum = async (
           // Create new lesson
           console.log("Creating new lesson:", lesson.id, lesson.title);
           const { error: insertError } = await supabase
-            .from("lessons")
+            .from("course_lesson")
             .insert({
               lesson_id: String(lesson.id),
               ...lessonData

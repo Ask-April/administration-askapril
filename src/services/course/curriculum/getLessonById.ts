@@ -9,7 +9,7 @@ import { CourseLesson } from "@/services/types";
 export const getLessonById = async (lessonId: string): Promise<CourseLesson | null> => {
   try {
     const { data, error } = await supabase
-      .from("lessons")
+      .from("course_lesson")  // Using the actual table name in the database
       .select("*")
       .eq("lesson_id", lessonId)
       .single();
@@ -27,7 +27,7 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
     // with fallbacks for fields that might not exist in the database
     const lesson: CourseLesson = {
       id: data.lesson_id,
-      section_id: data.module_id,
+      section_id: data.section_id, // Keep using section_id as it exists in the database
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
