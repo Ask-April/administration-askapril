@@ -12,12 +12,12 @@ interface SectionCardProps {
   onAddLesson: (section: Section) => void;
   onDeleteLesson: (sectionId: string, lessonId: string) => void;
   onOpenLessonModal: (sectionId: string, lesson: any) => void;
-  onDragStart: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragStart: (event: React.DragEvent<HTMLDivElement>, item: any, type: 'section' | 'lesson', sectionId?: string) => void;
   onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
   onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
   onDragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
-  onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
-  changeLessonType: (lessonId: string, newType: string) => void;
+  onDrop: (event: React.DragEvent<HTMLDivElement>, targetId: string, type: 'section' | 'lesson', sectionId?: string) => void;
+  changeLessonType: (sectionId: string, lessonId: string, newType: string) => void;
   updateLessonTitle: (lessonId: string, newTitle: string) => void;
 }
 
@@ -36,7 +36,15 @@ const SectionCard: React.FC<SectionCardProps> = ({
   updateLessonTitle
 }) => {
   return (
-    <Card className="relative group">
+    <Card 
+      className="relative group" 
+      draggable
+      onDragStart={(e) => onDragStart(e, section, 'section')}
+      onDragEnd={onDragEnd}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={(e) => onDrop(e, section.id, 'section')}
+    >
       <CardContent className="p-4">
         <div className="flex justify-between items-center mb-3">
           <h3 className="font-medium">{section.title}</h3>
@@ -57,15 +65,14 @@ const SectionCard: React.FC<SectionCardProps> = ({
               key={lesson.id}
               lesson={lesson}
               sectionId={section.id}
-              onDelete={onDeleteLesson}
+              onDeleteLesson={onDeleteLesson}
               onOpenLessonModal={onOpenLessonModal}
-              onDragStart={onDragStart}
+              onDragStart={(e) => onDragStart(e, lesson, 'lesson', section.id)}
               onDragEnd={onDragEnd}
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
-              onDrop={onDrop}
-              changeLessonType={changeLessonType}
-              updateLessonTitle={updateLessonTitle}
+              onDrop={(e) => onDrop(e, lesson.id, 'lesson', section.id)}
+              changeLessonType={(lessonId, newType) => changeLessonType(section.id, lessonId, newType)}
             />
           ))}
           

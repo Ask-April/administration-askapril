@@ -2,7 +2,6 @@
 import React from "react";
 import SectionItem from "./SectionItem";
 import LessonEditDrawer from "./LessonEditDrawer";
-import AddSectionForm from "./AddSectionForm";
 import AddLessonSidebar from "./AddLessonSidebar";
 import { useContentOrganization } from "@/hooks/useContentOrganization";
 import { CourseSection } from "@/services/types";
@@ -53,6 +52,7 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
 
   return (
     <div className="space-y-4">
+      {/* Only show one Add Section input field regardless of how many times the button is clicked */}
       {showAddSection && (
         <div className="flex items-center space-x-2 mb-4">
           <Input

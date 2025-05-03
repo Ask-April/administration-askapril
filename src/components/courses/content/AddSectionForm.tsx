@@ -1,7 +1,8 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
 import { ContentOrganizationHook } from "@/hooks/useContentOrganization";
 
 interface AddSectionFormProps {
@@ -15,10 +16,6 @@ const AddSectionForm: React.FC<AddSectionFormProps> = ({ hook }) => {
     handleAddSection 
   } = hook;
 
-  const onAddSection = () => {
-    handleAddSection();
-  };
-
   return (
     <div className="flex items-center space-x-2 mb-4">
       <Input
@@ -26,8 +23,16 @@ const AddSectionForm: React.FC<AddSectionFormProps> = ({ hook }) => {
         onChange={(e) => setNewSectionTitle(e.target.value)}
         placeholder="Enter section title"
         className="flex-grow"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && newSectionTitle.trim()) {
+            handleAddSection();
+          }
+        }}
       />
-      <Button onClick={onAddSection}>Add Section</Button>
+      <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
+        <PlusCircle className="h-4 w-4 mr-2" />
+        Add Section
+      </Button>
     </div>
   );
 };

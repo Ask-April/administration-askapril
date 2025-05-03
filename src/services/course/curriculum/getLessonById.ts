@@ -24,10 +24,9 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
     }
     
     // Map the database response to our CourseLesson type
-    // with fallbacks for fields that might not exist in the database
     const lesson: CourseLesson = {
       id: data.lesson_id,
-      section_id: data.section_id, // Keep using section_id as it exists in the database
+      section_id: data.section_id,
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
@@ -35,10 +34,10 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       content_url: data.content_url || '',
       video_url: data.video_url || '',
       duration: data.duration || 0,
-      is_preview: !!data.is_preview,
-      is_draft: !!data.is_draft,
+      is_preview: data.is_preview === true,
+      is_draft: data.is_draft === true,
       is_compulsory: data.is_compulsory !== false, // default to true if not defined
-      enable_discussion: !!data.enable_discussion
+      enable_discussion: data.enable_discussion === true
     };
 
     return lesson;
