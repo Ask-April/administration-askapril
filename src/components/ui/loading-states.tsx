@@ -1,18 +1,13 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 export const LoadingSkeleton = () => {
-  return (
-    <div className="w-full h-full flex items-center justify-center p-6">
+  return <div className="w-full h-full flex items-center justify-center p-6">
       <div className="animate-pulse rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-    </div>
-  );
+    </div>;
 };
-
 export const StatCardSkeleton = () => {
-  return (
-    <Card>
+  return <Card>
       <CardHeader className="pb-2">
         <Skeleton className="h-4 w-24" />
       </CardHeader>
@@ -20,13 +15,10 @@ export const StatCardSkeleton = () => {
         <Skeleton className="h-8 w-16 mb-2" />
         <Skeleton className="h-3 w-32" />
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export const CourseProgressSkeleton = () => {
-  return (
-    <div className="space-y-3">
+  return <div className="space-y-3">
       <div className="flex items-start gap-3">
         <Skeleton className="h-12 w-12 rounded" />
         <div className="space-y-2 flex-1">
@@ -35,13 +27,10 @@ export const CourseProgressSkeleton = () => {
           <Skeleton className="h-2 w-3/4" />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export const ChartSkeleton = () => {
-  return (
-    <Card>
+  return <Card>
       <CardHeader>
         <Skeleton className="h-6 w-36" />
         <Skeleton className="h-4 w-48 mt-1" />
@@ -49,56 +38,40 @@ export const ChartSkeleton = () => {
       <CardContent>
         <Skeleton className="h-[300px] w-full" />
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export const RecentActivitySkeleton = () => {
-  return (
-    <Card>
+  return <Card>
       <CardHeader>
         <Skeleton className="h-6 w-32" />
         <Skeleton className="h-4 w-48 mt-1" />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="flex items-start gap-4 rounded-lg border p-3">
+          {Array.from({
+          length: 3
+        }).map((_, index) => <div key={index} className="flex items-start gap-4 rounded-lg border p-3">
               <Skeleton className="h-8 w-8 rounded-full" />
               <div className="space-y-2 flex-1">
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-3 w-full" />
                 <Skeleton className="h-3 w-1/4" />
               </div>
-            </div>
-          ))}
+            </div>)}
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export const EmptyState = ({
   title = "Nothing here yet",
   description = "There is no data to display at this time.",
   icon: Icon,
-  action,
+  action
 }: {
   title?: string;
   description?: string;
   icon?: React.ComponentType<any>;
   action?: React.ReactNode;
 }) => {
-  return (
-    <div className="flex flex-col items-center justify-center p-8 text-center h-full min-h-[200px] bg-muted/30 rounded-lg">
-      {Icon && (
-        <div className="bg-primary/10 p-3 rounded-full mb-4">
-          <Icon className="h-8 w-8 text-primary" />
-        </div>
-      )}
-      <h3 className="text-xl font-medium mb-2">{title}</h3>
-      <p className="text-muted-foreground mb-4 max-w-md">{description}</p>
-      {action}
-    </div>
-  );
+  return;
 };
