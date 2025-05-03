@@ -1,9 +1,5 @@
 
-import { getLessonById, lessonService } from './getLessonById';
-import { getCurriculum } from '../curriculumService';
+import { lessonService } from './getLessonById';
 
-export {
-  getLessonById,
-  lessonService,
-  getCurriculum
-};
+export { lessonService };
+export default lessonService;

@@ -159,7 +159,7 @@ export type Database = {
             foreignKeyName: "assignment_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "course_lesson"
             referencedColumns: ["lesson_id"]
           },
         ]
@@ -442,7 +442,45 @@ export type Database = {
         }
         Relationships: []
       }
-      course_module: {
+      course_lesson: {
+        Row: {
+          content_url: string | null
+          duration: number | null
+          lesson_id: string
+          position: number | null
+          section_id: string | null
+          title: string | null
+          type: string | null
+        }
+        Insert: {
+          content_url?: string | null
+          duration?: number | null
+          lesson_id?: string
+          position?: number | null
+          section_id?: string | null
+          title?: string | null
+          type?: string | null
+        }
+        Update: {
+          content_url?: string | null
+          duration?: number | null
+          lesson_id?: string
+          position?: number | null
+          section_id?: string | null
+          title?: string | null
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_lesson_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "course_section"
+            referencedColumns: ["module_id"]
+          },
+        ]
+      }
+      course_section: {
         Row: {
           course_id: string | null
           module_id: string
@@ -1004,7 +1042,7 @@ export type Database = {
             foreignKeyName: "lesson_comment_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "course_lesson"
             referencedColumns: ["lesson_id"]
           },
           {
@@ -1040,7 +1078,7 @@ export type Database = {
             foreignKeyName: "lesson_completion_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "course_lesson"
             referencedColumns: ["lesson_id"]
           },
           {
@@ -1073,7 +1111,7 @@ export type Database = {
             foreignKeyName: "lesson_resource_lesson_id_fkey"
             columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: "lessons"
+            referencedRelation: "course_lesson"
             referencedColumns: ["lesson_id"]
           },
           {
@@ -1082,44 +1120,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "media"
             referencedColumns: ["media_id"]
-          },
-        ]
-      }
-      lessons: {
-        Row: {
-          content_url: string | null
-          duration: number | null
-          lesson_id: string
-          module_id: string | null
-          position: number | null
-          title: string | null
-          type: string | null
-        }
-        Insert: {
-          content_url?: string | null
-          duration?: number | null
-          lesson_id?: string
-          module_id?: string | null
-          position?: number | null
-          title?: string | null
-          type?: string | null
-        }
-        Update: {
-          content_url?: string | null
-          duration?: number | null
-          lesson_id?: string
-          module_id?: string | null
-          position?: number | null
-          title?: string | null
-          type?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lessons_module_id_fkey"
-            columns: ["module_id"]
-            isOneToOne: false
-            referencedRelation: "course_module"
-            referencedColumns: ["module_id"]
           },
         ]
       }
@@ -1211,47 +1211,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      modules_comments: {
-        Row: {
-          avatar_url: string | null
-          comment_text: string
-          created_at: string | null
-          id: string
-          module_id: string | null
-          updated_at: string | null
-          user_id: string | null
-          username: string
-        }
-        Insert: {
-          avatar_url?: string | null
-          comment_text: string
-          created_at?: string | null
-          id?: string
-          module_id?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          username: string
-        }
-        Update: {
-          avatar_url?: string | null
-          comment_text?: string
-          created_at?: string | null
-          id?: string
-          module_id?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          username?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "modules_comments_module_id_fkey"
-            columns: ["module_id"]
-            isOneToOne: false
-            referencedRelation: "course_module"
-            referencedColumns: ["module_id"]
           },
         ]
       }
@@ -1924,6 +1883,47 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "courses"
             referencedColumns: ["course_id"]
+          },
+        ]
+      }
+      section_comments: {
+        Row: {
+          avatar_url: string | null
+          comment_text: string
+          created_at: string | null
+          id: string
+          section_id: string | null
+          updated_at: string | null
+          user_id: string | null
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          comment_text: string
+          created_at?: string | null
+          id?: string
+          section_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          comment_text?: string
+          created_at?: string | null
+          id?: string
+          section_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "section_comments_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "course_section"
+            referencedColumns: ["module_id"]
           },
         ]
       }
