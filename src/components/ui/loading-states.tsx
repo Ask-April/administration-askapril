@@ -1,11 +1,14 @@
+
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 export const LoadingSkeleton = () => {
   return <div className="w-full h-full flex items-center justify-center p-6">
       <div className="animate-pulse rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
     </div>;
 };
+
 export const StatCardSkeleton = () => {
   return <Card>
       <CardHeader className="pb-2">
@@ -17,6 +20,7 @@ export const StatCardSkeleton = () => {
       </CardContent>
     </Card>;
 };
+
 export const CourseProgressSkeleton = () => {
   return <div className="space-y-3">
       <div className="flex items-start gap-3">
@@ -29,6 +33,7 @@ export const CourseProgressSkeleton = () => {
       </div>
     </div>;
 };
+
 export const ChartSkeleton = () => {
   return <Card>
       <CardHeader>
@@ -40,6 +45,7 @@ export const ChartSkeleton = () => {
       </CardContent>
     </Card>;
 };
+
 export const RecentActivitySkeleton = () => {
   return <Card>
       <CardHeader>
@@ -62,6 +68,7 @@ export const RecentActivitySkeleton = () => {
       </CardContent>
     </Card>;
 };
+
 export const EmptyState = ({
   title = "Nothing here yet",
   description = "There is no data to display at this time.",
@@ -73,5 +80,18 @@ export const EmptyState = ({
   icon?: React.ComponentType<any>;
   action?: React.ReactNode;
 }) => {
-  return;
+  return (
+    <div className="flex flex-col items-center justify-center text-center p-6 space-y-4">
+      {Icon && (
+        <div className="rounded-full bg-muted p-3">
+          <Icon className="h-6 w-6" />
+        </div>
+      )}
+      <div className="space-y-2">
+        {title && <h3 className="text-lg font-medium">{title}</h3>}
+        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+      </div>
+      {action && <div>{action}</div>}
+    </div>
+  );
 };

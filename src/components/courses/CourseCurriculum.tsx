@@ -76,13 +76,6 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
     }));
   };
 
-  // Update curriculum sections while preserving course_id
-  const handleUpdateSections = (sections: CourseSection[]) => {
-    // Convert back to CurriculumSection[] for the wizard context
-    const updatedCurriculumSections = sections.map(({ course_id, ...rest }) => rest as CurriculumSection);
-    updateCurriculumSections(updatedCurriculumSections);
-  };
-
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Curriculum</h2>
@@ -133,8 +126,8 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
       {curriculumSections.length > 0 && (
         <ContentOrganization 
           sections={getCourseSections()}
-          updateSections={handleUpdateSections}
-          showAddSection={false} // Don't show AddSectionForm in ContentOrganization, we'll handle it here
+          updateSections={(sections) => onUpdateSections(sections)}
+          showAddSection={false} // Don't show AddSectionForm in ContentOrganization
         />
       )}
       
