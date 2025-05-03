@@ -35,10 +35,10 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       content_url: data.content_url || '',
       video_url: data.video_url || '',
       duration: data.duration || 0,
-      is_preview: data.is_preview === true,
-      is_draft: data.is_draft === true,
+      is_preview: !!data.is_preview,
+      is_draft: !!data.is_draft,
       is_compulsory: data.is_compulsory !== false, // default to true if not defined
-      enable_discussion: data.enable_discussion === true
+      enable_discussion: !!data.enable_discussion
     };
 
     return lesson;
