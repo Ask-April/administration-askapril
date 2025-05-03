@@ -31,15 +31,15 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
-      // Handle optional fields that might not exist in the database
-      content: data.content || '',
+      // Handle optional fields with optional chaining and nullish coalescing
+      content: data.content ?? '',
       content_url: data.content_url || '',
-      video_url: data.video_url || '',
+      video_url: data.video_url ?? '',
       duration: data.duration || 0,
-      is_preview: Boolean(data.is_preview),
-      is_draft: Boolean(data.is_draft),
-      is_compulsory: data.is_compulsory === false ? false : true, // default to true if not defined
-      enable_discussion: Boolean(data.enable_discussion)
+      is_preview: data.is_preview === true,
+      is_draft: data.is_draft === true,
+      is_compulsory: data.is_compulsory !== false, // default to true if not defined
+      enable_discussion: data.enable_discussion === true
     };
 
     return lesson;
