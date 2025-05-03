@@ -130,17 +130,32 @@ const LessonItem: React.FC<LessonItemProps> = ({
           )}
         </div>
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation();
-          onDeleteLesson(sectionId, lesson.id);
-        }}
-        className="h-7 w-7 p-0"
-      >
-        <X className="h-3.5 w-3.5 text-destructive" />
-      </Button>
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenLessonModal(sectionId, lesson);
+          }}
+          className="h-7 w-7 p-0"
+          title="Edit lesson"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteLesson(sectionId, lesson.id);
+          }}
+          className="h-7 w-7 p-0"
+          title="Delete lesson"
+        >
+          <X className="h-3.5 w-3.5 text-destructive" />
+        </Button>
+      </div>
     </div>
   );
 };

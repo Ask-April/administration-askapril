@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ interface SectionCardProps {
   onDeleteSection: (sectionId: string) => void;
   onAddLesson: (section: Section) => void;
   onDeleteLesson: (sectionId: string, lessonId: string) => void;
-  onOpenLessonModal: (lessonId: string) => void;
+  onOpenLessonModal: (sectionId: string, lesson: any) => void;
   onDragStart: (event: React.DragEvent<HTMLDivElement>) => void;
   onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
   onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
