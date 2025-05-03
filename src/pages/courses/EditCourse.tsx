@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CoursePageHeader from "@/components/courses/CoursePageHeader";
@@ -9,7 +10,7 @@ import { toast } from "sonner";
 import { useEditCourse } from "@/hooks/useEditCourse";
 import { EmptyState, LoadingSkeleton } from "@/components/ui/loading-states";
 import { CourseSection } from "@/services/types";
-import { curriculumService } from "@/services/course/curriculum";
+import { curriculumService } from "@/services/course/curriculumService";
 import { 
   OverviewTab,
   DetailsTab, 

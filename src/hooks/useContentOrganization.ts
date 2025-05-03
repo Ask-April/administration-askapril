@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { CourseSection, CourseLesson } from "@/services/types";
@@ -16,7 +15,6 @@ export const useContentOrganization = (
     lesson: CourseLesson;
   } | null>(null);
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
-  const [isNewLesson, setIsNewLesson] = useState(false);
   const [draggedItem, setDraggedItem] = useState<any>(null);
   const [dragOverItem, setDragOverItem] = useState<any>(null);
   const [dragType, setDragType] = useState<'section' | 'lesson' | null>(null);
@@ -36,14 +34,6 @@ export const useContentOrganization = (
   const [content, setContent] = useState('');
   const [contentUrl, setContentUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Preserve content when selected lesson changes
-  useEffect(() => {
-    if (selectedLesson && !isNewLesson) {
-      setContent(selectedLesson.lesson.content || "");
-      setContentUrl(selectedLesson.lesson.content_url || "");
-    }
-  }, [selectedLesson, isNewLesson]);
 
   const handleAddSection = () => {
     if (!newSectionTitle.trim()) return;
@@ -70,17 +60,7 @@ export const useContentOrganization = (
 
   const handleAddLesson = (sectionId: string) => {
     setCurrentSectionId(sectionId);
-    setIsNewLesson(true);
-    // Reset content for new lesson
-    setContent("");
-    setContentUrl("");
-    setLessonName("");
-    setSelectedType("video");
-    setEnableFreePreview(false);
-    setSetAsDraft(false);
-    setSetAsCompulsory(true);
-    setEnableDiscussion(false);
-    setIsLessonModalOpen(true);
+    setIsAddLessonSidebarOpen(true);
   };
 
   const handleDeleteLesson = (sectionId: string, lessonId: string) => {
@@ -101,7 +81,6 @@ export const useContentOrganization = (
   };
 
   const openLessonModal = (sectionId: string, lesson: CourseLesson) => {
-    setIsNewLesson(false);
     setSelectedLesson({ sectionId, lesson });
     setContent(lesson.content || "");
     setContentUrl(lesson.content_url || "");
@@ -277,8 +256,6 @@ export const useContentOrganization = (
       enable_discussion: enableDiscussion,
       content: content,
       content_url: contentUrl,
-      video_url: '',
-      duration: 0,
       position: section.lessons.length
     };
 
@@ -293,30 +270,22 @@ export const useContentOrganization = (
     });
     
     setSections(updatedSections);
-    setIsLessonModalOpen(false);
-    setIsNewLesson(false);
+    setIsAddLessonSidebarOpen(false);
     toast.success(`Lesson "${lessonName}" added successfully`);
     resetForm();
   };
 
   const handleLessonContentSave = () => {
-    if (isNewLesson) {
-      handleSaveNewLesson();
-      return;
-    }
-
     if (!selectedLesson) return;
     
-    const lessonToSave = selectedLesson.lesson;
-    
-    // Create a complete updated lesson object with all fields
     const updatedSections = sections.map(section => {
       if (section.id === selectedLesson.sectionId) {
         const updatedLessons = section.lessons.map(lesson => {
-          if (lesson.id === lessonToSave.id) {
+          if (lesson.id === selectedLesson.lesson.id) {
             return { 
-              ...lesson,
-              ...selectedLesson.lesson,
+              ...lesson, 
+              title: selectedLesson.lesson.title,
+              type: selectedLesson.lesson.type,
               content: content,
               content_url: contentUrl
             };
@@ -332,12 +301,7 @@ export const useContentOrganization = (
     setSections(updatedSections);
     toast.success("Lesson content saved successfully");
     setIsLessonModalOpen(false);
-    
-    // Don't clear the selectedLesson right away
-    // This prevents the content from immediately disappearing
-    setTimeout(() => {
-      setSelectedLesson(null);
-    }, 300);
+    setSelectedLesson(null);
   };
 
   return {
@@ -356,8 +320,6 @@ export const useContentOrganization = (
     
     isLessonModalOpen,
     setIsLessonModalOpen,
-    isNewLesson,
-    setIsNewLesson,
 
     draggedItem,
     dragOverItem,

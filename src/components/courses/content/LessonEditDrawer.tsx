@@ -22,7 +22,6 @@ interface LessonEditDrawerProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleLessonContentSave: () => void;
-  isNewLesson?: boolean;
 }
 
 const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
@@ -37,40 +36,33 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
   fileInputRef,
   handleFileChange,
   handleLessonContentSave,
-  isNewLesson = false,
 }) => {
   const [lessonName, setLessonName] = React.useState("");
-  const [selectedType, setSelectedType] = React.useState<string | null>("video");
+  const [selectedType, setSelectedType] = React.useState<string | null>(null);
   const [enableFreePreview, setEnableFreePreview] = React.useState(false);
-  const [setAsDraft, setSetAsDraft] = React.useState(false);
+  const [setAsDraft, setSetAsDraft] = React.useState(true);
   const [setAsCompulsory, setSetAsCompulsory] = React.useState(true);
   const [enableDiscussion, setEnableDiscussion] = React.useState(true);
 
-  // Update form state when selectedLesson changes or drawer opens
+  // Update form state when selectedLesson changes
   useEffect(() => {
-    if (isOpen) {
-      if (selectedLesson && !isNewLesson) {
-        // Update form with existing lesson data
-        setLessonName(selectedLesson.lesson?.title || "");
-        setSelectedType(selectedLesson.lesson?.type || "video");
-        setEnableFreePreview(selectedLesson.lesson?.is_preview || false);
-        setSetAsDraft(selectedLesson.lesson?.is_draft || false);
-        setSetAsCompulsory(selectedLesson.lesson?.is_compulsory || true);
-        setEnableDiscussion(selectedLesson.lesson?.enable_discussion || true);
-        setContent(selectedLesson.lesson?.content || "");
-        setContentUrl(selectedLesson.lesson?.content_url || "");
-      } else if (isNewLesson) {
-        // Reset form for new lesson
-        resetForm();
-      }
+    if (selectedLesson) {
+      setLessonName(selectedLesson.title || "");
+      setSelectedType(selectedLesson.type || null);
+      setEnableFreePreview(selectedLesson.isPreview || false);
+      setSetAsDraft(selectedLesson.isDraft || true);
+      setSetAsCompulsory(selectedLesson.isCompulsory || true);
+      setEnableDiscussion(selectedLesson.enableDiscussion || true);
+    } else {
+      resetForm();
     }
-  }, [selectedLesson, isOpen, isNewLesson, setContent, setContentUrl]);
+  }, [selectedLesson]);
 
   const resetForm = () => {
     setLessonName("");
-    setSelectedType("video");
+    setSelectedType(null);
     setEnableFreePreview(false);
-    setSetAsDraft(false);
+    setSetAsDraft(true);
     setSetAsCompulsory(true);
     setEnableDiscussion(true);
     setContent("");
@@ -79,34 +71,18 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
 
   const handleSave = () => {
     // Update the selected lesson with the form values
-    if (selectedLesson || isNewLesson) {
+    if (selectedLesson) {
       const updatedLesson = {
-        ...(selectedLesson || {}),
-        lesson: {
-          ...(selectedLesson?.lesson || {}),
-          title: lessonName,
-          type: selectedType,
-          is_preview: enableFreePreview,
-          is_draft: setAsDraft,
-          is_compulsory: setAsCompulsory,
-          enable_discussion: enableDiscussion,
-          content: content,
-          content_url: contentUrl,
-        }
+        ...selectedLesson,
+        title: lessonName,
+        type: selectedType,
+        isPreview: enableFreePreview,
+        isDraft: setAsDraft,
+        isCompulsory: setAsCompulsory,
+        enableDiscussion: enableDiscussion,
       };
-      
-      // First update the selected lesson so it contains current content
       setSelectedLesson(updatedLesson);
-      
-      // Then call the save function
       handleLessonContentSave();
-    }
-  };
-
-  const handleCancel = () => {
-    setIsOpen(false);
-    if (isNewLesson) {
-      resetForm();
     }
   };
 
@@ -115,7 +91,9 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
       <SheetContent className="w-full sm:max-w-md md:max-w-xl overflow-y-auto">
         <SheetHeader>
           <SheetTitle>
-            {isNewLesson ? "Add New Lesson" : `Edit Lesson: ${lessonName}`}
+            {selectedLesson?.title
+              ? `Edit Lesson: ${selectedLesson.title}`
+              : "New Lesson"}
           </SheetTitle>
         </SheetHeader>
 
@@ -144,7 +122,7 @@ const LessonEditDrawer: React.FC<LessonEditDrawerProps> = ({
 
         <SheetFooter className="pt-4 mt-6 border-t">
           <div className="flex justify-end gap-2 w-full">
-            <Button variant="outline" onClick={handleCancel}>
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
             <Button

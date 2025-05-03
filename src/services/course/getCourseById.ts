@@ -35,7 +35,7 @@ export const getCourseById = async (id: string): Promise<Course | null> => {
       category_id: rawData.category_id,
       image_url: rawData.image_url,
       status: rawData.status,
-      site_id: rawData.ownership || crypto.randomUUID(), // Use existing ownership (previously site_id) or generate one if missing
+      site_id: rawData.site_id || crypto.randomUUID(), // Use existing site_id or generate one if missing
       featured: !!rawData.featured,
       price_visible: rawData.price_visible !== false,
       hidden: !!rawData.hidden,

@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { LayoutGrid, PlusCircle } from "lucide-react";
-import { ContentOrganization } from "@/components/courses/content";
-import { curriculumService } from "@/services/course/curriculum";
+import { LayoutGrid, Plus, PlusCircle } from "lucide-react";
+import { ContentOrganization, AddSectionForm } from "@/components/courses/content";
+import { curriculumService } from "@/services/course/curriculumService";
 import { toast } from "sonner";
 import { CourseSection } from "@/services/types";
 import { Button } from "@/components/ui/button";

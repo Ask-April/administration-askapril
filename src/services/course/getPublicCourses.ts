@@ -27,7 +27,7 @@ export const getPublicCourses = async (): Promise<Course[]> => {
         category_id: item.category_id,
         image_url: item.image_url,
         status: item.status,
-        site_id: item.ownership || '', // Use ownership instead of site_id
+        site_id: item.site_id,
         featured: item.featured,
         price_visible: item.price_visible,
         hidden: item.hidden,

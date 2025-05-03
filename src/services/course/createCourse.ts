@@ -33,7 +33,7 @@ export const createCourse = async (courseData: {
         category_id: courseData.category,
         image_url: courseData.image,
         status: courseData.status,
-        ownership: crypto.randomUUID(), // Generate ownership since it's required (previously site_id)
+        site_id: crypto.randomUUID(), // Generate site_id since it's required
         owner: userId, // Add the owner field which is required
         featured: false,
         price_visible: true,
@@ -54,7 +54,7 @@ export const createCourse = async (courseData: {
     throw error;
   }
 
-  // Map to our Course type - make sure to include ownership
+  // Map to our Course type - make sure to include site_id
   const rawData = data as any;
   const course: Course = {
     course_id: rawData.course_id,
@@ -63,7 +63,7 @@ export const createCourse = async (courseData: {
     category_id: rawData.category_id,
     image_url: rawData.image_url,
     status: rawData.status,
-    site_id: rawData.ownership || crypto.randomUUID(), // Use existing ownership or generate one if missing
+    site_id: rawData.site_id || crypto.randomUUID(), // Use existing site_id or generate one if missing
     featured: !!rawData.featured,
     price_visible: rawData.price_visible !== false,
     hidden: !!rawData.hidden,

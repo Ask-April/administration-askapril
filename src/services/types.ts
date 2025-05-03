@@ -9,8 +9,7 @@ export interface Course {
   category_id: string | null; // references course_category.category_id
   image_url: string | null;
   status: string | null;
-  site_id: string;         // This is kept for backward compatibility but uses 'ownership' in the DB
-  ownership?: string;      // Added ownership field to match DB schema
+  site_id: string;
   owner?: string;         // Added owner field which is required by database
   featured: boolean | null;
   price_visible: boolean | null;

@@ -40,7 +40,6 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
     setSelectedLesson,
     isLessonModalOpen, 
     setIsLessonModalOpen,
-    isNewLesson,
     content,
     setContent,
     contentUrl,
@@ -106,7 +105,6 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
         fileInputRef={fileInputRef}
         handleFileChange={handleFileChange}
         handleLessonContentSave={handleLessonContentSave}
-        isNewLesson={isNewLesson}
       />
 
       {/* Add New Lesson Sidebar */}

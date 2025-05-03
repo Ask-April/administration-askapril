@@ -3,15 +3,11 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   DollarSign, 
-  Tag,
-  CreditCard,
-  Settings
+  Tag
 } from "lucide-react";
 import {
   PricingModels,
-  DiscountsManager,
-  PricingOptions,
-  PaymentSettings
+  DiscountsManager
 } from "@/components/courses/pricing";
 
 interface PricingTabProps {
@@ -49,33 +45,10 @@ const PricingTab: React.FC<PricingTabProps> = ({
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 mb-4">
-            <Settings className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-medium">Additional Pricing Options</h3>
-          </div>
-          <PricingOptions 
-            editedCourse={editedCourse}
-            updateCourseData={updateCourseData}
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-2 mb-4">
             <Tag className="h-5 w-5 text-primary" />
             <h3 className="text-lg font-medium">Discounts & Promotions</h3>
           </div>
           <DiscountsManager />
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CreditCard className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-medium">Payment Settings</h3>
-          </div>
-          <PaymentSettings />
         </CardContent>
       </Card>
     </div>

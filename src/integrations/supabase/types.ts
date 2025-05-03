@@ -14,7 +14,7 @@ export type Database = {
           action_type: string | null
           details: string | null
           log_id: string
-          owner: string | null
+          site_id: string | null
           timestamp: string | null
           user_id: string | null
         }
@@ -22,7 +22,7 @@ export type Database = {
           action_type?: string | null
           details?: string | null
           log_id?: string
-          owner?: string | null
+          site_id?: string | null
           timestamp?: string | null
           user_id?: string | null
         }
@@ -30,7 +30,7 @@ export type Database = {
           action_type?: string | null
           details?: string | null
           log_id?: string
-          owner?: string | null
+          site_id?: string | null
           timestamp?: string | null
           user_id?: string | null
         }
@@ -214,21 +214,21 @@ export type Database = {
           background_image: string | null
           cert_id: string
           design_data: string | null
-          owner: string | null
+          site_id: string | null
           template_name: string | null
         }
         Insert: {
           background_image?: string | null
           cert_id?: string
           design_data?: string | null
-          owner?: string | null
+          site_id?: string | null
           template_name?: string | null
         }
         Update: {
           background_image?: string | null
           cert_id?: string
           design_data?: string | null
-          owner?: string | null
+          site_id?: string | null
           template_name?: string | null
         }
         Relationships: []
@@ -239,7 +239,7 @@ export type Database = {
           created_by: string | null
           description: string | null
           name: string | null
-          owner: string | null
+          site_id: string | null
           type: string | null
         }
         Insert: {
@@ -247,7 +247,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           name?: string | null
-          owner?: string | null
+          site_id?: string | null
           type?: string | null
         }
         Update: {
@@ -255,7 +255,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           name?: string | null
-          owner?: string | null
+          site_id?: string | null
           type?: string | null
         }
         Relationships: [
@@ -312,7 +312,7 @@ export type Database = {
           contact_id: string
           email: string | null
           name: string | null
-          owner: string | null
+          site_id: string | null
           source: string | null
           status: string | null
         }
@@ -320,7 +320,7 @@ export type Database = {
           contact_id?: string
           email?: string | null
           name?: string | null
-          owner?: string | null
+          site_id?: string | null
           source?: string | null
           status?: string | null
         }
@@ -328,7 +328,7 @@ export type Database = {
           contact_id?: string
           email?: string | null
           name?: string | null
-          owner?: string | null
+          site_id?: string | null
           source?: string | null
           status?: string | null
         }
@@ -343,7 +343,7 @@ export type Database = {
           discount_value: number | null
           expiration_date: string | null
           max_redemptions: number | null
-          owner: string | null
+          site_id: string | null
           usage_count: number | null
         }
         Insert: {
@@ -354,7 +354,7 @@ export type Database = {
           discount_value?: number | null
           expiration_date?: string | null
           max_redemptions?: number | null
-          owner?: string | null
+          site_id?: string | null
           usage_count?: number | null
         }
         Update: {
@@ -365,7 +365,7 @@ export type Database = {
           discount_value?: number | null
           expiration_date?: string | null
           max_redemptions?: number | null
-          owner?: string | null
+          site_id?: string | null
           usage_count?: number | null
         }
         Relationships: []
@@ -580,24 +580,24 @@ export type Database = {
           campaign_id: string
           created_by: string | null
           name: string | null
-          owner: string | null
           send_date: string | null
+          site_id: string | null
           status: string | null
         }
         Insert: {
           campaign_id?: string
           created_by?: string | null
           name?: string | null
-          owner?: string | null
           send_date?: string | null
+          site_id?: string | null
           status?: string | null
         }
         Update: {
           campaign_id?: string
           created_by?: string | null
           name?: string | null
-          owner?: string | null
           send_date?: string | null
+          site_id?: string | null
           status?: string | null
         }
         Relationships: [
@@ -781,21 +781,21 @@ export type Database = {
           external_id: string | null
           external_system: string | null
           mapping_id: string
-          owner: string | null
+          site_id: string | null
         }
         Insert: {
           contact_id?: string | null
           external_id?: string | null
           external_system?: string | null
           mapping_id?: string
-          owner?: string | null
+          site_id?: string | null
         }
         Update: {
           contact_id?: string | null
           external_id?: string | null
           external_system?: string | null
           mapping_id?: string
-          owner?: string | null
+          site_id?: string | null
         }
         Relationships: [
           {
@@ -812,19 +812,19 @@ export type Database = {
           funnel_id: string
           goal: string | null
           name: string | null
-          owner: string | null
+          site_id: string | null
         }
         Insert: {
           funnel_id?: string
           goal?: string | null
           name?: string | null
-          owner?: string | null
+          site_id?: string | null
         }
         Update: {
           funnel_id?: string
           goal?: string | null
           name?: string | null
-          owner?: string | null
+          site_id?: string | null
         }
         Relationships: []
       }
@@ -865,22 +865,22 @@ export type Database = {
           active_flag: boolean | null
           config_data: string | null
           config_id: string
-          owner: string | null
           service_type: string | null
+          site_id: string | null
         }
         Insert: {
           active_flag?: boolean | null
           config_data?: string | null
           config_id?: string
-          owner?: string | null
           service_type?: string | null
+          site_id?: string | null
         }
         Update: {
           active_flag?: boolean | null
           config_data?: string | null
           config_id?: string
-          owner?: string | null
           service_type?: string | null
+          site_id?: string | null
         }
         Relationships: []
       }
@@ -1130,10 +1130,10 @@ export type Database = {
           external_meeting_id: string | null
           host_user_id: string | null
           join_url: string | null
-          owner: string | null
           recording_url: string | null
           session_id: string
           session_type: string | null
+          site_id: string | null
           start_time: string | null
           title: string | null
         }
@@ -1143,10 +1143,10 @@ export type Database = {
           external_meeting_id?: string | null
           host_user_id?: string | null
           join_url?: string | null
-          owner?: string | null
           recording_url?: string | null
           session_id?: string
           session_type?: string | null
+          site_id?: string | null
           start_time?: string | null
           title?: string | null
         }
@@ -1156,10 +1156,10 @@ export type Database = {
           external_meeting_id?: string | null
           host_user_id?: string | null
           join_url?: string | null
-          owner?: string | null
           recording_url?: string | null
           session_id?: string
           session_type?: string | null
+          site_id?: string | null
           start_time?: string | null
           title?: string | null
         }
@@ -1179,7 +1179,7 @@ export type Database = {
           file_url: string | null
           filename: string | null
           media_id: string
-          owner: string | null
+          site_id: string | null
           size: number | null
           uploaded_by: string | null
           uploaded_date: string | null
@@ -1189,7 +1189,7 @@ export type Database = {
           file_url?: string | null
           filename?: string | null
           media_id?: string
-          owner?: string | null
+          site_id?: string | null
           size?: number | null
           uploaded_by?: string | null
           uploaded_date?: string | null
@@ -1199,7 +1199,7 @@ export type Database = {
           file_url?: string | null
           filename?: string | null
           media_id?: string
-          owner?: string | null
+          site_id?: string | null
           size?: number | null
           uploaded_by?: string | null
           uploaded_date?: string | null
@@ -1373,33 +1373,33 @@ export type Database = {
           amount: number | null
           currency: string | null
           order_id: string
-          owner: string | null
           payment_status: string | null
           plan_id: string | null
           product_id: string | null
           purchase_date: string | null
+          site_id: string | null
           user_id: string | null
         }
         Insert: {
           amount?: number | null
           currency?: string | null
           order_id?: string
-          owner?: string | null
           payment_status?: string | null
           plan_id?: string | null
           product_id?: string | null
           purchase_date?: string | null
+          site_id?: string | null
           user_id?: string | null
         }
         Update: {
           amount?: number | null
           currency?: string | null
           order_id?: string
-          owner?: string | null
           payment_status?: string | null
           plan_id?: string | null
           product_id?: string | null
           purchase_date?: string | null
+          site_id?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -1524,22 +1524,22 @@ export type Database = {
       page: {
         Row: {
           content: string | null
-          owner: string | null
           page_id: string
+          site_id: string | null
           title: string | null
           type: string | null
         }
         Insert: {
           content?: string | null
-          owner?: string | null
           page_id?: string
+          site_id?: string | null
           title?: string | null
           type?: string | null
         }
         Update: {
           content?: string | null
-          owner?: string | null
           page_id?: string
+          site_id?: string | null
           title?: string | null
           type?: string | null
         }
@@ -1549,19 +1549,19 @@ export type Database = {
         Row: {
           config_data: string | null
           gateway_id: string
-          owner: string | null
+          site_id: string | null
           type: string | null
         }
         Insert: {
           config_data?: string | null
           gateway_id?: string
-          owner?: string | null
+          site_id?: string | null
           type?: string | null
         }
         Update: {
           config_data?: string | null
           gateway_id?: string
-          owner?: string | null
+          site_id?: string | null
           type?: string | null
         }
         Relationships: []
@@ -1656,25 +1656,25 @@ export type Database = {
         Row: {
           description: string | null
           name: string | null
-          owner: string | null
           product_id: string
           reference_id: string | null
+          site_id: string | null
           type: string | null
         }
         Insert: {
           description?: string | null
           name?: string | null
-          owner?: string | null
           product_id?: string
           reference_id?: string | null
+          site_id?: string | null
           type?: string | null
         }
         Update: {
           description?: string | null
           name?: string | null
-          owner?: string | null
           product_id?: string
           reference_id?: string | null
+          site_id?: string | null
           type?: string | null
         }
         Relationships: []
@@ -2045,18 +2045,18 @@ export type Database = {
       }
       user_roles: {
         Row: {
-          owner: string | null
           role_id: string
+          site_id: string
           user_id: string
         }
         Insert: {
-          owner?: string | null
           role_id: string
+          site_id: string
           user_id: string
         }
         Update: {
-          owner?: string | null
           role_id?: string
+          site_id?: string
           user_id?: string
         }
         Relationships: [
@@ -2152,24 +2152,24 @@ export type Database = {
         Row: {
           event_type: string | null
           is_active: boolean | null
-          owner: string | null
           secret_token: string | null
+          site_id: string | null
           target_url: string | null
           webhook_id: string
         }
         Insert: {
           event_type?: string | null
           is_active?: boolean | null
-          owner?: string | null
           secret_token?: string | null
+          site_id?: string | null
           target_url?: string | null
           webhook_id?: string
         }
         Update: {
           event_type?: string | null
           is_active?: boolean | null
-          owner?: string | null
           secret_token?: string | null
+          site_id?: string | null
           target_url?: string | null
           webhook_id?: string
         }
