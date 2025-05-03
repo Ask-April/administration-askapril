@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LayoutGrid, Plus, PlusCircle } from "lucide-react";
-import { ContentOrganization, AddSectionForm } from "@/components/courses/content";
+import { ContentOrganization } from "@/components/courses/content";
 import { curriculumService } from "@/services/course/curriculumService";
 import { toast } from "sonner";
 import { CourseSection } from "@/services/types";
@@ -92,6 +92,13 @@ const ContentTab: React.FC<ContentTabProps> = ({
     toast.success(`Section "${newSectionTitle}" added successfully`);
   };
 
+  // Handle key press to add section on enter
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newSectionTitle.trim()) {
+      handleAddSection();
+    }
+  };
+
   return (
     <div className="space-y-8">
       <Card>
@@ -114,6 +121,7 @@ const ContentTab: React.FC<ContentTabProps> = ({
                     onChange={(e) => setNewSectionTitle(e.target.value)}
                     placeholder="e.g., Introduction to the course"
                     className="flex-grow"
+                    onKeyDown={handleKeyDown}
                   />
                   <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
                     <PlusCircle className="h-4 w-4 mr-2" />
@@ -131,11 +139,29 @@ const ContentTab: React.FC<ContentTabProps> = ({
               </div>
             </div>
           ) : (
-            <ContentOrganization 
-              sections={sections} 
-              updateSections={updateSections} 
-              showAddSection={true} 
-            />
+            <div>
+              {/* Add section input at the top (only if there are already sections) */}
+              <div className="flex items-center space-x-2 mb-4">
+                <Input
+                  value={newSectionTitle}
+                  onChange={(e) => setNewSectionTitle(e.target.value)}
+                  placeholder="Enter section title"
+                  className="flex-grow"
+                  onKeyDown={handleKeyDown}
+                />
+                <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Add Section
+                </Button>
+              </div>
+              
+              {/* ContentOrganization component without its own Add Section form */}
+              <ContentOrganization 
+                sections={sections} 
+                updateSections={updateSections} 
+                showAddSection={false} 
+              />
+            </div>
           )}
         </CardContent>
       </Card>

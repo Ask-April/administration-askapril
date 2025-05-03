@@ -229,10 +229,10 @@ export const saveCurriculum = async (
           content_url: lesson.content_url || '',
           video_url: lesson.video_url || '',
           duration: lesson.duration || 0,
-          section_id: String(section.id), // Using section_id as column name
+          section_id: String(section.id), // Explicitly cast to string
           is_preview: lesson.is_preview || false,
           is_draft: lesson.is_draft || false,
-          is_compulsory: lesson.is_compulsory || true,
+          is_compulsory: lesson.is_compulsory ?? true,
           enable_discussion: lesson.enable_discussion || false
         };
 

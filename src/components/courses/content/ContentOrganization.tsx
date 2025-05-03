@@ -3,11 +3,9 @@ import React from "react";
 import SectionItem from "./SectionItem";
 import LessonEditDrawer from "./LessonEditDrawer";
 import AddLessonSidebar from "./AddLessonSidebar";
+import AddSectionForm from "./AddSectionForm";
 import { useContentOrganization } from "@/hooks/useContentOrganization";
 import { CourseSection } from "@/services/types";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
 
 interface ContentOrganizationProps {
   sections: CourseSection[];
@@ -52,24 +50,9 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Only show one Add Section input field regardless of how many times the button is clicked */}
+      {/* Only show AddSectionForm component if showAddSection is true */}
       {showAddSection && (
-        <div className="flex items-center space-x-2 mb-4">
-          <Input
-            value={newSectionTitle}
-            onChange={(e) => setNewSectionTitle(e.target.value)}
-            placeholder="Enter section title"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && newSectionTitle.trim()) {
-                handleAddSection();
-              }
-            }}
-          />
-          <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
-            <PlusCircle className="h-4 w-4 mr-2" />
-            Add Section
-          </Button>
-        </div>
+        <AddSectionForm hook={contentOrgHook} />
       )}
       
       <div className="space-y-4">

@@ -18,7 +18,7 @@ interface SectionCardProps {
   onDragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (event: React.DragEvent<HTMLDivElement>, targetId: string, type: 'section' | 'lesson', sectionId?: string) => void;
   changeLessonType: (sectionId: string, lessonId: string, newType: string) => void;
-  updateLessonTitle: (lessonId: string, newTitle: string) => void;
+  updateLessonTitle?: (lessonId: string, newTitle: string) => void;
 }
 
 const SectionCard: React.FC<SectionCardProps> = ({
@@ -65,14 +65,14 @@ const SectionCard: React.FC<SectionCardProps> = ({
               key={lesson.id}
               lesson={lesson}
               sectionId={section.id}
-              onDeleteLesson={onDeleteLesson}
-              onOpenLessonModal={onOpenLessonModal}
-              onDragStart={(e) => onDragStart(e, lesson, 'lesson', section.id)}
+              onDelete={() => onDeleteLesson(section.id, lesson.id)}
+              onOpen={() => onOpenLessonModal(section.id, lesson)}
+              onDragStart={(e: React.DragEvent<HTMLDivElement>) => onDragStart(e, lesson, 'lesson', section.id)}
               onDragEnd={onDragEnd}
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
-              onDrop={(e) => onDrop(e, lesson.id, 'lesson', section.id)}
-              changeLessonType={(lessonId, newType) => changeLessonType(section.id, lessonId, newType)}
+              onDrop={(e: React.DragEvent<HTMLDivElement>) => onDrop(e, lesson.id, 'lesson', section.id)}
+              onChangeType={(newType: string) => changeLessonType(section.id, lesson.id, newType)}
             />
           ))}
           

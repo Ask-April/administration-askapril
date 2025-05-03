@@ -23,21 +23,23 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       return null;
     }
     
-    // Map the database response to our CourseLesson type
+    // Map the database response to our CourseLesson type with proper type safety
+    // and default values for potentially missing properties
     const lesson: CourseLesson = {
       id: data.lesson_id,
       section_id: data.section_id,
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
-      content: data.content || '',
-      content_url: data.content_url || '',
-      video_url: data.video_url || '',
-      duration: data.duration || 0,
-      is_preview: data.is_preview === true,
-      is_draft: data.is_draft === true,
-      is_compulsory: data.is_compulsory !== false, // default to true if not defined
-      enable_discussion: data.enable_discussion === true
+      // Use optional chaining and nullish coalescing for possibly undefined properties
+      content: data.content ?? '',
+      content_url: data.content_url ?? '',
+      video_url: data.video_url ?? '',
+      duration: data.duration ?? 0,
+      is_preview: !!data.is_preview,
+      is_draft: !!data.is_draft,
+      is_compulsory: data.is_compulsory === false ? false : true, // default to true
+      enable_discussion: !!data.enable_discussion
     };
 
     return lesson;

@@ -16,6 +16,13 @@ const AddSectionForm: React.FC<AddSectionFormProps> = ({ hook }) => {
     handleAddSection 
   } = hook;
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newSectionTitle.trim()) {
+      e.preventDefault();
+      handleAddSection();
+    }
+  };
+
   return (
     <div className="flex items-center space-x-2 mb-4">
       <Input
@@ -23,11 +30,7 @@ const AddSectionForm: React.FC<AddSectionFormProps> = ({ hook }) => {
         onChange={(e) => setNewSectionTitle(e.target.value)}
         placeholder="Enter section title"
         className="flex-grow"
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && newSectionTitle.trim()) {
-            handleAddSection();
-          }
-        }}
+        onKeyDown={handleKeyDown}
       />
       <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
         <PlusCircle className="h-4 w-4 mr-2" />

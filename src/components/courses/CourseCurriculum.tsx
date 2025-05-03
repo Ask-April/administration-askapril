@@ -131,24 +131,26 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
       
       {/* Content organization will show after adding at least one section */}
       {curriculumSections.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2 mb-4">
-            <Input
-              value={newSectionTitle}
-              onChange={(e) => setNewSectionTitle(e.target.value)}
-              placeholder="Enter section title"
-              onKeyPress={handleKeyPress}
-            />
-            <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Add Section
-            </Button>
-          </div>
-          
-          <ContentOrganization 
-            sections={getCourseSections()}
-            updateSections={handleUpdateSections}
+        <ContentOrganization 
+          sections={getCourseSections()}
+          updateSections={handleUpdateSections}
+          showAddSection={false} // Don't show AddSectionForm in ContentOrganization, we'll handle it here
+        />
+      )}
+      
+      {/* Only show the add section form if we already have sections */}
+      {curriculumSections.length > 0 && (
+        <div className="flex items-center space-x-2 mt-4">
+          <Input
+            value={newSectionTitle}
+            onChange={(e) => setNewSectionTitle(e.target.value)}
+            placeholder="Enter section title"
+            onKeyPress={handleKeyPress}
           />
+          <Button onClick={handleAddSection} disabled={!newSectionTitle.trim()}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add Section
+          </Button>
         </div>
       )}
     </div>
