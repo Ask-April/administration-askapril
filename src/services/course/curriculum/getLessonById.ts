@@ -31,15 +31,14 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
-      // Check if these properties exist in the data object before accessing them
-      content: 'content' in data ? data.content : '',
+      content: typeof data.content === 'string' ? data.content : '',
       content_url: data.content_url ?? '',
-      video_url: 'video_url' in data ? data.video_url : '',
+      video_url: typeof data.video_url === 'string' ? data.video_url : '',
       duration: data.duration ?? 0,
-      is_preview: 'is_preview' in data ? data.is_preview === true : false,
-      is_draft: 'is_draft' in data ? data.is_draft === true : false,
-      is_compulsory: 'is_compulsory' in data ? data.is_compulsory !== false : true,
-      enable_discussion: 'enable_discussion' in data ? data.enable_discussion === true : false
+      is_preview: Boolean(data.is_preview),
+      is_draft: Boolean(data.is_draft),
+      is_compulsory: data.is_compulsory !== false,
+      enable_discussion: Boolean(data.enable_discussion)
     };
 
     return lesson;

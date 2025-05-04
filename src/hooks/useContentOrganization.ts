@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { CourseSection, CourseLesson } from "@/services/types";
@@ -19,10 +20,24 @@ export const useContentOrganization = (
   const [dragOverItem, setDragOverItem] = useState<any>(null);
   const [dragType, setDragType] = useState<'section' | 'lesson' | null>(null);
 
+  // We need to handle updates from parent properly
+  useEffect(() => {
+    // Only update if the initialSections are different than our current sections
+    // but avoid infinite loops by checking length and ids
+    if (initialSections.length !== sections.length || 
+        !initialSections.every(section => 
+          sections.some(s => s.id === section.id))) {
+      setSections(initialSections);
+    }
+  }, [initialSections]);
+
   // Update parent component when sections change
   useEffect(() => {
-    updateSections(sections);
-  }, [sections, updateSections]);
+    // We need this check to prevent unnecessary updates
+    if (sections !== initialSections) {
+      updateSections(sections);
+    }
+  }, [sections, updateSections, initialSections]);
 
   // Lesson form state
   const [lessonName, setLessonName] = useState('');
@@ -41,19 +56,39 @@ export const useContentOrganization = (
     const newSection: CourseSection = {
       id: crypto.randomUUID(),
       title: newSectionTitle.trim(),
-      position: sections.length,
+      position: 0, // Position 0 means it goes at the top
       lessons: [],
       course_id: sections[0]?.course_id || ''
     };
     
-    setSections([...sections, newSection]);
+    // Update positions of existing sections
+    const updatedSections = sections.map(section => ({
+      ...section,
+      position: section.position + 1
+    }));
+    
+    // Add the new section at the beginning
+    setSections([newSection, ...updatedSections]);
     setNewSectionTitle('');
     toast.success(`Section "${newSectionTitle}" added successfully`);
   };
 
   const handleDeleteSection = (sectionId: string) => {
     if (window.confirm("Are you sure you want to delete this section and all its lessons?")) {
-      setSections(sections.filter(section => section.id !== sectionId));
+      // Get the deleted section's position
+      const deletedSection = sections.find(section => section.id === sectionId);
+      const deletedPosition = deletedSection?.position || 0;
+      
+      // Remove the section and update positions of remaining sections
+      const filteredSections = sections.filter(section => section.id !== sectionId);
+      const updatedSections = filteredSections.map(section => {
+        if (section.position > deletedPosition) {
+          return { ...section, position: section.position - 1 };
+        }
+        return section;
+      });
+      
+      setSections(updatedSections);
       toast.success("Section deleted successfully");
     }
   };
@@ -67,9 +102,22 @@ export const useContentOrganization = (
     if (window.confirm("Are you sure you want to delete this lesson?")) {
       const updatedSections = sections.map(section => {
         if (section.id === sectionId) {
+          // Get the deleted lesson's position
+          const deletedLesson = section.lessons.find(lesson => lesson.id === lessonId);
+          const deletedPosition = deletedLesson?.position || 0;
+          
+          // Remove the lesson and update positions of remaining lessons
+          const filteredLessons = section.lessons.filter(lesson => lesson.id !== lessonId);
+          const updatedLessons = filteredLessons.map(lesson => {
+            if (lesson.position > deletedPosition) {
+              return { ...lesson, position: lesson.position - 1 };
+            }
+            return lesson;
+          });
+          
           return {
             ...section,
-            lessons: section.lessons.filter(lesson => lesson.id !== lessonId)
+            lessons: updatedLessons
           };
         }
         return section;

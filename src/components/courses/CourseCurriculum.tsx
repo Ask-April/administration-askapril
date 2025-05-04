@@ -53,11 +53,18 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
     const newSection: CurriculumSection = {
       id: crypto.randomUUID(),
       title: newSectionTitle.trim(),
-      position: curriculumSections.length,
+      position: 0, // Position 0 puts it at the top
       lessons: []
     };
     
-    updateCurriculumSections([...curriculumSections, newSection]);
+    // Update positions of existing sections
+    const updatedSections = curriculumSections.map(section => ({
+      ...section,
+      position: section.position + 1
+    }));
+    
+    // Add the new section at the beginning
+    updateCurriculumSections([newSection, ...updatedSections]);
     setNewSectionTitle("");
     setHasEnteredSection(true);
   };
@@ -75,6 +82,23 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
       ...section,
       course_id: courseId
     }));
+  };
+
+  // Handler for updating sections that maintains their order
+  const handleUpdateSections = (updatedSections: CourseSection[]) => {
+    // Convert back to CurriculumSection[] format
+    const newCurriculumSections = updatedSections.map(section => ({
+      id: section.id,
+      title: section.title,
+      position: section.position,
+      lessons: section.lessons
+    }));
+    
+    // Sort by position to maintain order
+    const sortedSections = [...newCurriculumSections].sort((a, b) => a.position - b.position);
+    
+    updateCurriculumSections(sortedSections);
+    onUpdateSections(updatedSections);
   };
 
   return (
@@ -125,7 +149,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
       {curriculumSections.length > 0 && (
         <ContentOrganization 
           sections={getCourseSections()}
-          updateSections={onUpdateSections}
+          updateSections={handleUpdateSections}
           showAddSection={false} // Don't show AddSectionForm in ContentOrganization
         />
       )}
