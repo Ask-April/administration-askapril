@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,10 +11,11 @@ import {
   SubscriptionPricingModel
 } from "./models";
 import { Card } from "@/components/ui/card";
+import { CourseData } from "@/components/courses/wizard/types";
 
 interface PricingModelsProps {
   editedCourse?: any;
-  updateCourseData?: (field: string, value: any) => void;
+  updateCourseData?: (data: Partial<CourseData>) => void;
 }
 
 const PricingModels: React.FC<PricingModelsProps> = ({ 
@@ -65,14 +65,16 @@ const PricingModels: React.FC<PricingModelsProps> = ({
     if (updateCourseData) {
       const currentPricingData = editedCourse?.pricing_data || {};
       
-      updateCourseData('pricing_data', {
-        ...currentPricingData,
-        model: pricingModel,
-        basePrice: parseFloat(basePrice) || 0,
-        currency,
-        hasTrialPeriod,
-        trialDays: parseInt(trialDays) || 0,
-        isDiscountAvailable
+      updateCourseData({
+        pricing_data: {
+          ...currentPricingData,
+          model: pricingModel,
+          basePrice: parseFloat(basePrice) || 0,
+          currency,
+          hasTrialPeriod,
+          trialDays: parseInt(trialDays) || 0,
+          isDiscountAvailable
+        }
       });
     }
   }, [
@@ -91,9 +93,11 @@ const PricingModels: React.FC<PricingModelsProps> = ({
     setPricingModel(model);
     if (updateCourseData) {
       const currentPricingData = editedCourse?.pricing_data || {};
-      updateCourseData('pricing_data', {
-        ...currentPricingData,
-        model
+      updateCourseData({
+        pricing_data: {
+          ...currentPricingData,
+          model
+        }
       });
     }
   };

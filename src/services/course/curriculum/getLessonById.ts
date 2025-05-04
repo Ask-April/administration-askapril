@@ -23,8 +23,8 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       return null;
     }
     
-    // Type assertion to ensure TypeScript recognizes all the properties
     // Map the database response to our CourseLesson type with proper type safety
+    // Use type assertions for properties not in the base schema but expected in our model
     const lesson: CourseLesson = {
       id: data.lesson_id,
       section_id: data.section_id,

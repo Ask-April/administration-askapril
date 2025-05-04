@@ -11,6 +11,7 @@ import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wiza
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import { PricingModels } from "@/components/courses/pricing";
+import { CourseData } from "@/components/courses/wizard/types";
 
 // Pricing component with real pricing options
 const CoursePricing: React.FC = () => {
@@ -29,7 +30,7 @@ const CoursePricing: React.FC = () => {
       
       <PricingModels 
         editedCourse={courseData} 
-        updateCourseData={(data: any) => updateCourseData(data)} 
+        updateCourseData={(data: Partial<CourseData>) => updateCourseData(data)} 
       />
       
       <div className="p-4 border rounded-md mt-6">
