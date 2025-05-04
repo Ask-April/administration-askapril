@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 import { CourseData, CurriculumSection } from './types';
 
@@ -26,6 +27,7 @@ export const validateCurrentStep = (
   curriculumSections: any[]
 ): { isValid: boolean; errors: Record<string, string[]> } => {
   const errors: Record<string, string[]> = {};
+  let isValid = true;
   
   switch (currentStep) {
     case "info": {
@@ -67,6 +69,7 @@ export const validateCurrentStep = (
         // Validate base price is a valid number for paid models
         const basePrice = parseFloat(String(courseData.pricing_data?.basePrice));
         if (isNaN(basePrice) || basePrice < 0) {
+          isValid = false;
           errors.basePrice = ['Please enter a valid price'];
         }
         
@@ -74,6 +77,7 @@ export const validateCurrentStep = (
         if (courseData.pricing_data?.model === 'subscription' && courseData.pricing_data?.hasTrialPeriod) {
           const trialDays = parseInt(String(courseData.pricing_data?.trialDays));
           if (isNaN(trialDays) || trialDays <= 0) {
+            isValid = false;
             errors.trialDays = ['Please enter a valid number of trial days'];
           }
         }
@@ -82,6 +86,7 @@ export const validateCurrentStep = (
         if (courseData.pricing_data?.model === 'payment-plan') {
           const installments = parseInt(String(courseData.pricing_data?.installments));
           if (isNaN(installments) || installments <= 0) {
+            isValid = false;
             errors.installments = ['Please enter a valid number of installments'];
           }
         }
@@ -96,7 +101,7 @@ export const validateCurrentStep = (
   }
   
   return {
-    isValid: Object.keys(errors).length === 0,
+    isValid,
     errors
   };
 };
