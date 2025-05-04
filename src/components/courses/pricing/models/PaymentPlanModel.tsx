@@ -3,20 +3,39 @@ import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { CourseData } from "@/components/courses/wizard/types";
 
 interface PaymentPlanModelProps {
   editedCourse?: any;
-  updateCourseData?: (field: string, value: any) => void;
+  updateCourseData?: ((data: Partial<CourseData>) => void) | ((field: string, value: any) => void);
 }
 
 const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({ 
   editedCourse,
   updateCourseData
 }) => {
+  // Helper function to update pricing data, handling both function signatures
+  const updatePricingData = (data: any) => {
+    if (!updateCourseData) return;
+    
+    if (typeof updateCourseData === 'function') {
+      // Check if it's the one-parameter or two-parameter version
+      if (updateCourseData.length === 1) {
+        // It's the (data: Partial<CourseData>) => void signature
+        (updateCourseData as (data: Partial<CourseData>) => void)({
+          pricing_data: data
+        });
+      } else {
+        // It's the (field: string, value: any) => void signature
+        (updateCourseData as (field: string, value: any) => void)('pricing_data', data);
+      }
+    }
+  };
+  
   // Initialize pricing_data if it doesn't exist
   useEffect(() => {
     if (!editedCourse?.pricing_data) {
-      updateCourseData && updateCourseData('pricing_data', {
+      updatePricingData({
         model: 'payment-plan',
         totalPrice: '299.99',
         installments: '3',
@@ -27,13 +46,13 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
     }
   }, [editedCourse, updateCourseData]);
 
-  const updatePricingData = (field: string, value: any) => {
-    if (updateCourseData && editedCourse?.pricing_data) {
+  const updateField = (field: string, value: any) => {
+    if (editedCourse?.pricing_data) {
       const updatedPricingData = {
         ...editedCourse.pricing_data,
         [field]: value
       };
-      updateCourseData('pricing_data', updatedPricingData);
+      updatePricingData(updatedPricingData);
     }
   };
 
@@ -58,7 +77,7 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
               id="total-price" 
               type="number" 
               value={editedCourse?.pricing_data?.totalPrice || "299.99"}
-              onChange={(e) => updatePricingData('totalPrice', e.target.value)}
+              onChange={(e) => updateField('totalPrice', e.target.value)}
               className="rounded-l-none" 
             />
           </div>
@@ -70,7 +89,7 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
             id="installments" 
             type="number" 
             value={editedCourse?.pricing_data?.installments || "3"}
-            onChange={(e) => updatePricingData('installments', e.target.value)}
+            onChange={(e) => updateField('installments', e.target.value)}
             className="mt-1" 
           />
         </div>
@@ -81,7 +100,7 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
             id="installment-period" 
             type="number" 
             value={editedCourse?.pricing_data?.installmentPeriod || "30"}
-            onChange={(e) => updatePricingData('installmentPeriod', e.target.value)}
+            onChange={(e) => updateField('installmentPeriod', e.target.value)}
             className="mt-1" 
           />
         </div>
@@ -114,7 +133,7 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
           <Switch 
             id="down-payment"
             checked={editedCourse?.pricing_data?.requireDownPayment || false}
-            onCheckedChange={(checked) => updatePricingData('requireDownPayment', checked)}
+            onCheckedChange={(checked) => updateField('requireDownPayment', checked)}
           />
         </div>
         
@@ -126,7 +145,7 @@ const PaymentPlanModel: React.FC<PaymentPlanModelProps> = ({
                 id="down-payment-percent" 
                 type="number" 
                 value={editedCourse?.pricing_data?.downPaymentPercent || "25"}
-                onChange={(e) => updatePricingData('downPaymentPercent', e.target.value)}
+                onChange={(e) => updateField('downPaymentPercent', e.target.value)}
               />
               <div className="flex items-center border rounded-r-md px-3 bg-muted">
                 <span>%</span>

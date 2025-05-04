@@ -1,10 +1,11 @@
 
 import React, { useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
+import { CourseData } from "@/components/courses/wizard/types";
 
 interface FreePricingModelProps {
   editedCourse?: any;
-  updateCourseData?: (field: string, value: any) => void;
+  updateCourseData?: ((data: Partial<CourseData>) => void) | ((field: string, value: any) => void);
 }
 
 const FreePricingModel: React.FC<FreePricingModelProps> = ({ 
@@ -14,7 +15,7 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
   // Initialize pricing_data if it doesn't exist
   useEffect(() => {
     if (!editedCourse?.pricing_data) {
-      updateCourseData && updateCourseData('pricing_data', {
+      updateCourseData && updatePricingData({
         model: 'free',
         completelyFree: true,
         freeTrial: false,
@@ -23,13 +24,30 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
     }
   }, [editedCourse, updateCourseData]);
 
-  const updatePricingData = (field: string, value: any) => {
+  const updatePricingData = (data: any) => {
+    if (!updateCourseData) return;
+    
+    if (typeof updateCourseData === 'function') {
+      // Check if it's the one-parameter or two-parameter version
+      if (updateCourseData.length === 1) {
+        // It's the (data: Partial<CourseData>) => void signature
+        (updateCourseData as (data: Partial<CourseData>) => void)({
+          pricing_data: data
+        });
+      } else {
+        // It's the (field: string, value: any) => void signature
+        (updateCourseData as (field: string, value: any) => void)('pricing_data', data);
+      }
+    }
+  };
+
+  const updateField = (field: string, value: any) => {
     if (updateCourseData && editedCourse?.pricing_data) {
       const updatedPricingData = {
         ...editedCourse.pricing_data,
         [field]: value
       };
-      updateCourseData('pricing_data', updatedPricingData);
+      updatePricingData(updatedPricingData);
     }
   };
 
@@ -47,7 +65,7 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
           <Switch 
             id="completely-free"
             checked={editedCourse?.pricing_data?.completelyFree !== false}
-            onCheckedChange={(checked) => updatePricingData('completelyFree', checked)}
+            onCheckedChange={(checked) => updateField('completelyFree', checked)}
           />
         </div>
         
@@ -61,7 +79,7 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
           <Switch 
             id="free-trial"
             checked={editedCourse?.pricing_data?.freeTrial || false}
-            onCheckedChange={(checked) => updatePricingData('freeTrial', checked)}
+            onCheckedChange={(checked) => updateField('freeTrial', checked)}
           />
         </div>
         
@@ -75,7 +93,7 @@ const FreePricingModel: React.FC<FreePricingModelProps> = ({
           <Switch 
             id="freemium"
             checked={editedCourse?.pricing_data?.freemium || false}
-            onCheckedChange={(checked) => updatePricingData('freemium', checked)}
+            onCheckedChange={(checked) => updateField('freemium', checked)}
           />
         </div>
       </div>

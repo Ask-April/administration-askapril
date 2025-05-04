@@ -68,14 +68,16 @@ const PricingModels: React.FC<PricingModelsProps> = ({
     
     // Check if updateCourseData takes one parameter (Partial<CourseData>)
     // or two parameters (field: string, value: any)
-    if (updateCourseData.length === 1) {
-      // It's the (data: Partial<CourseData>) => void signature
-      (updateCourseData as (data: Partial<CourseData>) => void)({
-        pricing_data: pricingData
-      });
-    } else {
-      // It's the (field: string, value: any) => void signature
-      (updateCourseData as (field: string, value: any) => void)('pricing_data', pricingData);
+    if (typeof updateCourseData === 'function') {
+      if (updateCourseData.length === 1) {
+        // It's the (data: Partial<CourseData>) => void signature
+        (updateCourseData as (data: Partial<CourseData>) => void)({
+          pricing_data: pricingData
+        });
+      } else {
+        // It's the (field: string, value: any) => void signature
+        (updateCourseData as (field: string, value: any) => void)('pricing_data', pricingData);
+      }
     }
   };
   

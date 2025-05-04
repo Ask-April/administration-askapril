@@ -1,11 +1,12 @@
 
 import React, { useEffect } from "react";
+import { CourseData } from "@/components/courses/wizard/types";
 
 interface PricingModelSelectorProps {
   pricingModel: string;
   setPricingModel: (model: string) => void;
   editedCourse?: any;
-  updateCourseData?: (field: string, value: any) => void;
+  updateCourseData?: ((data: Partial<CourseData>) => void) | ((field: string, value: any) => void);
 }
 
 const PricingModelSelector: React.FC<PricingModelSelectorProps> = ({
@@ -14,11 +15,29 @@ const PricingModelSelector: React.FC<PricingModelSelectorProps> = ({
   editedCourse,
   updateCourseData
 }) => {
+  // Helper function to update pricing data, handling both function signatures
+  const updatePricingData = (data: any) => {
+    if (!updateCourseData) return;
+    
+    if (typeof updateCourseData === 'function') {
+      // Check if it's the one-parameter or two-parameter version
+      if (updateCourseData.length === 1) {
+        // It's the (data: Partial<CourseData>) => void signature
+        (updateCourseData as (data: Partial<CourseData>) => void)({
+          pricing_data: data
+        });
+      } else {
+        // It's the (field: string, value: any) => void signature
+        (updateCourseData as (field: string, value: any) => void)('pricing_data', data);
+      }
+    }
+  };
+
   // When pricing model changes, update the pricing_data.model property
   useEffect(() => {
     if (updateCourseData && editedCourse) {
       const currentPricingData = editedCourse.pricing_data || {};
-      updateCourseData('pricing_data', {
+      updatePricingData({
         ...currentPricingData,
         model: pricingModel
       });

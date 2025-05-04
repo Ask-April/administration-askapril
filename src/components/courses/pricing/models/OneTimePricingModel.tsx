@@ -4,21 +4,40 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { CourseData } from "@/components/courses/wizard/types";
 
 interface OneTimePricingModelProps {
   editedCourse?: any;
-  updateCourseData?: (field: string, value: any) => void;
+  updateCourseData?: ((data: Partial<CourseData>) => void) | ((field: string, value: any) => void);
 }
 
 const OneTimePricingModel: React.FC<OneTimePricingModelProps> = ({ 
   editedCourse,
   updateCourseData
 }) => {
+  // Helper function to update pricing data, handling both function signatures
+  const updatePricingData = (data: any) => {
+    if (!updateCourseData) return;
+    
+    if (typeof updateCourseData === 'function') {
+      // Check if it's the one-parameter or two-parameter version
+      if (updateCourseData.length === 1) {
+        // It's the (data: Partial<CourseData>) => void signature
+        (updateCourseData as (data: Partial<CourseData>) => void)({
+          pricing_data: data
+        });
+      } else {
+        // It's the (field: string, value: any) => void signature
+        (updateCourseData as (field: string, value: any) => void)('pricing_data', data);
+      }
+    }
+  };
+
   // Instead of updating 'price' directly, we'll use a pricing_data object
   useEffect(() => {
     // Initialize pricing_data if it doesn't exist
     if (!editedCourse?.pricing_data) {
-      updateCourseData && updateCourseData('pricing_data', {
+      updatePricingData({
         model: 'one-time',
         price: '99.99',
         tieredPricing: false
@@ -26,13 +45,13 @@ const OneTimePricingModel: React.FC<OneTimePricingModelProps> = ({
     }
   }, [editedCourse, updateCourseData]);
 
-  const updatePricingData = (field: string, value: any) => {
-    if (updateCourseData && editedCourse?.pricing_data) {
+  const updateField = (field: string, value: any) => {
+    if (editedCourse?.pricing_data) {
       const updatedPricingData = {
         ...editedCourse.pricing_data,
         [field]: value
       };
-      updateCourseData('pricing_data', updatedPricingData);
+      updatePricingData(updatedPricingData);
     }
   };
 
@@ -50,7 +69,7 @@ const OneTimePricingModel: React.FC<OneTimePricingModelProps> = ({
               id="standard-price" 
               type="number" 
               value={editedCourse?.pricing_data?.price || "99.99"}
-              onChange={(e) => updatePricingData('price', e.target.value)}
+              onChange={(e) => updateField('price', e.target.value)}
               className="rounded-l-none" 
             />
           </div>
@@ -66,7 +85,7 @@ const OneTimePricingModel: React.FC<OneTimePricingModelProps> = ({
           <Switch 
             id="tiered-pricing"
             checked={editedCourse?.pricing_data?.tieredPricing || false}
-            onCheckedChange={(checked) => updatePricingData('tieredPricing', checked)}
+            onCheckedChange={(checked) => updateField('tieredPricing', checked)}
           />
         </div>
         
@@ -85,7 +104,7 @@ const OneTimePricingModel: React.FC<OneTimePricingModelProps> = ({
                       id="basic-tier" 
                       type="number" 
                       value={editedCourse?.pricing_data?.basicTier || "49.99"}
-                      onChange={(e) => updatePricingData('basicTier', e.target.value)}
+                      onChange={(e) => updateField('basicTier', e.target.value)}
                       className="rounded-l-none" 
                     />
                   </div>
@@ -100,7 +119,7 @@ const OneTimePricingModel: React.FC<OneTimePricingModelProps> = ({
                       id="premium-tier" 
                       type="number" 
                       value={editedCourse?.pricing_data?.premiumTier || "99.99"}
-                      onChange={(e) => updatePricingData('premiumTier', e.target.value)}
+                      onChange={(e) => updateField('premiumTier', e.target.value)}
                       className="rounded-l-none" 
                     />
                   </div>
