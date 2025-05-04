@@ -23,6 +23,7 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       return null;
     }
     
+    // Type assertion to ensure TypeScript recognizes all the properties
     // Map the database response to our CourseLesson type with proper type safety
     const lesson: CourseLesson = {
       id: data.lesson_id,
@@ -30,14 +31,14 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
-      content: data.content || '', 
+      content: (data as any).content || '', 
       content_url: data.content_url || '',
-      video_url: data.video_url || '', 
+      video_url: (data as any).video_url || '', 
       duration: data.duration || 0,
-      is_preview: data.is_preview === true,
-      is_draft: data.is_draft === true,
-      is_compulsory: data.is_compulsory !== false,
-      enable_discussion: data.enable_discussion === true
+      is_preview: (data as any).is_preview === true,
+      is_draft: (data as any).is_draft === true,
+      is_compulsory: (data as any).is_compulsory !== false,
+      enable_discussion: (data as any).enable_discussion === true
     };
 
     return lesson;
