@@ -126,9 +126,8 @@ const PricingModels: React.FC<PricingModelsProps> = ({
                   <Select 
                     value={currency} 
                     onValueChange={setCurrency}
-                    className="w-24 mr-2"
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-24 mr-2">
                       <SelectValue placeholder="Currency" />
                     </SelectTrigger>
                     <SelectContent>
@@ -188,9 +187,8 @@ const PricingModels: React.FC<PricingModelsProps> = ({
                   <Select 
                     value={currency} 
                     onValueChange={setCurrency}
-                    className="w-24 mr-2"
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-24 mr-2">
                       <SelectValue placeholder="Currency" />
                     </SelectTrigger>
                     <SelectContent>
@@ -236,9 +234,8 @@ const PricingModels: React.FC<PricingModelsProps> = ({
                   <Select 
                     value={currency} 
                     onValueChange={setCurrency}
-                    className="w-24 mr-2"
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-24 mr-2">
                       <SelectValue placeholder="Currency" />
                     </SelectTrigger>
                     <SelectContent>
