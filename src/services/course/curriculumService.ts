@@ -109,7 +109,7 @@ export const saveCurriculum = async (
       
       // First delete related lessons to avoid foreign key constraints
       for (const sectionId of sectionIdsToDelete) {
-        // Convert explicitly to string, fixing the type error
+        // Make sure sectionId is always a string
         const moduleId = String(sectionId);
         
         const { error: lessonDeleteError } = await supabase
