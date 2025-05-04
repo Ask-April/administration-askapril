@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 import { CourseData, CurriculumSection } from './types';
 
@@ -23,38 +22,81 @@ export const curriculumSchema = z.object({
 
 export const validateCurrentStep = (
   currentStep: string, 
-  courseData: CourseData, 
-  curriculumSections: CurriculumSection[]
+  courseData: any, 
+  curriculumSections: any[]
 ): { isValid: boolean; errors: Record<string, string[]> } => {
   const errors: Record<string, string[]> = {};
-  let isValid = true;
-
-  if (currentStep === 'info') {
-    try {
-      courseInfoSchema.parse(courseData);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        isValid = false;
-        errors.info = error.errors.map(e => e.message);
-        
-        // Set specific field errors
-        error.errors.forEach(e => {
-          const path = e.path.join('.');
-          if (!errors[path]) errors[path] = [];
-          errors[path].push(e.message);
-        });
+  
+  switch (currentStep) {
+    case "info": {
+      // Validate basic course info
+      try {
+        courseInfoSchema.parse(courseData);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          isValid = false;
+          errors.info = error.errors.map(e => e.message);
+          
+          // Set specific field errors
+          error.errors.forEach(e => {
+            const path = e.path.join('.');
+            if (!errors[path]) errors[path] = [];
+            errors[path].push(e.message);
+          });
+        }
       }
+      
+      break;
     }
-  } else if (currentStep === 'curriculum') {
-    try {
-      curriculumSchema.parse({ sections: curriculumSections });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        isValid = false;
-        errors.curriculum = error.errors.map(e => e.message);
+    case "curriculum": {
+      // Validate curriculum
+      try {
+        curriculumSchema.parse({ sections: curriculumSections });
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          isValid = false;
+          errors.curriculum = error.errors.map(e => e.message);
+        }
       }
+      
+      break;
+    }
+    case "pricing": {
+      // Validate pricing information
+      if (courseData.pricing_data?.model === 'one-time' || courseData.pricing_data?.model === 'subscription' || courseData.pricing_data?.model === 'payment-plan') {
+        // Validate base price is a valid number for paid models
+        const basePrice = parseFloat(String(courseData.pricing_data?.basePrice));
+        if (isNaN(basePrice) || basePrice < 0) {
+          errors.basePrice = ['Please enter a valid price'];
+        }
+        
+        // If it's a subscription with trial, validate trial days
+        if (courseData.pricing_data?.model === 'subscription' && courseData.pricing_data?.hasTrialPeriod) {
+          const trialDays = parseInt(String(courseData.pricing_data?.trialDays));
+          if (isNaN(trialDays) || trialDays <= 0) {
+            errors.trialDays = ['Please enter a valid number of trial days'];
+          }
+        }
+        
+        // If it's a payment plan, validate installments
+        if (courseData.pricing_data?.model === 'payment-plan') {
+          const installments = parseInt(String(courseData.pricing_data?.installments));
+          if (isNaN(installments) || installments <= 0) {
+            errors.installments = ['Please enter a valid number of installments'];
+          }
+        }
+      }
+      
+      break;
+    }
+    case "settings": {
+      // No specific validation for settings step
+      break;
     }
   }
-
-  return { isValid, errors };
+  
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
 };

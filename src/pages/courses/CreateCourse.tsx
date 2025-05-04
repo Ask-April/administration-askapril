@@ -10,25 +10,32 @@ import StepProgress from "@/components/courses/StepProgress";
 import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wizard/CourseWizardContext";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
+import { PricingModels } from "@/components/courses/pricing";
 
-// Pricing component - without duration
+// Pricing component with real pricing options
 const CoursePricing: React.FC = () => {
-  const { courseData } = useCourseWizard();
+  const { courseData, updateCourseData } = useCourseWizard();
 
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Pricing</h2>
-      <Alert>
+      <Alert variant="default" className="mb-4">
         <Info className="h-4 w-4" />
-        <AlertTitle>Pricing Info</AlertTitle>
+        <AlertTitle>Set Your Course Pricing</AlertTitle>
         <AlertDescription>
-          More advanced pricing options will be available in the future.
+          Choose the pricing model that works best for your course content and target audience.
         </AlertDescription>
       </Alert>
-      <div className="p-4 border rounded-md">
+      
+      <PricingModels 
+        editedCourse={courseData} 
+        updateCourseData={updateCourseData} 
+      />
+      
+      <div className="p-4 border rounded-md mt-6">
         <div className="text-center py-4">
           <h3 className="text-lg font-medium">Total Lessons</h3>
-          <p className="text-2xl font-bold mt-2">{courseData.lessons}</p>
+          <p className="text-2xl font-bold mt-2">{courseData.lessons || 0}</p>
         </div>
       </div>
     </div>
@@ -38,6 +45,29 @@ const CoursePricing: React.FC = () => {
 // Settings component - remove duration
 const CourseSettings: React.FC = () => {
   const { courseData } = useCourseWizard();
+  
+  // Format pricing info for display
+  const getPricingInfo = () => {
+    if (!courseData.pricing_data || !courseData.pricing_data.model) {
+      return "Free";
+    }
+    
+    const pricingData = courseData.pricing_data;
+    const model = pricingData.model;
+    
+    if (model === 'free') {
+      return "Free";
+    } else if (model === 'one-time') {
+      return `One-time purchase: ${pricingData.currency || 'USD'} ${pricingData.basePrice || 0}`;
+    } else if (model === 'subscription') {
+      return `Subscription: ${pricingData.currency || 'USD'} ${pricingData.basePrice || 0}/month`;
+    } else if (model === 'payment-plan') {
+      return `Payment plan: ${pricingData.currency || 'USD'} ${pricingData.basePrice || 0} (${pricingData.installments || 3} payments)`;
+    }
+    
+    return "Not set";
+  };
+  
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Settings</h2>
@@ -62,6 +92,10 @@ const CourseSettings: React.FC = () => {
             <div className="space-y-1">
               <p className="text-sm font-medium">Category</p>
               <p className="text-sm">{courseData.category}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Pricing</p>
+              <p className="text-sm">{getPricingInfo()}</p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium">Total Lessons</p>

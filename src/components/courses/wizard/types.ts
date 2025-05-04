@@ -9,6 +9,28 @@ export interface CourseData {
   students: number;
   created_at?: string;
   updated_at?: string;
+  pricing_data?: {
+    model: 'free' | 'one-time' | 'subscription' | 'payment-plan';
+    basePrice?: number;
+    currency?: string;
+    hasTrialPeriod?: boolean;
+    trialDays?: number;
+    isDiscountAvailable?: boolean;
+    completelyFree?: boolean;
+    freeTrial?: boolean;
+    freemium?: boolean;
+    price?: string; 
+    tieredPricing?: boolean;
+    basicTier?: string;
+    premiumTier?: string;
+    installments?: string;
+    installmentPeriod?: string;
+    requireDownPayment?: boolean;
+    downPaymentPercent?: string;
+    monthlyPrice?: string;
+    annualPrice?: string;
+    autoRenewal?: boolean;
+  };
 }
 
 export interface CurriculumSection {

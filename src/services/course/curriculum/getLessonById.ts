@@ -9,7 +9,7 @@ import { CourseLesson } from "@/services/types";
 export const getLessonById = async (lessonId: string): Promise<CourseLesson | null> => {
   try {
     const { data, error } = await supabase
-      .from("course_lesson")  // Using the actual table name in the database
+      .from("course_lesson")
       .select("*")
       .eq("lesson_id", lessonId)
       .single();
@@ -24,21 +24,20 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
     }
     
     // Map the database response to our CourseLesson type with proper type safety
-    // and default values for potentially missing properties
     const lesson: CourseLesson = {
       id: data.lesson_id,
       section_id: data.section_id,
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
-      content: data.content || '',  // Explicitly add this even if not in DB response
+      content: data.content || '', // Handling case where property might not exist
       content_url: data.content_url || '',
-      video_url: data.video_url || '', // Explicitly add this even if not in DB response
+      video_url: data.video_url || '', // Handling case where property might not exist
       duration: data.duration || 0,
-      is_preview: Boolean(data.is_preview),  // Convert to boolean with default false
-      is_draft: Boolean(data.is_draft),      // Convert to boolean with default false
+      is_preview: data.is_preview === true, // Explicitly check for true
+      is_draft: data.is_draft === true, // Explicitly check for true
       is_compulsory: data.is_compulsory !== false, // If undefined, default to true
-      enable_discussion: Boolean(data.enable_discussion) // Convert to boolean with default false
+      enable_discussion: data.enable_discussion === true // Explicitly check for true
     };
 
     return lesson;

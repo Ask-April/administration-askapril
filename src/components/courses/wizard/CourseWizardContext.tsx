@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -18,7 +17,12 @@ const defaultCourseData: CourseData = {
   image: '',
   lessons: 0,
   status: 'draft',
-  students: 0
+  students: 0,
+  pricing_data: {
+    model: 'one-time',
+    basePrice: 99,
+    currency: 'USD'
+  }
 };
 
 const CourseWizardContext = createContext<CourseWizardContextValue | undefined>(undefined);
