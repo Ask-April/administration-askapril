@@ -84,9 +84,9 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
     }));
   };
 
-  // Handler for updating sections that maintains their order
+  // Handler for updating sections - this is our connection to ContentOrganization
   const handleUpdateSections = (updatedSections: CourseSection[]) => {
-    // Convert back to CurriculumSection[] format
+    // Since this is triggered by ContentOrganization, we need to transform the sections back
     const newCurriculumSections = updatedSections.map(section => ({
       id: section.id,
       title: section.title,
@@ -94,11 +94,13 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
       lessons: section.lessons
     }));
     
-    // Sort by position to maintain order
-    const sortedSections = [...newCurriculumSections].sort((a, b) => a.position - b.position);
-    
-    updateCurriculumSections(sortedSections);
-    onUpdateSections(updatedSections);
+    // Only update if there are changes to avoid infinite loops
+    if (JSON.stringify(newCurriculumSections) !== JSON.stringify(curriculumSections)) {
+      updateCurriculumSections(newCurriculumSections);
+      
+      // Also notify the parent if needed
+      onUpdateSections(updatedSections);
+    }
   };
 
   return (

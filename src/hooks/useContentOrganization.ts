@@ -7,7 +7,8 @@ export const useContentOrganization = (
   initialSections: CourseSection[],
   updateSections: (sections: CourseSection[]) => void
 ) => {
-  const [sections, setSections] = useState<CourseSection[]>(initialSections);
+  // Clone the initialSections to avoid direct mutation
+  const [sections, setSections] = useState<CourseSection[]>(() => [...initialSections]);
   const [newSectionTitle, setNewSectionTitle] = useState<string>("");
   const [isAddLessonSidebarOpen, setIsAddLessonSidebarOpen] = useState(false);
   const [currentSectionId, setCurrentSectionId] = useState<string | null>(null);
@@ -19,25 +20,32 @@ export const useContentOrganization = (
   const [draggedItem, setDraggedItem] = useState<any>(null);
   const [dragOverItem, setDragOverItem] = useState<any>(null);
   const [dragType, setDragType] = useState<'section' | 'lesson' | null>(null);
+  
+  // Previous sections ref to avoid unnecessary updates
+  const prevSectionsRef = useRef<CourseSection[]>([]);
 
-  // We need to handle updates from parent properly
+  // Handle updates from parent properly - only if they're truly different
   useEffect(() => {
-    // Only update if the initialSections are different than our current sections
-    // but avoid infinite loops by checking length and ids
-    if (initialSections.length !== sections.length || 
-        !initialSections.every(section => 
-          sections.some(s => s.id === section.id))) {
-      setSections(initialSections);
+    // Deep comparison isn't ideal for performance, but it's simple and effective
+    const sectionsChanged = 
+      JSON.stringify(initialSections) !== JSON.stringify(prevSectionsRef.current);
+    
+    if (sectionsChanged) {
+      setSections([...initialSections]);
+      prevSectionsRef.current = [...initialSections];
     }
   }, [initialSections]);
 
-  // Update parent component when sections change
+  // Notify parent component about sections changes
   useEffect(() => {
-    // We need this check to prevent unnecessary updates
-    if (sections !== initialSections) {
-      updateSections(sections);
+    const sectionsChanged = 
+      JSON.stringify(sections) !== JSON.stringify(prevSectionsRef.current);
+    
+    if (sectionsChanged && sections.length > 0) {
+      updateSections([...sections]);
+      prevSectionsRef.current = [...sections];
     }
-  }, [sections, updateSections, initialSections]);
+  }, [sections, updateSections]);
 
   // Lesson form state
   const [lessonName, setLessonName] = useState('');
@@ -67,7 +75,7 @@ export const useContentOrganization = (
       position: section.position + 1
     }));
     
-    // Add the new section at the beginning
+    // Add the new section at the beginning and update state in a single operation
     setSections([newSection, ...updatedSections]);
     setNewSectionTitle('');
     toast.success(`Section "${newSectionTitle}" added successfully`);
@@ -95,6 +103,7 @@ export const useContentOrganization = (
 
   const handleAddLesson = (sectionId: string) => {
     setCurrentSectionId(sectionId);
+    resetForm();
     setIsAddLessonSidebarOpen(true);
   };
 
@@ -290,8 +299,9 @@ export const useContentOrganization = (
   const handleSaveNewLesson = () => {
     if (!currentSectionId || !lessonName.trim() || !selectedType) return;
 
-    const section = sections.find(s => s.id === currentSectionId);
-    if (!section) return;
+    // Find the section to ensure we're working with the most current data
+    const sectionToUpdate = sections.find(s => s.id === currentSectionId);
+    if (!sectionToUpdate) return;
 
     const newLesson: CourseLesson = {
       id: crypto.randomUUID(),
@@ -304,9 +314,10 @@ export const useContentOrganization = (
       enable_discussion: enableDiscussion,
       content: content,
       content_url: contentUrl,
-      position: section.lessons.length
+      position: sectionToUpdate.lessons.length
     };
 
+    // Create a new array to avoid mutation issues
     const updatedSections = sections.map(section => {
       if (section.id === currentSectionId) {
         return {
@@ -317,6 +328,7 @@ export const useContentOrganization = (
       return section;
     });
     
+    // Update state with the new array
     setSections(updatedSections);
     setIsAddLessonSidebarOpen(false);
     toast.success(`Lesson "${lessonName}" added successfully`);
@@ -403,7 +415,8 @@ export const useContentOrganization = (
     setSelectedLesson,
 
     handleSaveNewLesson,
-    handleLessonContentSave
+    handleLessonContentSave,
+    resetForm
   };
 };
 
