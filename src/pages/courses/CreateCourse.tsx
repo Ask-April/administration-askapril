@@ -30,7 +30,7 @@ const CoursePricing: React.FC = () => {
       
       <PricingModels 
         editedCourse={courseData} 
-        updateCourseData={(data: Partial<CourseData>) => updateCourseData(data)} 
+        updateCourseData={updateCourseData} 
       />
       
       <div className="p-4 border rounded-md mt-6">

@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CourseSection, CourseLesson } from "../types";
 
@@ -123,11 +122,11 @@ export const saveCurriculum = async (
         }
       }
       
-      // Then delete the sections - make sure we convert all IDs to strings
+      // Then delete the sections - make sure we use proper type for the IDs
       const { error: sectionDeleteError } = await supabase
         .from("course_section")
         .delete()
-        .in("module_id", sectionIdsToDelete.map((id: unknown) => String(id)));
+        .in("module_id", sectionIdsToDelete.map((id: string | unknown) => String(id)));
       
       if (sectionDeleteError) {
         console.error("Error deleting sections:", sectionDeleteError);

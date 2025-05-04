@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -13,9 +14,10 @@ import {
 import { Card } from "@/components/ui/card";
 import { CourseData } from "@/components/courses/wizard/types";
 
+// Create a flexible interface that can handle both function signatures
 interface PricingModelsProps {
   editedCourse?: any;
-  updateCourseData?: (data: Partial<CourseData>) => void;
+  updateCourseData?: ((data: Partial<CourseData>) => void) | ((field: string, value: any) => void);
 }
 
 const PricingModels: React.FC<PricingModelsProps> = ({ 
@@ -60,21 +62,36 @@ const PricingModels: React.FC<PricingModelsProps> = ({
     }
   }, [editedCourse]);
   
+  // Helper function to update course data with proper function signature
+  const updatePricingData = (pricingData: any) => {
+    if (!updateCourseData) return;
+    
+    // Check if updateCourseData takes one parameter (Partial<CourseData>)
+    // or two parameters (field: string, value: any)
+    if (updateCourseData.length === 1) {
+      // It's the (data: Partial<CourseData>) => void signature
+      (updateCourseData as (data: Partial<CourseData>) => void)({
+        pricing_data: pricingData
+      });
+    } else {
+      // It's the (field: string, value: any) => void signature
+      (updateCourseData as (field: string, value: any) => void)('pricing_data', pricingData);
+    }
+  };
+  
   // Update course data when pricing details change
   useEffect(() => {
     if (updateCourseData) {
       const currentPricingData = editedCourse?.pricing_data || {};
       
-      updateCourseData({
-        pricing_data: {
-          ...currentPricingData,
-          model: pricingModel,
-          basePrice: parseFloat(basePrice) || 0,
-          currency,
-          hasTrialPeriod,
-          trialDays: parseInt(trialDays) || 0,
-          isDiscountAvailable
-        }
+      updatePricingData({
+        ...currentPricingData,
+        model: pricingModel,
+        basePrice: parseFloat(basePrice) || 0,
+        currency,
+        hasTrialPeriod,
+        trialDays: parseInt(trialDays) || 0,
+        isDiscountAvailable
       });
     }
   }, [
@@ -93,11 +110,9 @@ const PricingModels: React.FC<PricingModelsProps> = ({
     setPricingModel(model);
     if (updateCourseData) {
       const currentPricingData = editedCourse?.pricing_data || {};
-      updateCourseData({
-        pricing_data: {
-          ...currentPricingData,
-          model
-        }
+      updatePricingData({
+        ...currentPricingData,
+        model
       });
     }
   };

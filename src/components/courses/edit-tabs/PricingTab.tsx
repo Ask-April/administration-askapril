@@ -9,6 +9,7 @@ import {
   PricingModels,
   DiscountsManager
 } from "@/components/courses/pricing";
+import { CourseData } from "@/components/courses/wizard/types";
 
 interface PricingTabProps {
   editedCourse: any;
@@ -19,11 +20,11 @@ const PricingTab: React.FC<PricingTabProps> = ({
   editedCourse, 
   setEditedCourse 
 }) => {
-  // Function to update any course property
-  const updateCourseData = (field: string, value: any) => {
+  // Updated function to match expected signature
+  const updateCourseData = (data: Partial<CourseData>) => {
     setEditedCourse({
       ...editedCourse,
-      [field]: value
+      ...data
     });
   };
 
