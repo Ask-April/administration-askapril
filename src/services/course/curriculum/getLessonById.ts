@@ -31,15 +31,15 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
-      // Use optional chaining and nullish coalescing for properties that may not exist
-      content: data.content ?? '',
+      // Check if these properties exist in the data object before accessing them
+      content: 'content' in data ? data.content : '',
       content_url: data.content_url ?? '',
-      video_url: data.video_url ?? '',
+      video_url: 'video_url' in data ? data.video_url : '',
       duration: data.duration ?? 0,
-      is_preview: data.is_preview === true,
-      is_draft: data.is_draft === true,
-      is_compulsory: data.is_compulsory !== false, // default to true
-      enable_discussion: data.enable_discussion === true
+      is_preview: 'is_preview' in data ? data.is_preview === true : false,
+      is_draft: 'is_draft' in data ? data.is_draft === true : false,
+      is_compulsory: 'is_compulsory' in data ? data.is_compulsory !== false : true,
+      enable_discussion: 'enable_discussion' in data ? data.enable_discussion === true : false
     };
 
     return lesson;

@@ -8,6 +8,7 @@ import ContentOrganization from "./content/ContentOrganization";
 import { useCourseWizard } from "./wizard/CourseWizardContext";
 import { CurriculumSection } from "./wizard/types";
 import { CourseSection } from "@/services/types";
+import { EmptyState } from "@/components/ui/loading-states";
 
 interface CourseCurriculumProps {
   courseData: any;
@@ -112,13 +113,11 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
             ))}
           </div>
           
-          <div className="flex items-center justify-center border border-dashed rounded-md p-8">
-            <div className="text-center">
-              <p className="text-muted-foreground mb-4">
-                Start by entering a section title above. Sections help organize your course content.
-              </p>
-            </div>
-          </div>
+          <EmptyState
+            title="Start Creating Your Course Structure"
+            description="Enter a section title above to begin organizing your course content."
+            icon={PlusCircle}
+          />
         </div>
       )}
       
@@ -126,7 +125,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
       {curriculumSections.length > 0 && (
         <ContentOrganization 
           sections={getCourseSections()}
-          updateSections={(sections) => onUpdateSections(sections)}
+          updateSections={onUpdateSections}
           showAddSection={false} // Don't show AddSectionForm in ContentOrganization
         />
       )}

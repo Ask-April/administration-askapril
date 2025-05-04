@@ -20,7 +20,7 @@ interface LessonItemProps {
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDragLeave: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
-  onChangeType: (newType: string) => void;
+  onChangeType?: (newType: string) => void;
 }
 
 const LessonItem: React.FC<LessonItemProps> = ({
