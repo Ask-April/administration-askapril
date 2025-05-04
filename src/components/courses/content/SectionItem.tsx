@@ -14,11 +14,14 @@ interface SectionItemProps {
   onOpenLessonModal: (sectionId: string, lesson: any) => void;
   onDragStart: (e: React.DragEvent, item: any, type: 'section' | 'lesson', sectionId?: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
-  onDragOver: (e: React.DragEvent) => void;
+  onDragOver: (e: React.DragEvent, id: string, type: 'section' | 'lesson', sectionId?: string) => void;
   onDragLeave: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, targetId: string, type: 'section' | 'lesson', sectionId?: string) => void;
   changeLessonType: (sectionId: string, lessonId: string, newType: string) => void;
   updateSectionTitle?: (sectionId: string, newTitle: string) => void;
+  isDragging?: boolean;
+  draggedItem?: any;
+  dragOverItem?: any;
 }
 
 const SectionItem: React.FC<SectionItemProps> = ({
@@ -33,10 +36,19 @@ const SectionItem: React.FC<SectionItemProps> = ({
   onDragLeave,
   onDrop,
   changeLessonType,
-  updateSectionTitle
+  updateSectionTitle,
+  isDragging,
+  draggedItem,
+  dragOverItem
 }) => {
   const [editingSection, setEditingSection] = useState<{ id: string, title: string } | null>(null);
   const [expanded, setExpanded] = useState<boolean>(true);
+  
+  // Check if this section is the one being dragged over
+  const isBeingDraggedOver = dragOverItem?.id === section.id && dragOverItem?.type === 'section';
+  
+  // Check if this section is the one being dragged
+  const isBeingDragged = draggedItem?.item?.id === section.id && draggedItem?.type === 'section';
   
   const toggleExpand = () => {
     setExpanded(!expanded);
@@ -71,20 +83,24 @@ const SectionItem: React.FC<SectionItemProps> = ({
   return (
     <div 
       key={section.id}
-      draggable
+      draggable={true}
       onDragStart={(e) => onDragStart(e, section, 'section')}
       onDragEnd={onDragEnd}
-      onDragOver={onDragOver}
+      onDragOver={(e) => onDragOver(e, section.id, 'section')}
       onDragLeave={onDragLeave}
       onDrop={(e) => onDrop(e, section.id, 'section')}
-      className="border rounded-md bg-card transition-all"
+      className={`border rounded-md bg-card transition-all ${
+        isBeingDraggedOver ? 'border-primary bg-primary/10' : ''
+      } ${
+        isBeingDragged ? 'opacity-50' : ''
+      }`}
     >
       <div 
         className="p-4 flex items-center justify-between bg-muted cursor-pointer"
         onClick={toggleExpand}
       >
         <div className="flex items-center">
-          <div className="cursor-grab mr-2" onClick={e => e.stopPropagation()}>
+          <div className="cursor-grab mr-2" onMouseDown={(e) => e.stopPropagation()}>
             <GripVertical className="h-4 w-4 text-muted-foreground" />
           </div>
           
@@ -184,10 +200,13 @@ const SectionItem: React.FC<SectionItemProps> = ({
                 onOpenLessonModal={onOpenLessonModal}
                 onDragStart={onDragStart}
                 onDragEnd={onDragEnd}
-                onDragOver={onDragOver}
+                onDragOver={(e) => onDragOver(e, lesson.id, 'lesson', section.id)}
                 onDragLeave={onDragLeave}
-                onDrop={onDrop}
+                onDrop={(e) => onDrop(e, lesson.id, 'lesson', section.id)}
                 changeLessonType={changeLessonType}
+                isDragging={isDragging}
+                draggedItem={draggedItem}
+                dragOverItem={dragOverItem}
               />
             ))}
           </div>

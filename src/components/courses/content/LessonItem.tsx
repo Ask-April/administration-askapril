@@ -28,8 +28,11 @@ interface LessonItemProps {
   onDragEnd: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDragLeave: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent, targetId: string, type: 'section' | 'lesson', sectionId?: string) => void;
+  onDrop: (e: React.DragEvent) => void;
   changeLessonType: (sectionId: string, lessonId: string, newType: string) => void;
+  isDragging?: boolean;
+  draggedItem?: any;
+  dragOverItem?: any;
 }
 
 const LessonItem: React.FC<LessonItemProps> = ({ 
@@ -42,8 +45,23 @@ const LessonItem: React.FC<LessonItemProps> = ({
   onDragOver,
   onDragLeave,
   onDrop,
-  changeLessonType
+  changeLessonType,
+  isDragging,
+  draggedItem,
+  dragOverItem
 }) => {
+  // Check if this lesson is being dragged over
+  const isBeingDraggedOver = 
+    dragOverItem?.id === lesson.id && 
+    dragOverItem?.type === 'lesson' &&
+    dragOverItem?.sectionId === sectionId;
+    
+  // Check if this lesson is being dragged
+  const isBeingDragged = 
+    draggedItem?.item?.id === lesson.id && 
+    draggedItem?.type === 'lesson' &&
+    draggedItem?.sectionId === sectionId;
+
   const getIconForLessonType = (type?: string) => {
     switch (type) {
       case "video":
@@ -97,13 +115,17 @@ const LessonItem: React.FC<LessonItemProps> = ({
   
   return (
     <div
-      draggable
+      draggable={true}
       onDragStart={(e) => onDragStart(e, lesson, 'lesson', sectionId)}
       onDragEnd={onDragEnd}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      onDrop={(e) => onDrop(e, lesson.id, 'lesson', sectionId)}
-      className="p-2 border rounded-md bg-background flex items-center justify-between cursor-pointer hover:bg-accent/10 transition-colors"
+      onDrop={onDrop}
+      className={`p-2 border rounded-md bg-background flex items-center justify-between cursor-pointer hover:bg-accent/10 transition-colors ${
+        isBeingDraggedOver ? 'border-primary bg-primary/10' : ''
+      } ${
+        isBeingDragged ? 'opacity-50' : ''
+      }`}
       onClick={() => onOpenLessonModal(sectionId, lesson)}
     >
       <div className="flex items-center">

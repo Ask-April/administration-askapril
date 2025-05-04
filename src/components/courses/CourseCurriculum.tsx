@@ -33,6 +33,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   const [newSectionTitle, setNewSectionTitle] = useState("");
   const sectionInputRef = useRef<HTMLInputElement>(null);
   const [hasEnteredSection, setHasEnteredSection] = useState(false);
+  const previousSectionsRef = useRef<CurriculumSection[]>([]);
   
   // Focus the input field when the component mounts if focusFirstInput is true
   useEffect(() => {
@@ -64,7 +65,9 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
     }));
     
     // Add the new section at the beginning
-    updateCurriculumSections([newSection, ...updatedSections]);
+    const newSections = [newSection, ...updatedSections];
+    updateCurriculumSections(newSections);
+    previousSectionsRef.current = newSections;
     setNewSectionTitle("");
     setHasEnteredSection(true);
   };
@@ -94,9 +97,13 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
       lessons: section.lessons
     }));
     
-    // Only update if there are changes to avoid infinite loops
-    if (JSON.stringify(newCurriculumSections) !== JSON.stringify(curriculumSections)) {
+    // Don't update if there are no changes to avoid infinite loops
+    const sectionsHaveChanged = JSON.stringify(newCurriculumSections) !== 
+                               JSON.stringify(previousSectionsRef.current);
+                               
+    if (sectionsHaveChanged) {
       updateCurriculumSections(newCurriculumSections);
+      previousSectionsRef.current = newCurriculumSections;
       
       // Also notify the parent if needed
       onUpdateSections(updatedSections);

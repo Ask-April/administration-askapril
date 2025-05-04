@@ -19,6 +19,7 @@ interface CategoryData {
 const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors }) => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [categoryNames, setCategoryNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function fetchCategories() {
@@ -26,6 +27,14 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors
       try {
         const data = await categoryService.getCategories();
         setCategories(data || []);
+        
+        // Create a mapping of category IDs to names
+        const namesMap: Record<string, string> = {};
+        data?.forEach(cat => {
+          namesMap[cat.category_id] = cat.name;
+        });
+        setCategoryNames(namesMap);
+        
         console.log("Fetched categories:", data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -37,11 +46,18 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ value, onChange, errors
     fetchCategories();
   }, []);
 
+  // Get the display name for the selected category
+  const getDisplayName = (categoryId: string): string => {
+    return categoryNames[categoryId] || categoryId;
+  };
+
   return (
     <CourseFormField id="category" label="Category" required errors={errors}>
       <Select value={value} onValueChange={onChange} disabled={isLoading}>
         <SelectTrigger className={errors?.length ? "border-red-500" : ""}>
-          <SelectValue placeholder={isLoading ? "Loading categories..." : "Select a category"} />
+          <SelectValue placeholder={isLoading ? "Loading categories..." : "Select a category"}>
+            {value ? getDisplayName(value) : "Select a category"}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {categories.length === 0 && (

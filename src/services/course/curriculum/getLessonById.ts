@@ -31,13 +31,13 @@ export const getLessonById = async (lessonId: string): Promise<CourseLesson | nu
       title: data.title || '',
       type: data.type || 'video',
       position: data.position || 0,
-      content: data.content || '',
+      content: data.content || '',  // Handle potentially missing properties
       content_url: data.content_url || '',
       video_url: data.video_url || '',
       duration: data.duration || 0,
       is_preview: Boolean(data.is_preview),
       is_draft: Boolean(data.is_draft),
-      is_compulsory: data.is_compulsory !== false,
+      is_compulsory: data.is_compulsory !== false, // If undefined, default to true
       enable_discussion: Boolean(data.enable_discussion)
     };
 

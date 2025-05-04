@@ -1,5 +1,9 @@
 
 import React, { useState, useEffect } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   PricingModelSelector,
   FreePricingModel,
@@ -7,6 +11,7 @@ import {
   PaymentPlanModel,
   SubscriptionPricingModel
 } from "./models";
+import { Card } from "@/components/ui/card";
 
 interface PricingModelsProps {
   editedCourse?: any;
@@ -18,19 +23,86 @@ const PricingModels: React.FC<PricingModelsProps> = ({
   updateCourseData
 }) => {
   const [pricingModel, setPricingModel] = useState('one-time');
+  const [basePrice, setBasePrice] = useState('99');
+  const [currency, setCurrency] = useState('USD');
+  const [hasTrialPeriod, setHasTrialPeriod] = useState(false);
+  const [trialDays, setTrialDays] = useState('14');
+  const [isDiscountAvailable, setIsDiscountAvailable] = useState(false);
   
   // Initialize from course data if available
   useEffect(() => {
-    if (editedCourse?.pricing_data?.model) {
-      setPricingModel(editedCourse.pricing_data.model);
+    if (editedCourse?.pricing_data) {
+      const pricingData = editedCourse.pricing_data;
+      
+      if (pricingData.model) {
+        setPricingModel(pricingData.model);
+      }
+      
+      if (pricingData.basePrice) {
+        setBasePrice(String(pricingData.basePrice));
+      }
+      
+      if (pricingData.currency) {
+        setCurrency(pricingData.currency);
+      }
+      
+      if (pricingData.hasTrialPeriod !== undefined) {
+        setHasTrialPeriod(pricingData.hasTrialPeriod);
+      }
+      
+      if (pricingData.trialDays) {
+        setTrialDays(String(pricingData.trialDays));
+      }
+      
+      if (pricingData.isDiscountAvailable !== undefined) {
+        setIsDiscountAvailable(pricingData.isDiscountAvailable);
+      }
     }
   }, [editedCourse]);
+  
+  // Update course data when pricing details change
+  useEffect(() => {
+    if (updateCourseData) {
+      const currentPricingData = editedCourse?.pricing_data || {};
+      
+      updateCourseData('pricing_data', {
+        ...currentPricingData,
+        model: pricingModel,
+        basePrice: parseFloat(basePrice) || 0,
+        currency,
+        hasTrialPeriod,
+        trialDays: parseInt(trialDays) || 0,
+        isDiscountAvailable
+      });
+    }
+  }, [
+    pricingModel, 
+    basePrice, 
+    currency, 
+    hasTrialPeriod, 
+    trialDays, 
+    isDiscountAvailable, 
+    updateCourseData, 
+    editedCourse?.pricing_data
+  ]);
+
+  // Make sure we can see pricing model even if updateCourseData is not defined
+  const handlePricingModelChange = (model: string) => {
+    setPricingModel(model);
+    if (updateCourseData) {
+      const currentPricingData = editedCourse?.pricing_data || {};
+      updateCourseData('pricing_data', {
+        ...currentPricingData,
+        model
+      });
+    }
+  };
 
   return (
     <div className="space-y-4">
       <PricingModelSelector 
         pricingModel={pricingModel}
-        setPricingModel={setPricingModel}
+        setPricingModel={handlePricingModelChange}
         editedCourse={editedCourse}
         updateCourseData={updateCourseData}
       />
@@ -43,24 +115,187 @@ const PricingModels: React.FC<PricingModelsProps> = ({
       )}
       
       {pricingModel === 'one-time' && (
-        <OneTimePricingModel 
-          editedCourse={editedCourse}
-          updateCourseData={updateCourseData}
-        />
+        <Card className="p-4">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">One-Time Purchase Settings</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="base-price">Base Price</Label>
+                <div className="flex items-center">
+                  <Select 
+                    value={currency} 
+                    onValueChange={setCurrency}
+                    className="w-24 mr-2"
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                      <SelectItem value="CAD">CAD</SelectItem>
+                      <SelectItem value="AUD">AUD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="base-price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={basePrice}
+                    onChange={(e) => setBasePrice(e.target.value)}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="discount-toggle">Allow Discounts</Label>
+                  <Switch
+                    id="discount-toggle"
+                    checked={isDiscountAvailable}
+                    onCheckedChange={setIsDiscountAvailable}
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Enable coupon codes and promotional discounts
+                </p>
+              </div>
+            </div>
+            
+            <div className="border-t pt-4 mt-4">
+              <OneTimePricingModel 
+                editedCourse={editedCourse}
+                updateCourseData={updateCourseData}
+              />
+            </div>
+          </div>
+        </Card>
       )}
       
       {pricingModel === 'payment-plan' && (
-        <PaymentPlanModel 
-          editedCourse={editedCourse}
-          updateCourseData={updateCourseData}
-        />
+        <Card className="p-4">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Payment Plan Settings</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="full-price">Full Price</Label>
+                <div className="flex items-center">
+                  <Select 
+                    value={currency} 
+                    onValueChange={setCurrency}
+                    className="w-24 mr-2"
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                      <SelectItem value="CAD">CAD</SelectItem>
+                      <SelectItem value="AUD">AUD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="full-price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={basePrice}
+                    onChange={(e) => setBasePrice(e.target.value)}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t pt-4 mt-4">
+              <PaymentPlanModel 
+                editedCourse={editedCourse}
+                updateCourseData={updateCourseData}
+              />
+            </div>
+          </div>
+        </Card>
       )}
       
       {pricingModel === 'subscription' && (
-        <SubscriptionPricingModel 
-          editedCourse={editedCourse}
-          updateCourseData={updateCourseData}
-        />
+        <Card className="p-4">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Subscription Settings</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="subscription-price">Monthly Price</Label>
+                <div className="flex items-center">
+                  <Select 
+                    value={currency} 
+                    onValueChange={setCurrency}
+                    className="w-24 mr-2"
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                      <SelectItem value="CAD">CAD</SelectItem>
+                      <SelectItem value="AUD">AUD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="subscription-price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={basePrice}
+                    onChange={(e) => setBasePrice(e.target.value)}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="trial-toggle">Free Trial Period</Label>
+                  <Switch
+                    id="trial-toggle"
+                    checked={hasTrialPeriod}
+                    onCheckedChange={setHasTrialPeriod}
+                  />
+                </div>
+                
+                {hasTrialPeriod && (
+                  <div className="mt-2">
+                    <Label htmlFor="trial-days">Trial Days</Label>
+                    <Input
+                      id="trial-days"
+                      type="number"
+                      min="1"
+                      max="90"
+                      value={trialDays}
+                      onChange={(e) => setTrialDays(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="border-t pt-4 mt-4">
+              <SubscriptionPricingModel 
+                editedCourse={editedCourse}
+                updateCourseData={updateCourseData}
+              />
+            </div>
+          </div>
+        </Card>
       )}
     </div>
   );

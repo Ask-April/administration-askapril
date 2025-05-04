@@ -6,6 +6,7 @@ import AddLessonSidebar from "./AddLessonSidebar";
 import AddSectionForm from "./AddSectionForm";
 import { useContentOrganization } from "@/hooks/useContentOrganization";
 import { CourseSection } from "@/services/types";
+import { useEffectiveDragDrop } from "@/hooks/content/useEffectiveDragDrop";
 
 interface ContentOrganizationProps {
   sections: CourseSection[];
@@ -20,17 +21,16 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
 }) => {
   // Use our custom hook for all state and logic
   const contentOrgHook = useContentOrganization(sections, updateSections);
+  
+  // Use our improved drag and drop hook
+  const dragDropHook = useEffectiveDragDrop(sections, updateSections);
+  
   const { 
     handleAddSection,
     handleDeleteSection,
     handleAddLesson,
     handleDeleteLesson,
     openLessonModal,
-    handleDragStart,
-    handleDragEnd,
-    handleDragOver,
-    handleDragLeave,
-    handleDrop,
     changeLessonType,
     updateSectionTitle,
     selectedLesson,
@@ -64,13 +64,16 @@ const ContentOrganization: React.FC<ContentOrganizationProps> = ({
             onAddLesson={handleAddLesson}
             onDeleteLesson={handleDeleteLesson}
             onOpenLessonModal={openLessonModal}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
+            onDragStart={dragDropHook.handleDragStart}
+            onDragEnd={dragDropHook.handleDragEnd}
+            onDragOver={dragDropHook.handleDragOver}
+            onDragLeave={dragDropHook.handleDragLeave}
+            onDrop={dragDropHook.handleDrop}
             changeLessonType={changeLessonType}
             updateSectionTitle={updateSectionTitle}
+            isDragging={dragDropHook.isDragging}
+            draggedItem={dragDropHook.draggedItem}
+            dragOverItem={dragDropHook.dragOverItem}
           />
         ))}
       </div>
