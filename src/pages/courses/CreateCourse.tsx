@@ -1,4 +1,3 @@
-
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,10 +14,11 @@ import { CourseData } from "@/components/courses/wizard/types";
 
 // Pricing component with real pricing options
 const CoursePricing: React.FC = () => {
-  const { courseData, updateCourseData } = useCourseWizard();
-
-  return (
-    <div className="space-y-6">
+  const {
+    courseData,
+    updateCourseData
+  } = useCourseWizard();
+  return <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Pricing</h2>
       <Alert variant="default" className="mb-4">
         <Info className="h-4 w-4" />
@@ -28,34 +28,25 @@ const CoursePricing: React.FC = () => {
         </AlertDescription>
       </Alert>
       
-      <PricingModels 
-        editedCourse={courseData} 
-        updateCourseData={updateCourseData} 
-      />
+      <PricingModels editedCourse={courseData} updateCourseData={updateCourseData} />
       
-      <div className="p-4 border rounded-md mt-6">
-        <div className="text-center py-4">
-          <h3 className="text-lg font-medium">Total Lessons</h3>
-          <p className="text-2xl font-bold mt-2">{courseData.lessons || 0}</p>
-        </div>
-      </div>
-    </div>
-  );
+      
+    </div>;
 };
 
 // Settings component - remove duration
 const CourseSettings: React.FC = () => {
-  const { courseData } = useCourseWizard();
-  
+  const {
+    courseData
+  } = useCourseWizard();
+
   // Format pricing info for display
   const getPricingInfo = () => {
     if (!courseData.pricing_data || !courseData.pricing_data.model) {
       return "Free";
     }
-    
     const pricingData = courseData.pricing_data;
     const model = pricingData.model;
-    
     if (model === 'free') {
       return "Free";
     } else if (model === 'one-time') {
@@ -65,12 +56,9 @@ const CourseSettings: React.FC = () => {
     } else if (model === 'payment-plan') {
       return `Payment plan: ${pricingData.currency || 'USD'} ${pricingData.basePrice || 0} (${pricingData.installments || 3} payments)`;
     }
-    
     return "Not set";
   };
-  
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Settings</h2>
       <Alert>
         <Info className="h-4 w-4" />
@@ -112,37 +100,24 @@ const CourseSettings: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 const WizardContent: React.FC = () => {
-  const { 
-    currentStep, 
-    courseData, 
-    updateCourseData, 
+  const {
+    currentStep,
+    courseData,
+    updateCourseData,
     createdCourseId,
     updateCurriculumSections,
     steps,
     currentStepIndex
   } = useCourseWizard();
-
   const renderStepContent = () => {
     switch (currentStep) {
       case "info":
-        return (
-          <CourseInfoForm 
-            courseData={courseData} 
-            updateCourseData={updateCourseData} 
-          />
-        );
+        return <CourseInfoForm courseData={courseData} updateCourseData={updateCourseData} />;
       case "curriculum":
-        return <CourseCurriculum 
-                 courseData={courseData} 
-                 updateCourseData={updateCourseData}
-                 courseId={createdCourseId || ""}
-                 onUpdateSections={updateCurriculumSections}
-               />;
+        return <CourseCurriculum courseData={courseData} updateCourseData={updateCourseData} courseId={createdCourseId || ""} onUpdateSections={updateCurriculumSections} />;
       case "pricing":
         return <CoursePricing />;
       case "settings":
@@ -151,15 +126,9 @@ const WizardContent: React.FC = () => {
         return null;
     }
   };
-
-  return (
-    <>
+  return <>
       <div className="max-w-4xl mx-auto mb-6">
-        <StepProgress 
-          steps={steps} 
-          currentStep={currentStep} 
-          currentStepIndex={currentStepIndex}
-        />
+        <StepProgress steps={steps} currentStep={currentStep} currentStepIndex={currentStepIndex} />
       </div>
       <Card className="max-w-4xl mx-auto">
         <CardContent className="pt-6">
@@ -167,24 +136,16 @@ const WizardContent: React.FC = () => {
           <WizardNavigation />
         </CardContent>
       </Card>
-    </>
-  );
+    </>;
 };
-
 const CreateCourse: React.FC = () => {
-  return (
-    <CourseWizardProvider>
+  return <CourseWizardProvider>
       <PageTransition>
         <div className="container px-4 py-6">
-          <CoursePageHeader 
-            title="Create New Course" 
-            backPath="/courses/overview" 
-          />
+          <CoursePageHeader title="Create New Course" backPath="/courses/overview" />
           <WizardContent />
         </div>
       </PageTransition>
-    </CourseWizardProvider>
-  );
+    </CourseWizardProvider>;
 };
-
 export default CreateCourse;
