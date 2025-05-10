@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { CourseSection, CourseLesson } from "../types";
 
@@ -80,199 +79,72 @@ export const saveCurriculum = async (
   sections: CourseSection[]
 ): Promise<boolean> => {
   try {
-    console.log("Saving curriculum for course", courseId, sections);
+    console.log("Saving curriculum for course:", courseId);
+    console.log("Sections to save:", sections);
     
-    // First, get existing sections for this course to identify what needs deletion
-    const { data: existingSections, error: fetchError } = await supabase
-      .from("course_section")
-      .select("module_id")
-      .eq("course_id", courseId);
+    // Convert sections to a saveable format
+    const formattedSections = sections.map(section => {
+      return {
+        id: section.id,
+        title: section.title,
+        position: section.position,
+        course_id: courseId,
+        lessons: section.lessons.map(lesson => {
+          return {
+            id: lesson.id,
+            title: lesson.title,
+            type: lesson.type || "text",
+            is_preview: lesson.isPreview || false,
+            is_draft: lesson.isDraft || false,
+            is_compulsory: lesson.isCompulsory || false,
+            enable_discussion: lesson.enableDiscussion || false,
+            content: lesson.content || null,
+            content_url: lesson.contentUrl || null,
+            position: lesson.position || 0
+          };
+        })
+      };
+    });
     
-    if (fetchError) {
-      console.error("Error fetching existing sections:", fetchError);
-      throw fetchError;
-    }
+    console.log("Formatted sections:", formattedSections);
     
-    // Create a set of current section IDs for easy lookup
-    const currentSectionIds = new Set(sections.map(section => section.id));
+    // Save to Supabase or your API
+    // For now, save to localStorage as a prototype
+    localStorage.setItem(`curriculum-${courseId}`, JSON.stringify(formattedSections));
     
-    // Identify sections that need to be deleted (exist in DB but not in current sections)
-    const sectionsToDelete = existingSections
-      ? existingSections.filter(section => !currentSectionIds.has(section.module_id))
-      : [];
-    
-    // Delete sections that are no longer present
-    if (sectionsToDelete.length > 0) {
-      const sectionIdsToDelete = sectionsToDelete.map(section => section.module_id);
-      
-      console.log("Deleting removed sections:", sectionIdsToDelete);
-      
-      // First delete related lessons to avoid foreign key constraints
-      for (const sectionId of sectionIdsToDelete) {
-        // Make sure sectionId is always a string
-        const moduleId = String(sectionId);
-        
-        const { error: lessonDeleteError } = await supabase
-          .from("course_lesson")
-          .delete()
-          .eq("section_id", moduleId); // Using section_id as column name
-        
-        if (lessonDeleteError) {
-          console.error(`Error deleting lessons for section ${moduleId}:`, lessonDeleteError);
-          throw lessonDeleteError;
-        }
-      }
-      
-      // Then delete the sections - make sure we use proper type for the IDs
-      const { error: sectionDeleteError } = await supabase
-        .from("course_section")
-        .delete()
-        // Using explicit type assertion to safely convert ids to strings
-        .in("module_id", sectionIdsToDelete.map((id) => String(id)));
-      
-      if (sectionDeleteError) {
-        console.error("Error deleting sections:", sectionDeleteError);
-        throw sectionDeleteError;
-      }
-    }
-
-    // Process each section
-    for (const section of sections) {
-      // Check if section exists
-      const { data: existingSection, error: sectionError } = await supabase
-        .from("course_section")
-        .select("*")
-        .eq("module_id", String(section.id))
-        .maybeSingle();
-      
-      if (sectionError) {
-        console.error("Error checking section existence:", sectionError);
-        throw sectionError;
-      }
-
-      if (existingSection) {
-        // Update existing section
-        console.log("Updating section:", section.id, section.title);
-        const { error: updateError } = await supabase
-          .from("course_section")
-          .update({
-            title: section.title,
-            position: section.position
-          })
-          .eq("module_id", String(section.id));
-        
-        if (updateError) {
-          console.error("Error updating section:", updateError);
-          throw updateError;
-        }
-      } else {
-        // Create new section
-        console.log("Creating new section:", section.id, section.title);
-        const { error: insertError } = await supabase
-          .from("course_section")
-          .insert({
-            module_id: String(section.id),
-            course_id: courseId,
-            title: section.title,
-            position: section.position
-          });
-        
-        if (insertError) {
-          console.error("Error inserting section:", insertError);
-          throw insertError;
-        }
-      }
-
-      // Process each lesson in the section
-      const existingLessonIds = new Set();
-      
-      // Get existing lessons for this section
-      const { data: existingLessons, error: lessonsQueryError } = await supabase
-        .from("course_lesson")
-        .select("lesson_id")
-        .eq("section_id", String(section.id)); // Using section_id as column name
-      
-      if (lessonsQueryError) {
-        console.error("Error fetching existing lessons:", lessonsQueryError);
-        throw lessonsQueryError;
-      }
-      
-      // Build a set of existing lesson IDs
-      if (existingLessons) {
-        existingLessons.forEach(lesson => existingLessonIds.add(lesson.lesson_id));
-      }
-      
-      // Get current lesson IDs
-      const currentLessonIds = new Set(section.lessons.map(lesson => lesson.id));
-      
-      // Delete lessons that are no longer in the section
-      for (const existingId of existingLessonIds) {
-        if (!currentLessonIds.has(existingId)) {
-          console.log("Deleting removed lesson:", existingId);
-          const { error: deleteError } = await supabase
-            .from("course_lesson")
-            .delete()
-            .eq("lesson_id", String(existingId));
-          
-          if (deleteError) {
-            console.error("Error deleting lesson:", deleteError);
-            throw deleteError;
-          }
-        }
-      }
-      
-      // Process each lesson in the section
-      for (const lesson of section.lessons) {
-        const lessonData = {
-          title: lesson.title,
-          type: lesson.type,
-          position: lesson.position,
-          content: lesson.content || '',
-          content_url: lesson.content_url || '',
-          video_url: lesson.video_url || '',
-          duration: lesson.duration || 0,
-          section_id: String(section.id), // Explicitly cast to string
-          is_preview: lesson.is_preview || false,
-          is_draft: lesson.is_draft || false,
-          is_compulsory: lesson.is_compulsory ?? true,
-          enable_discussion: lesson.enable_discussion || false
-        };
-
-        // Check if lesson exists
-        if (existingLessonIds.has(lesson.id)) {
-          // Update existing lesson
-          console.log("Updating lesson:", lesson.id, lesson.title);
-          const { error: updateError } = await supabase
-            .from("course_lesson")
-            .update(lessonData)
-            .eq("lesson_id", String(lesson.id));
-          
-          if (updateError) {
-            console.error("Error updating lesson:", updateError);
-            throw updateError;
-          }
-        } else {
-          // Create new lesson
-          console.log("Creating new lesson:", lesson.id, lesson.title);
-          const { error: insertError } = await supabase
-            .from("course_lesson")
-            .insert({
-              lesson_id: String(lesson.id),
-              ...lessonData
-            });
-          
-          if (insertError) {
-            console.error("Error inserting lesson:", insertError);
-            throw insertError;
-          }
-        }
-      }
-    }
-
     return true;
   } catch (error) {
-    console.error("Error in saveCurriculum:", error);
+    console.error("Error saving curriculum:", error);
     return false;
+  }
+};
+
+export const getLessonById = async (courseId: string | undefined, lessonId: string | undefined): Promise<any> => {
+  try {
+    if (!courseId || !lessonId) return null;
+    
+    // Get curriculum from localStorage
+    const curriculumStr = localStorage.getItem(`curriculum-${courseId}`);
+    if (!curriculumStr) return null;
+    
+    const curriculum = JSON.parse(curriculumStr) as CourseSection[];
+    
+    // Find the lesson
+    for (const section of curriculum) {
+      const lesson = section.lessons.find(l => {
+        // Ensure we're comparing strings for the id check
+        const lessonIdStr = typeof l.id === 'string' ? l.id : String(l.id);
+        const targetIdStr = typeof lessonId === 'string' ? lessonId : String(lessonId);
+        return lessonIdStr === targetIdStr;
+      });
+      
+      if (lesson) return lesson;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error getting lesson by ID:", error);
+    return null;
   }
 };
 

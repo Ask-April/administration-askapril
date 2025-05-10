@@ -1,10 +1,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { Mic, Upload, Link as LinkIcon, Play, Square, Pause } from "lucide-react";
+import { Mic, Upload, Link as LinkIcon, Play, Square, Pause, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { uploadImage } from "@/utils/supabaseStorage";
 import { toast } from "sonner";
 
@@ -27,6 +28,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -93,30 +95,46 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
   const handleAudioEnd = () => {
     setIsPlaying(false);
   };
+  
+  const handleLocalFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsUploading(true);
+    onFileChange(e);
+    // The actual upload is handled in the parent via onFileChange
+    // This is just to reset the UI after a short delay
+    setTimeout(() => {
+      setIsUploading(false);
+    }, 500);
+  };
 
   const handleUploadRecording = async () => {
     if (!audioBlob) return;
     
     try {
+      setIsUploading(true);
       const timestamp = new Date().getTime();
       const fileName = `recorded-audio-${timestamp}.webm`;
       const file = new File([audioBlob], fileName, { type: "audio/webm" });
       
-      // TODO: Replace with your upload function
       toast.promise(
-        uploadImage(file, 'course-content', 'audio'),
+        uploadImage(file, 'course_audios', 'audio'),
         {
           loading: 'Uploading recorded audio...',
           success: (url) => {
             onContentUrlChange(url);
+            setIsUploading(false);
             return 'Audio uploaded successfully!';
           },
-          error: 'Failed to upload audio',
+          error: (err) => {
+            setIsUploading(false);
+            console.error('Upload error:', err);
+            return 'Failed to upload audio';
+          },
         }
       );
     } catch (error) {
       console.error("Error uploading recording:", error);
       toast.error("Failed to upload recording");
+      setIsUploading(false);
     }
   };
 
@@ -128,7 +146,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
         <TabsTrigger value="record"><Mic className="h-4 w-4 mr-1" /> Record</TabsTrigger>
       </TabsList>
       
-      <TabsContent value="url" className="space-y-2">
+      <TabsContent value="url" className="space-y-4">
         <div>
           <Label htmlFor="audio-url">Audio URL</Label>
           <Input 
@@ -145,7 +163,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
         </div>
       </TabsContent>
       
-      <TabsContent value="upload" className="space-y-2">
+      <TabsContent value="upload" className="space-y-4">
         <div>
           <Label htmlFor="audio-file">Upload Audio</Label>
           <Input 
@@ -153,9 +171,27 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
             type="file" 
             ref={fileInputRef}
             accept="audio/*"
-            onChange={onFileChange}
+            onChange={handleLocalFileChange}
+            disabled={isUploading}
           />
         </div>
+        
+        {isUploading && (
+          <div className="space-y-2">
+            <div className="flex items-center">
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <span className="text-sm">Uploading audio...</span>
+            </div>
+            <Progress value={65} className="h-2" />
+          </div>
+        )}
+        
+        {contentUrl && !isUploading && contentMethod === "upload" && (
+          <div className="p-3 bg-muted/50 rounded border">
+            <Label className="block mb-1 text-sm">Uploaded audio:</Label>
+            <audio controls src={contentUrl} className="w-full mt-1" />
+          </div>
+        )}
       </TabsContent>
       
       <TabsContent value="record" className="space-y-4">
@@ -167,7 +203,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
                 size="sm" 
                 variant="outline"
                 className="flex items-center space-x-1"
-                disabled={recordedAudioUrl !== null}
+                disabled={recordedAudioUrl !== null || isUploading}
               >
                 <Mic className="h-4 w-4" />
                 <span>Start Recording</span>
@@ -186,7 +222,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
           </div>
           
           {recordedAudioUrl && (
-            <div className="w-full space-y-2">
+            <div className="w-full space-y-3">
               <div className="bg-muted rounded-lg p-3 flex items-center justify-between">
                 <Button 
                   variant="outline" 
@@ -211,11 +247,25 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
                   variant="default" 
                   size="sm" 
                   onClick={handleUploadRecording}
+                  disabled={isUploading}
                 >
-                  <Upload className="h-4 w-4 mr-1" />
-                  <span>Use this recording</span>
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-1" />
+                      <span>Use this recording</span>
+                    </>
+                  )}
                 </Button>
               </div>
+              
+              {isUploading && (
+                <Progress value={65} className="h-2" />
+              )}
               
               <audio 
                 ref={audioRef} 
@@ -224,21 +274,31 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
                 className="hidden"
               />
               
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full"
-                onClick={() => {
-                  setAudioChunks([]);
-                  setAudioBlob(null);
-                  if (recordedAudioUrl) {
-                    URL.revokeObjectURL(recordedAudioUrl);
-                  }
-                  setRecordedAudioUrl(null);
-                }}
-              >
-                Record Again
-              </Button>
+              {contentUrl && contentMethod === "record" && !isUploading && (
+                <div className="p-3 bg-muted/50 rounded border">
+                  <Label className="block mb-1 text-sm">Uploaded recording:</Label>
+                  <audio controls src={contentUrl} className="w-full mt-1" />
+                </div>
+              )}
+              
+              {!isUploading && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    setAudioChunks([]);
+                    setAudioBlob(null);
+                    if (recordedAudioUrl) {
+                      URL.revokeObjectURL(recordedAudioUrl);
+                    }
+                    setRecordedAudioUrl(null);
+                  }}
+                  disabled={isUploading}
+                >
+                  Record Again
+                </Button>
+              )}
             </div>
           )}
         </div>

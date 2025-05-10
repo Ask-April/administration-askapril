@@ -51,6 +51,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
             type={selectedType as "e-book" | "powerpoint" | "pdf"}
             onFileChange={onFileChange}
             fileInputRef={fileInputRef}
+            contentUrl={contentUrl}
           />
         )}
         
@@ -72,6 +73,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
           <DownloadEditor 
             onFileChange={onFileChange}
             fileInputRef={fileInputRef}
+            contentUrl={contentUrl}
           />
         )}
         

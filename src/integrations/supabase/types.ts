@@ -12,6 +12,7 @@ export type Database = {
       activity_log: {
         Row: {
           action_type: string | null
+          created_at: string | null
           details: string | null
           log_id: string
           owner: string | null
@@ -20,6 +21,7 @@ export type Database = {
         }
         Insert: {
           action_type?: string | null
+          created_at?: string | null
           details?: string | null
           log_id?: string
           owner?: string | null
@@ -28,6 +30,7 @@ export type Database = {
         }
         Update: {
           action_type?: string | null
+          created_at?: string | null
           details?: string | null
           log_id?: string
           owner?: string | null
@@ -49,6 +52,7 @@ export type Database = {
           affiliate_user_id: string | null
           amount: number | null
           commission_id: string
+          created_at: string | null
           order_id: string | null
           payout_date: string | null
           status: string | null
@@ -57,6 +61,7 @@ export type Database = {
           affiliate_user_id?: string | null
           amount?: number | null
           commission_id?: string
+          created_at?: string | null
           order_id?: string | null
           payout_date?: string | null
           status?: string | null
@@ -65,6 +70,7 @@ export type Database = {
           affiliate_user_id?: string | null
           amount?: number | null
           commission_id?: string
+          created_at?: string | null
           order_id?: string | null
           payout_date?: string | null
           status?: string | null
@@ -90,6 +96,7 @@ export type Database = {
         Row: {
           affiliate_user_id: string | null
           course_id: string | null
+          created_at: string | null
           referral_date: string | null
           referral_id: string
           referred_user_id: string | null
@@ -97,6 +104,7 @@ export type Database = {
         Insert: {
           affiliate_user_id?: string | null
           course_id?: string | null
+          created_at?: string | null
           referral_date?: string | null
           referral_id?: string
           referred_user_id?: string | null
@@ -104,6 +112,7 @@ export type Database = {
         Update: {
           affiliate_user_id?: string | null
           course_id?: string | null
+          created_at?: string | null
           referral_date?: string | null
           referral_id?: string
           referred_user_id?: string | null
@@ -135,6 +144,7 @@ export type Database = {
       assignment: {
         Row: {
           assignment_id: string
+          created_at: string | null
           description: string | null
           due_date: string | null
           lesson_id: string | null
@@ -142,6 +152,7 @@ export type Database = {
         }
         Insert: {
           assignment_id?: string
+          created_at?: string | null
           description?: string | null
           due_date?: string | null
           lesson_id?: string | null
@@ -149,6 +160,7 @@ export type Database = {
         }
         Update: {
           assignment_id?: string
+          created_at?: string | null
           description?: string | null
           due_date?: string | null
           lesson_id?: string | null
@@ -168,6 +180,7 @@ export type Database = {
         Row: {
           assignment_id: string | null
           content: string | null
+          created_at: string | null
           feedback: string | null
           grade: number | null
           student_id: string | null
@@ -177,6 +190,7 @@ export type Database = {
         Insert: {
           assignment_id?: string | null
           content?: string | null
+          created_at?: string | null
           feedback?: string | null
           grade?: number | null
           student_id?: string | null
@@ -186,6 +200,7 @@ export type Database = {
         Update: {
           assignment_id?: string | null
           content?: string | null
+          created_at?: string | null
           feedback?: string | null
           grade?: number | null
           student_id?: string | null
@@ -213,6 +228,7 @@ export type Database = {
         Row: {
           background_image: string | null
           cert_id: string
+          created_at: string | null
           design_data: string | null
           owner: string | null
           template_name: string | null
@@ -220,6 +236,7 @@ export type Database = {
         Insert: {
           background_image?: string | null
           cert_id?: string
+          created_at?: string | null
           design_data?: string | null
           owner?: string | null
           template_name?: string | null
@@ -227,6 +244,7 @@ export type Database = {
         Update: {
           background_image?: string | null
           cert_id?: string
+          created_at?: string | null
           design_data?: string | null
           owner?: string | null
           template_name?: string | null
@@ -236,6 +254,7 @@ export type Database = {
       community: {
         Row: {
           community_id: string
+          created_at: string | null
           created_by: string | null
           description: string | null
           name: string | null
@@ -244,6 +263,7 @@ export type Database = {
         }
         Insert: {
           community_id?: string
+          created_at?: string | null
           created_by?: string | null
           description?: string | null
           name?: string | null
@@ -252,6 +272,7 @@ export type Database = {
         }
         Update: {
           community_id?: string
+          created_at?: string | null
           created_by?: string | null
           description?: string | null
           name?: string | null
@@ -310,6 +331,7 @@ export type Database = {
       contact: {
         Row: {
           contact_id: string
+          created_at: string | null
           email: string | null
           name: string | null
           owner: string | null
@@ -318,6 +340,7 @@ export type Database = {
         }
         Insert: {
           contact_id?: string
+          created_at?: string | null
           email?: string | null
           name?: string | null
           owner?: string | null
@@ -326,6 +349,7 @@ export type Database = {
         }
         Update: {
           contact_id?: string
+          created_at?: string | null
           email?: string | null
           name?: string | null
           owner?: string | null
@@ -338,6 +362,7 @@ export type Database = {
         Row: {
           code: string | null
           coupon_id: string
+          created_at: string | null
           description: string | null
           discount_type: string | null
           discount_value: number | null
@@ -349,6 +374,7 @@ export type Database = {
         Insert: {
           code?: string | null
           coupon_id?: string
+          created_at?: string | null
           description?: string | null
           discount_type?: string | null
           discount_value?: number | null
@@ -360,6 +386,7 @@ export type Database = {
         Update: {
           code?: string | null
           coupon_id?: string
+          created_at?: string | null
           description?: string | null
           discount_type?: string | null
           discount_value?: number | null
@@ -427,16 +454,19 @@ export type Database = {
       course_category: {
         Row: {
           category_id: string
+          created_at: string | null
           description: string
           name: string | null
         }
         Insert: {
           category_id?: string
+          created_at?: string | null
           description: string
           name?: string | null
         }
         Update: {
           category_id?: string
+          created_at?: string | null
           description?: string
           name?: string | null
         }
@@ -445,6 +475,7 @@ export type Database = {
       course_lesson: {
         Row: {
           content_url: string | null
+          created_at: string | null
           duration: number | null
           lesson_id: string
           position: number | null
@@ -454,6 +485,7 @@ export type Database = {
         }
         Insert: {
           content_url?: string | null
+          created_at?: string | null
           duration?: number | null
           lesson_id?: string
           position?: number | null
@@ -463,6 +495,7 @@ export type Database = {
         }
         Update: {
           content_url?: string | null
+          created_at?: string | null
           duration?: number | null
           lesson_id?: string
           position?: number | null
@@ -483,18 +516,21 @@ export type Database = {
       course_section: {
         Row: {
           course_id: string | null
+          created_at: string | null
           module_id: string
           position: number | null
           title: string | null
         }
         Insert: {
           course_id?: string | null
+          created_at?: string | null
           module_id?: string
           position?: number | null
           title?: string | null
         }
         Update: {
           course_id?: string | null
+          created_at?: string | null
           module_id?: string
           position?: number | null
           title?: string | null
@@ -616,6 +652,7 @@ export type Database = {
       email_campaign: {
         Row: {
           campaign_id: string
+          created_at: string | null
           created_by: string | null
           name: string | null
           owner: string | null
@@ -624,6 +661,7 @@ export type Database = {
         }
         Insert: {
           campaign_id?: string
+          created_at?: string | null
           created_by?: string | null
           name?: string | null
           owner?: string | null
@@ -632,6 +670,7 @@ export type Database = {
         }
         Update: {
           campaign_id?: string
+          created_at?: string | null
           created_by?: string | null
           name?: string | null
           owner?: string | null
@@ -652,14 +691,17 @@ export type Database = {
         Row: {
           campaign_id: string
           contact_id: string
+          created_at: string | null
         }
         Insert: {
           campaign_id: string
           contact_id: string
+          created_at?: string | null
         }
         Update: {
           campaign_id?: string
           contact_id?: string
+          created_at?: string | null
         }
         Relationships: [
           {
@@ -680,16 +722,19 @@ export type Database = {
       }
       email_sequence: {
         Row: {
+          created_at: string | null
           description: string | null
           name: string | null
           sequence_id: string
         }
         Insert: {
+          created_at?: string | null
           description?: string | null
           name?: string | null
           sequence_id?: string
         }
         Update: {
+          created_at?: string | null
           description?: string | null
           name?: string | null
           sequence_id?: string
@@ -701,6 +746,7 @@ export type Database = {
           campaign_id: string | null
           clicked_at: string | null
           contact_id: string | null
+          created_at: string | null
           opened_at: string | null
           stat_id: string
         }
@@ -708,6 +754,7 @@ export type Database = {
           campaign_id?: string | null
           clicked_at?: string | null
           contact_id?: string | null
+          created_at?: string | null
           opened_at?: string | null
           stat_id?: string
         }
@@ -715,6 +762,7 @@ export type Database = {
           campaign_id?: string | null
           clicked_at?: string | null
           contact_id?: string | null
+          created_at?: string | null
           opened_at?: string | null
           stat_id?: string
         }
@@ -771,6 +819,7 @@ export type Database = {
       enrollment: {
         Row: {
           course_id: string | null
+          created_at: string | null
           enroll_date: string | null
           enrollment_id: string
           progress_percent: number | null
@@ -780,6 +829,7 @@ export type Database = {
         }
         Insert: {
           course_id?: string | null
+          created_at?: string | null
           enroll_date?: string | null
           enrollment_id?: string
           progress_percent?: number | null
@@ -789,6 +839,7 @@ export type Database = {
         }
         Update: {
           course_id?: string | null
+          created_at?: string | null
           enroll_date?: string | null
           enrollment_id?: string
           progress_percent?: number | null
@@ -816,6 +867,7 @@ export type Database = {
       external_contact_mapping: {
         Row: {
           contact_id: string | null
+          created_at: string | null
           external_id: string | null
           external_system: string | null
           mapping_id: string
@@ -823,6 +875,7 @@ export type Database = {
         }
         Insert: {
           contact_id?: string | null
+          created_at?: string | null
           external_id?: string | null
           external_system?: string | null
           mapping_id?: string
@@ -830,6 +883,7 @@ export type Database = {
         }
         Update: {
           contact_id?: string | null
+          created_at?: string | null
           external_id?: string | null
           external_system?: string | null
           mapping_id?: string
@@ -847,18 +901,21 @@ export type Database = {
       }
       funnel: {
         Row: {
+          created_at: string | null
           funnel_id: string
           goal: string | null
           name: string | null
           owner: string | null
         }
         Insert: {
+          created_at?: string | null
           funnel_id?: string
           goal?: string | null
           name?: string | null
           owner?: string | null
         }
         Update: {
+          created_at?: string | null
           funnel_id?: string
           goal?: string | null
           name?: string | null
@@ -868,6 +925,7 @@ export type Database = {
       }
       funnel_step: {
         Row: {
+          created_at: string | null
           funnel_id: string | null
           page_id: string | null
           step_id: string
@@ -875,6 +933,7 @@ export type Database = {
           step_type: string | null
         }
         Insert: {
+          created_at?: string | null
           funnel_id?: string | null
           page_id?: string | null
           step_id?: string
@@ -882,6 +941,7 @@ export type Database = {
           step_type?: string | null
         }
         Update: {
+          created_at?: string | null
           funnel_id?: string | null
           page_id?: string | null
           step_id?: string
@@ -903,6 +963,7 @@ export type Database = {
           active_flag: boolean | null
           config_data: string | null
           config_id: string
+          created_at: string | null
           owner: string | null
           service_type: string | null
         }
@@ -910,6 +971,7 @@ export type Database = {
           active_flag?: boolean | null
           config_data?: string | null
           config_id?: string
+          created_at?: string | null
           owner?: string | null
           service_type?: string | null
         }
@@ -917,6 +979,7 @@ export type Database = {
           active_flag?: boolean | null
           config_data?: string | null
           config_id?: string
+          created_at?: string | null
           owner?: string | null
           service_type?: string | null
         }
@@ -927,6 +990,7 @@ export type Database = {
           cert_id: string | null
           certificate_code: string | null
           course_id: string | null
+          created_at: string | null
           id: string
           issue_date: string | null
           student_id: string | null
@@ -935,6 +999,7 @@ export type Database = {
           cert_id?: string | null
           certificate_code?: string | null
           course_id?: string | null
+          created_at?: string | null
           id?: string
           issue_date?: string | null
           student_id?: string | null
@@ -943,6 +1008,7 @@ export type Database = {
           cert_id?: string | null
           certificate_code?: string | null
           course_id?: string | null
+          created_at?: string | null
           id?: string
           issue_date?: string | null
           student_id?: string | null
@@ -976,6 +1042,7 @@ export type Database = {
           areas_for_improvement: string[] | null
           completion_percentage: number | null
           course_id: string | null
+          created_at: string | null
           id: string
           last_activity: string | null
           strengths: string[] | null
@@ -986,6 +1053,7 @@ export type Database = {
           areas_for_improvement?: string[] | null
           completion_percentage?: number | null
           course_id?: string | null
+          created_at?: string | null
           id?: string
           last_activity?: string | null
           strengths?: string[] | null
@@ -996,6 +1064,7 @@ export type Database = {
           areas_for_improvement?: string[] | null
           completion_percentage?: number | null
           course_id?: string | null
+          created_at?: string | null
           id?: string
           last_activity?: string | null
           strengths?: string[] | null
@@ -1016,6 +1085,7 @@ export type Database = {
         Row: {
           comment_id: string
           content: string | null
+          created_at: string | null
           lesson_id: string | null
           parent_comment: string | null
           timestamp: string | null
@@ -1024,6 +1094,7 @@ export type Database = {
         Insert: {
           comment_id?: string
           content?: string | null
+          created_at?: string | null
           lesson_id?: string | null
           parent_comment?: string | null
           timestamp?: string | null
@@ -1032,6 +1103,7 @@ export type Database = {
         Update: {
           comment_id?: string
           content?: string | null
+          created_at?: string | null
           lesson_id?: string | null
           parent_comment?: string | null
           timestamp?: string | null
@@ -1057,18 +1129,21 @@ export type Database = {
       lesson_completion: {
         Row: {
           completed_at: string | null
+          created_at: string | null
           lesson_id: string
           score: number | null
           student_id: string
         }
         Insert: {
           completed_at?: string | null
+          created_at?: string | null
           lesson_id: string
           score?: number | null
           student_id: string
         }
         Update: {
           completed_at?: string | null
+          created_at?: string | null
           lesson_id?: string
           score?: number | null
           student_id?: string
@@ -1092,16 +1167,19 @@ export type Database = {
       }
       lesson_resource: {
         Row: {
+          created_at: string | null
           is_downloadable: boolean | null
           lesson_id: string
           media_id: string
         }
         Insert: {
+          created_at?: string | null
           is_downloadable?: boolean | null
           lesson_id: string
           media_id: string
         }
         Update: {
+          created_at?: string | null
           is_downloadable?: boolean | null
           lesson_id?: string
           media_id?: string
@@ -1125,6 +1203,7 @@ export type Database = {
       }
       live_session: {
         Row: {
+          created_at: string | null
           description: string | null
           duration: number | null
           external_meeting_id: string | null
@@ -1138,6 +1217,7 @@ export type Database = {
           title: string | null
         }
         Insert: {
+          created_at?: string | null
           description?: string | null
           duration?: number | null
           external_meeting_id?: string | null
@@ -1151,6 +1231,7 @@ export type Database = {
           title?: string | null
         }
         Update: {
+          created_at?: string | null
           description?: string | null
           duration?: number | null
           external_meeting_id?: string | null
@@ -1175,6 +1256,7 @@ export type Database = {
       }
       media: {
         Row: {
+          created_at: string | null
           file_type: string | null
           file_url: string | null
           filename: string | null
@@ -1185,6 +1267,7 @@ export type Database = {
           uploaded_date: string | null
         }
         Insert: {
+          created_at?: string | null
           file_type?: string | null
           file_url?: string | null
           filename?: string | null
@@ -1195,6 +1278,7 @@ export type Database = {
           uploaded_date?: string | null
         }
         Update: {
+          created_at?: string | null
           file_type?: string | null
           file_url?: string | null
           filename?: string | null
@@ -1216,6 +1300,7 @@ export type Database = {
       }
       notification: {
         Row: {
+          created_at: string | null
           is_read: boolean | null
           message: string | null
           notif_id: string
@@ -1224,6 +1309,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          created_at?: string | null
           is_read?: boolean | null
           message?: string | null
           notif_id?: string
@@ -1232,6 +1318,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          created_at?: string | null
           is_read?: boolean | null
           message?: string | null
           notif_id?: string
@@ -1290,6 +1377,7 @@ export type Database = {
       }
       order_item: {
         Row: {
+          created_at: string | null
           item_price: number | null
           order_id: string | null
           order_item_id: string
@@ -1297,6 +1385,7 @@ export type Database = {
           quantity: number | null
         }
         Insert: {
+          created_at?: string | null
           item_price?: number | null
           order_id?: string | null
           order_item_id?: string
@@ -1304,6 +1393,7 @@ export type Database = {
           quantity?: number | null
         }
         Update: {
+          created_at?: string | null
           item_price?: number | null
           order_id?: string | null
           order_item_id?: string
@@ -1330,6 +1420,7 @@ export type Database = {
       orders: {
         Row: {
           amount: number | null
+          created_at: string | null
           currency: string | null
           order_id: string
           owner: string | null
@@ -1341,6 +1432,7 @@ export type Database = {
         }
         Insert: {
           amount?: number | null
+          created_at?: string | null
           currency?: string | null
           order_id?: string
           owner?: string | null
@@ -1352,6 +1444,7 @@ export type Database = {
         }
         Update: {
           amount?: number | null
+          created_at?: string | null
           currency?: string | null
           order_id?: string
           owner?: string | null
@@ -1389,18 +1482,21 @@ export type Database = {
         Row: {
           added_at: string | null
           course_id: string | null
+          created_at: string | null
           id: string
           organization_id: string | null
         }
         Insert: {
           added_at?: string | null
           course_id?: string | null
+          created_at?: string | null
           id?: string
           organization_id?: string | null
         }
         Update: {
           added_at?: string | null
           course_id?: string | null
+          created_at?: string | null
           id?: string
           organization_id?: string | null
         }
@@ -1483,6 +1579,7 @@ export type Database = {
       page: {
         Row: {
           content: string | null
+          created_at: string | null
           owner: string | null
           page_id: string
           title: string | null
@@ -1490,6 +1587,7 @@ export type Database = {
         }
         Insert: {
           content?: string | null
+          created_at?: string | null
           owner?: string | null
           page_id?: string
           title?: string | null
@@ -1497,6 +1595,7 @@ export type Database = {
         }
         Update: {
           content?: string | null
+          created_at?: string | null
           owner?: string | null
           page_id?: string
           title?: string | null
@@ -1507,18 +1606,21 @@ export type Database = {
       payment_gateway: {
         Row: {
           config_data: string | null
+          created_at: string | null
           gateway_id: string
           owner: string | null
           type: string | null
         }
         Insert: {
           config_data?: string | null
+          created_at?: string | null
           gateway_id?: string
           owner?: string | null
           type?: string | null
         }
         Update: {
           config_data?: string | null
+          created_at?: string | null
           gateway_id?: string
           owner?: string | null
           type?: string | null
@@ -1529,6 +1631,7 @@ export type Database = {
         Row: {
           community_id: string | null
           content: string | null
+          created_at: string | null
           parent_post: string | null
           post_date: string | null
           post_id: string
@@ -1538,6 +1641,7 @@ export type Database = {
         Insert: {
           community_id?: string | null
           content?: string | null
+          created_at?: string | null
           parent_post?: string | null
           post_date?: string | null
           post_id?: string
@@ -1547,6 +1651,7 @@ export type Database = {
         Update: {
           community_id?: string | null
           content?: string | null
+          created_at?: string | null
           parent_post?: string | null
           post_date?: string | null
           post_id?: string
@@ -1574,6 +1679,7 @@ export type Database = {
         Row: {
           billing_interval: string | null
           billing_type: string | null
+          created_at: string | null
           currency: string | null
           is_default: boolean | null
           plan_id: string
@@ -1584,6 +1690,7 @@ export type Database = {
         Insert: {
           billing_interval?: string | null
           billing_type?: string | null
+          created_at?: string | null
           currency?: string | null
           is_default?: boolean | null
           plan_id?: string
@@ -1594,6 +1701,7 @@ export type Database = {
         Update: {
           billing_interval?: string | null
           billing_type?: string | null
+          created_at?: string | null
           currency?: string | null
           is_default?: boolean | null
           plan_id?: string
@@ -1613,6 +1721,7 @@ export type Database = {
       }
       product: {
         Row: {
+          created_at: string | null
           description: string | null
           name: string | null
           owner: string | null
@@ -1621,6 +1730,7 @@ export type Database = {
           type: string | null
         }
         Insert: {
+          created_at?: string | null
           description?: string | null
           name?: string | null
           owner?: string | null
@@ -1629,6 +1739,7 @@ export type Database = {
           type?: string | null
         }
         Update: {
+          created_at?: string | null
           description?: string | null
           name?: string | null
           owner?: string | null
@@ -1667,18 +1778,21 @@ export type Database = {
       }
       question_option: {
         Row: {
+          created_at: string | null
           is_correct: boolean | null
           option_id: string
           option_text: string | null
           question_id: string | null
         }
         Insert: {
+          created_at?: string | null
           is_correct?: boolean | null
           option_id?: string
           option_text?: string | null
           question_id?: string | null
         }
         Update: {
+          created_at?: string | null
           is_correct?: boolean | null
           option_id?: string
           option_text?: string | null
@@ -1697,6 +1811,7 @@ export type Database = {
       quiz: {
         Row: {
           course_id: string | null
+          created_at: string | null
           graded: boolean | null
           quiz_id: string
           time_limit: number | null
@@ -1704,6 +1819,7 @@ export type Database = {
         }
         Insert: {
           course_id?: string | null
+          created_at?: string | null
           graded?: boolean | null
           quiz_id?: string
           time_limit?: number | null
@@ -1711,6 +1827,7 @@ export type Database = {
         }
         Update: {
           course_id?: string | null
+          created_at?: string | null
           graded?: boolean | null
           quiz_id?: string
           time_limit?: number | null
@@ -1731,6 +1848,7 @@ export type Database = {
           answer_id: string
           answer_text: string | null
           attempt_id: string | null
+          created_at: string | null
           option_id: string | null
           question_id: string | null
         }
@@ -1738,6 +1856,7 @@ export type Database = {
           answer_id?: string
           answer_text?: string | null
           attempt_id?: string | null
+          created_at?: string | null
           option_id?: string | null
           question_id?: string | null
         }
@@ -1745,6 +1864,7 @@ export type Database = {
           answer_id?: string
           answer_text?: string | null
           attempt_id?: string | null
+          created_at?: string | null
           option_id?: string | null
           question_id?: string | null
         }
@@ -1769,6 +1889,7 @@ export type Database = {
         Row: {
           attempt_date: string | null
           attempt_id: string
+          created_at: string | null
           passed_flag: boolean | null
           quiz_id: string | null
           score: number | null
@@ -1777,6 +1898,7 @@ export type Database = {
         Insert: {
           attempt_date?: string | null
           attempt_id?: string
+          created_at?: string | null
           passed_flag?: boolean | null
           quiz_id?: string | null
           score?: number | null
@@ -1785,6 +1907,7 @@ export type Database = {
         Update: {
           attempt_date?: string | null
           attempt_id?: string
+          created_at?: string | null
           passed_flag?: boolean | null
           quiz_id?: string | null
           score?: number | null
@@ -1809,6 +1932,7 @@ export type Database = {
       }
       quiz_question: {
         Row: {
+          created_at: string | null
           points: number | null
           question_id: string
           question_order: number | null
@@ -1817,6 +1941,7 @@ export type Database = {
           type: string | null
         }
         Insert: {
+          created_at?: string | null
           points?: number | null
           question_id?: string
           question_order?: number | null
@@ -1825,6 +1950,7 @@ export type Database = {
           type?: string | null
         }
         Update: {
+          created_at?: string | null
           points?: number | null
           question_id?: string
           question_order?: number | null
@@ -1844,14 +1970,17 @@ export type Database = {
       }
       roles: {
         Row: {
+          created_at: string | null
           role_id: string
           role_name: string
         }
         Insert: {
+          created_at?: string | null
           role_id?: string
           role_name: string
         }
         Update: {
+          created_at?: string | null
           role_id?: string
           role_name?: string
         }
@@ -1860,18 +1989,21 @@ export type Database = {
       scorm_package: {
         Row: {
           course_id: string | null
+          created_at: string | null
           file_url: string | null
           package_id: string
           status: string | null
         }
         Insert: {
           course_id?: string | null
+          created_at?: string | null
           file_url?: string | null
           package_id?: string
           status?: string | null
         }
         Update: {
           course_id?: string | null
+          created_at?: string | null
           file_url?: string | null
           package_id?: string
           status?: string | null
@@ -1929,18 +2061,21 @@ export type Database = {
       }
       sequence_step: {
         Row: {
+          created_at: string | null
           delay_days: number | null
           email_template_id: string | null
           sequence_id: string | null
           step_id: string
         }
         Insert: {
+          created_at?: string | null
           delay_days?: number | null
           email_template_id?: string | null
           sequence_id?: string | null
           step_id?: string
         }
         Update: {
+          created_at?: string | null
           delay_days?: number | null
           email_template_id?: string | null
           sequence_id?: string | null
@@ -1959,6 +2094,7 @@ export type Database = {
       session_attendance: {
         Row: {
           attended_flag: boolean | null
+          created_at: string | null
           join_time: string | null
           leave_time: string | null
           session_id: string
@@ -1966,6 +2102,7 @@ export type Database = {
         }
         Insert: {
           attended_flag?: boolean | null
+          created_at?: string | null
           join_time?: string | null
           leave_time?: string | null
           session_id: string
@@ -1973,6 +2110,7 @@ export type Database = {
         }
         Update: {
           attended_flag?: boolean | null
+          created_at?: string | null
           join_time?: string | null
           leave_time?: string | null
           session_id?: string
@@ -1997,6 +2135,7 @@ export type Database = {
       }
       subscription: {
         Row: {
+          created_at: string | null
           end_date: string | null
           external_subscription_id: string | null
           next_billing_date: string | null
@@ -2007,6 +2146,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          created_at?: string | null
           end_date?: string | null
           external_subscription_id?: string | null
           next_billing_date?: string | null
@@ -2017,6 +2157,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          created_at?: string | null
           end_date?: string | null
           external_subscription_id?: string | null
           next_billing_date?: string | null
@@ -2045,16 +2186,19 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          created_at: string | null
           owner: string | null
           role_id: string
           user_id: string
         }
         Insert: {
+          created_at?: string | null
           owner?: string | null
           role_id: string
           user_id: string
         }
         Update: {
+          created_at?: string | null
           owner?: string | null
           role_id?: string
           user_id?: string
@@ -2078,6 +2222,7 @@ export type Database = {
       }
       users: {
         Row: {
+          created_at: string | null
           email: string | null
           name: string | null
           password_hash: string | null
@@ -2085,6 +2230,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          created_at?: string | null
           email?: string | null
           name?: string | null
           password_hash?: string | null
@@ -2092,6 +2238,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          created_at?: string | null
           email?: string | null
           name?: string | null
           password_hash?: string | null
@@ -2104,6 +2251,7 @@ export type Database = {
         Row: {
           completed_flag: boolean | null
           country: string | null
+          created_at: string | null
           device: string | null
           duration_watched: number | null
           media_id: string | null
@@ -2114,6 +2262,7 @@ export type Database = {
         Insert: {
           completed_flag?: boolean | null
           country?: string | null
+          created_at?: string | null
           device?: string | null
           duration_watched?: number | null
           media_id?: string | null
@@ -2124,6 +2273,7 @@ export type Database = {
         Update: {
           completed_flag?: boolean | null
           country?: string | null
+          created_at?: string | null
           device?: string | null
           duration_watched?: number | null
           media_id?: string | null
@@ -2150,6 +2300,7 @@ export type Database = {
       }
       webhook_endpoint: {
         Row: {
+          created_at: string | null
           event_type: string | null
           is_active: boolean | null
           owner: string | null
@@ -2158,6 +2309,7 @@ export type Database = {
           webhook_id: string
         }
         Insert: {
+          created_at?: string | null
           event_type?: string | null
           is_active?: boolean | null
           owner?: string | null
@@ -2166,6 +2318,7 @@ export type Database = {
           webhook_id?: string
         }
         Update: {
+          created_at?: string | null
           event_type?: string | null
           is_active?: boolean | null
           owner?: string | null
@@ -2177,6 +2330,7 @@ export type Database = {
       }
       webhook_log: {
         Row: {
+          created_at: string | null
           log_id: string
           response_body: string | null
           response_status: number | null
@@ -2184,6 +2338,7 @@ export type Database = {
           webhook_id: string | null
         }
         Insert: {
+          created_at?: string | null
           log_id?: string
           response_body?: string | null
           response_status?: number | null
@@ -2191,6 +2346,7 @@ export type Database = {
           webhook_id?: string | null
         }
         Update: {
+          created_at?: string | null
           log_id?: string
           response_body?: string | null
           response_status?: number | null

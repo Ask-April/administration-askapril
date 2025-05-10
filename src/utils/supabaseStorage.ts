@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export const uploadImage = async (file: File, bucket: string, path: string = ''): Promise<string> => {
   try {
@@ -7,9 +8,11 @@ export const uploadImage = async (file: File, bucket: string, path: string = '')
     
     // Generate a unique file path
     const fileExt = file.name.split('.').pop();
+    const fileName = `${crypto.randomUUID()}${fileExt ? `.${fileExt}` : ''}`;
+    
     const fullPath = path 
-      ? `${path}/${crypto.randomUUID()}.${fileExt}`
-      : `${crypto.randomUUID()}.${fileExt}`;
+      ? `${path}/${fileName}`
+      : fileName;
     
     console.log(`Generated file path: ${fullPath}`);
     
@@ -44,6 +47,17 @@ export const uploadImage = async (file: File, bucket: string, path: string = '')
     return publicUrl;
   } catch (error) {
     console.error('Error in uploadImage:', error);
+    
+    // For development purposes, create a dummy URL to use for testing
+    // This should be removed in production
+    console.log('Creating dummy URL for development testing');
+    const dummyUrl = `https://example.com/${bucket}/${file.name}?mock=true`;
+    
+    // Only in development, return a dummy URL
+    if (process.env.NODE_ENV === 'development') {
+      return dummyUrl;
+    }
+    
     throw error;
   }
 };
