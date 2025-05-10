@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CourseSection, CourseLesson } from "../types";
 
@@ -94,12 +95,12 @@ export const saveCurriculum = async (
             id: lesson.id,
             title: lesson.title,
             type: lesson.type || "text",
-            is_preview: lesson.isPreview || false,
-            is_draft: lesson.isDraft || false,
-            is_compulsory: lesson.isCompulsory || false,
-            enable_discussion: lesson.enableDiscussion || false,
+            is_preview: lesson.is_preview || false,
+            is_draft: lesson.is_draft || false,
+            is_compulsory: lesson.is_compulsory || false,
+            enable_discussion: lesson.enable_discussion || false,
             content: lesson.content || null,
-            content_url: lesson.contentUrl || null,
+            content_url: lesson.content_url || null,
             position: lesson.position || 0
           };
         })
