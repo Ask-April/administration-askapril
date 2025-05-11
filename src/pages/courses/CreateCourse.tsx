@@ -7,7 +7,7 @@ import WizardNavigation from "@/components/courses/wizard/WizardNavigation";
 import CourseInfoForm from "@/components/courses/CourseInfoForm";
 import CourseCurriculum from "@/components/courses/CourseCurriculum";
 import StepProgress from "@/components/courses/StepProgress";
-import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wizard/CourseWizardContext";
+import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wizard/context";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import { PricingModels } from "@/components/courses/pricing";

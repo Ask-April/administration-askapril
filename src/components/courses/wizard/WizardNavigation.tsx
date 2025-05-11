@@ -2,7 +2,7 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useCourseWizard } from './CourseWizardContext';
+import { useCourseWizard } from './context';
 
 const WizardNavigation: React.FC = () => {
   const { 
