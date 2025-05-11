@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useCourseWizard } from "./wizard/CourseWizardContext";
+import { useCourseWizard } from "./wizard/context";
 import { CourseData } from "./course-info/types"; 
 import TitleField from "./course-info/TitleField";
 import DescriptionField from "./course-info/DescriptionField";

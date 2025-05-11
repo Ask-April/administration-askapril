@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusCircle, AlertOctagon } from "lucide-react";
 import ContentOrganization from "./content/ContentOrganization";
-import { useCourseWizard } from "./wizard/CourseWizardContext";
+import { useCourseWizard } from "./wizard/context";
 import { CurriculumSection } from "./wizard/types";
 import { CourseSection } from "@/services/types";
 import { EmptyState } from "@/components/ui/loading-states";
