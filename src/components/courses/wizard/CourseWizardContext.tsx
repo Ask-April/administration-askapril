@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -7,7 +8,6 @@ import {
   CourseWizardContextValue 
 } from './types';
 import { validateCurrentStep } from './validation';
-import { finalizeCourse } from './courseOperations';
 import { courseService } from '@/services/course';
 
 const defaultCourseData: CourseData = {
@@ -122,13 +122,13 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
               type: lesson.type || 'video',
               position: lesson.position,
               content: lesson.content,
-              content_url: lesson.contentUrl,
-              video_url: lesson.videoUrl,
+              content_url: lesson.content_url,
+              video_url: lesson.video_url,
               duration: lesson.duration || 0,
-              is_preview: lesson.isPreview || false,
-              is_draft: lesson.isDraft || false,
-              is_compulsory: lesson.isCompulsory || true,
-              enable_discussion: lesson.enableDiscussion || false
+              is_preview: lesson.is_preview || false,
+              is_draft: lesson.is_draft || false,
+              is_compulsory: lesson.is_compulsory || true,
+              enable_discussion: lesson.enable_discussion || false
             }))
           }));
 

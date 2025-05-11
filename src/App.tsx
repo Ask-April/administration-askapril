@@ -21,6 +21,7 @@ import Coupons from "./pages/courses/Coupons";
 import People from "./pages/courses/People";
 import MediaLibrary from "./pages/courses/MediaLibrary";
 import Reports from "./pages/courses/Reports";
+import NotFound from "./pages/NotFound";
 
 // Lead pages
 import AllLeads from "./pages/leads/AllLeads";
@@ -56,7 +57,7 @@ function App() {
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/signup" element={<SignUp />} />
         <Route
-          path="*"
+          path="/"
           element={
             <ProtectedRoute>
               <Layout>
@@ -104,6 +105,9 @@ function App() {
                   <Route path="/analytics/overview" element={<AnalyticsOverview />} />
                   <Route path="/analytics/traffic" element={<Traffic />} />
                   <Route path="/analytics/conversions" element={<Conversions />} />
+                  
+                  {/* 404 Route - Must be last */}
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </Layout>
             </ProtectedRoute>

@@ -1,3 +1,4 @@
+
 import React from "react";
 import PageTransition from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +11,6 @@ import { CourseWizardProvider, useCourseWizard } from "@/components/courses/wiza
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import { PricingModels } from "@/components/courses/pricing";
-import { CourseData } from "@/components/courses/wizard/types";
 
 // Pricing component with real pricing options
 const CoursePricing: React.FC = () => {
@@ -18,7 +18,9 @@ const CoursePricing: React.FC = () => {
     courseData,
     updateCourseData
   } = useCourseWizard();
-  return <div className="space-y-6">
+  
+  return (
+    <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Pricing</h2>
       <Alert variant="default" className="mb-4">
         <Info className="h-4 w-4" />
@@ -29,12 +31,11 @@ const CoursePricing: React.FC = () => {
       </Alert>
       
       <PricingModels editedCourse={courseData} updateCourseData={updateCourseData} />
-      
-      
-    </div>;
+    </div>
+  );
 };
 
-// Settings component - remove duration
+// Settings component
 const CourseSettings: React.FC = () => {
   const {
     courseData
@@ -58,7 +59,9 @@ const CourseSettings: React.FC = () => {
     }
     return "Not set";
   };
-  return <div className="space-y-6">
+  
+  return (
+    <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Course Settings</h2>
       <Alert>
         <Info className="h-4 w-4" />
@@ -100,8 +103,10 @@ const CourseSettings: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 const WizardContent: React.FC = () => {
   const {
     currentStep,
@@ -112,6 +117,7 @@ const WizardContent: React.FC = () => {
     steps,
     currentStepIndex
   } = useCourseWizard();
+  
   const renderStepContent = () => {
     switch (currentStep) {
       case "info":
@@ -126,7 +132,9 @@ const WizardContent: React.FC = () => {
         return null;
     }
   };
-  return <>
+  
+  return (
+    <>
       <div className="max-w-4xl mx-auto mb-6">
         <StepProgress steps={steps} currentStep={currentStep} currentStepIndex={currentStepIndex} />
       </div>
@@ -136,16 +144,21 @@ const WizardContent: React.FC = () => {
           <WizardNavigation />
         </CardContent>
       </Card>
-    </>;
+    </>
+  );
 };
+
 const CreateCourse: React.FC = () => {
-  return <CourseWizardProvider>
+  return (
+    <CourseWizardProvider>
       <PageTransition>
         <div className="container px-4 py-6">
           <CoursePageHeader title="Create New Course" backPath="/courses/overview" />
           <WizardContent />
         </div>
       </PageTransition>
-    </CourseWizardProvider>;
+    </CourseWizardProvider>
+  );
 };
+
 export default CreateCourse;

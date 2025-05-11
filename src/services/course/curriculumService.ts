@@ -120,11 +120,14 @@ export const saveCurriculum = async (
   }
 };
 
+/**
+ * Get a specific lesson by ID
+ */
 export const getLessonById = async (courseId: string | undefined, lessonId: string | undefined): Promise<any> => {
   try {
     if (!courseId || !lessonId) return null;
     
-    // Get curriculum from localStorage
+    // Get curriculum from localStorage or API
     const curriculumStr = localStorage.getItem(`curriculum-${courseId}`);
     if (!curriculumStr) return null;
     
@@ -152,5 +155,6 @@ export const getLessonById = async (courseId: string | undefined, lessonId: stri
 // Create an object with all exports
 export const curriculumService = {
   getCurriculum,
-  saveCurriculum
+  saveCurriculum,
+  getLessonById
 };
