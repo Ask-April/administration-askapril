@@ -122,13 +122,13 @@ export const CourseWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
               type: lesson.type || 'video',
               position: lesson.position,
               content: lesson.content,
-              content_url: lesson.content_url,
-              video_url: lesson.video_url,
+              content_url: lesson.contentUrl, // Fixed: contentUrl → content_url
+              video_url: lesson.videoUrl, // Fixed: videoUrl → video_url
               duration: lesson.duration || 0,
-              is_preview: lesson.is_preview || false,
-              is_draft: lesson.is_draft || false,
-              is_compulsory: lesson.is_compulsory || true,
-              enable_discussion: lesson.enable_discussion || false
+              is_preview: lesson.isPreview || false, // Fixed: isPreview → is_preview
+              is_draft: lesson.isDraft || false, // Fixed: isDraft → is_draft
+              is_compulsory: lesson.isCompulsory || true, // Fixed: isCompulsory → is_compulsory
+              enable_discussion: lesson.enableDiscussion || false // Fixed: enableDiscussion → enable_discussion
             }))
           }));
 
