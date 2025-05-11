@@ -3,9 +3,16 @@ import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import type { Profile } from "@/services/types";
 
-export type { Profile }; // Use "export type" for isolatedModules
+// Define Profile type explicitly to match what's in the database
+export interface Profile {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
 
 export const useProfile = (user: User | null) => {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -19,13 +26,11 @@ export const useProfile = (user: User | null) => {
       }
 
       try {
-        // Now we use the correct Table definition for "profiles":
-        // Note: We're casting "profiles" as any due to TypeScript errors with the supabase client
-        // This is a workaround until the proper types are available
+        // Use type assertion to work around TypeScript errors with "profiles" table
         const { data, error } = await supabase
-          .from("profiles" as any)
-          .select("*")
-          .eq("id", user.id)
+          .from('profiles' as any)
+          .select('*')
+          .eq('id', user.id)
           .maybeSingle();
 
         if (!data && error && error.code === 'PGRST116') {
