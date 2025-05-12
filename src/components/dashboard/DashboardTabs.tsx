@@ -6,7 +6,7 @@ import OverviewChart from "./OverviewChart";
 const DashboardTabs = () => {
   return (
     <Card className="h-full">
-      <div className="h-full p-4">
+      <div className="h-full">
         <OverviewChart />
       </div>
     </Card>
