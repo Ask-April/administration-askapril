@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,6 +8,7 @@ import { Loader2 } from "lucide-react";
 
 // Chart color constants
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
+
 const OverviewChart: React.FC = () => {
   const [timeRange, setTimeRange] = useState<"6m" | "1y" | "all">("6m");
   const {
@@ -43,7 +45,9 @@ const OverviewChart: React.FC = () => {
       <p className="text-muted-foreground">Error loading data</p>
       <p className="text-sm text-destructive">{message}</p>
     </div>;
-  return <div className="h-full flex flex-col">
+
+  return (
+    <div className="flex flex-col h-full">
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
@@ -63,86 +67,85 @@ const OverviewChart: React.FC = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden">
+      <CardContent className="flex-1">
         <Tabs defaultValue="enrollment" className="h-full">
-          <TabsList>
+          <TabsList className="mb-4">
             <TabsTrigger value="enrollment">Enrollment</TabsTrigger>
             <TabsTrigger value="revenue">Revenue</TabsTrigger>
             <TabsTrigger value="completion">Course Completion</TabsTrigger>
             <TabsTrigger value="popularity">Course Popularity</TabsTrigger>
           </TabsList>
           
-          <div className="mt-4 h-[calc(100%-40px)]">
-            <TabsContent value="enrollment" className="h-full">
-              {isEnrollmentLoading ? renderLoading() : enrollmentError ? renderError((enrollmentError as Error).message) : <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={enrollmentData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Area type="monotone" dataKey="count" name="New Enrollments" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>}
+          <div className="h-[400px]">
+            <TabsContent value="enrollment" className="h-full mt-0">
+              {isEnrollmentLoading ? renderLoading() : enrollmentError ? renderError((enrollmentError as Error).message) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={enrollmentData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Area type="monotone" dataKey="count" name="New Enrollments" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
             </TabsContent>
             
-            <TabsContent value="revenue" className="h-full">
-              {isRevenueLoading ? renderLoading() : revenueError ? renderError((revenueError as Error).message) : <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={revenueData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis tickFormatter={value => formatCurrency(value)} />
-                      <Tooltip formatter={value => formatCurrency(value as number)} />
-                      <Legend />
-                      <Line type="monotone" dataKey="amount" name="Revenue" stroke="#00C49F" activeDot={{
-                    r: 8
-                  }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>}
+            <TabsContent value="revenue" className="h-full mt-0">
+              {isRevenueLoading ? renderLoading() : revenueError ? renderError((revenueError as Error).message) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis tickFormatter={value => formatCurrency(value)} />
+                    <Tooltip formatter={value => formatCurrency(value as number)} />
+                    <Legend />
+                    <Line type="monotone" dataKey="amount" name="Revenue" stroke="#00C49F" activeDot={{ r: 8 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
             </TabsContent>
             
-            <TabsContent value="completion" className="h-full">
-              {isCompletionLoading ? renderLoading() : completionError ? renderError((completionError as Error).message) : <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={completionData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="count" name="Course Completions" fill="#FF8042" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>}
+            <TabsContent value="completion" className="h-full mt-0">
+              {isCompletionLoading ? renderLoading() : completionError ? renderError((completionError as Error).message) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={completionData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="count" name="Course Completions" fill="#FF8042" />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </TabsContent>
             
-            <TabsContent value="popularity" className="h-full">
-              {isPopularCoursesLoading ? renderLoading() : popularCoursesError ? renderError((popularCoursesError as Error).message) : <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 h-[300px]">
-                  <div>
-                    <h3 className="text-md font-medium mb-2 text-center">Top Courses by Enrollment</h3>
-                    <div className="h-[250px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={popularCoursesData} layout="vertical">
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis type="number" />
-                          <YAxis type="category" dataKey="name" width={150} />
-                          <Tooltip />
-                          <Legend />
-                          <Bar dataKey="students" fill="#0088FE" name="Students" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
+            <TabsContent value="popularity" className="h-full mt-0">
+              {isPopularCoursesLoading ? renderLoading() : popularCoursesError ? renderError((popularCoursesError as Error).message) : (
+                <div className="h-full">
+                  <h3 className="text-md font-medium mb-2 text-center">Top Courses by Enrollment</h3>
+                  <div className="h-[calc(100%-30px)]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={popularCoursesData} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" />
+                        <YAxis type="category" dataKey="name" width={150} />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="students" fill="#0088FE" name="Students" />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
-                  
-                </div>}
+                </div>
+              )}
             </TabsContent>
           </div>
         </Tabs>
       </CardContent>
-    </div>;
+    </div>
+  );
 };
+
 export default OverviewChart;
