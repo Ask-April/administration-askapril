@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,22 +7,18 @@ import { Loader2 } from "lucide-react";
 
 // Chart color constants
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
-
 const OverviewChart: React.FC = () => {
   const [timeRange, setTimeRange] = useState<"6m" | "1y" | "all">("6m");
   const {
     enrollmentData,
     isEnrollmentLoading,
     enrollmentError,
-    
     revenueData,
     isRevenueLoading,
     revenueError,
-    
     completionData,
     isCompletionLoading,
     completionError,
-    
     popularCoursesData,
     isPopularCoursesLoading,
     popularCoursesError
@@ -34,27 +29,21 @@ const OverviewChart: React.FC = () => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 0
     }).format(value);
   };
 
   // Chart loading state
-  const renderLoading = () => (
-    <div className="flex h-[300px] items-center justify-center">
+  const renderLoading = () => <div className="flex h-[300px] items-center justify-center">
       <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-    </div>
-  );
+    </div>;
 
   // Chart error state
-  const renderError = (message: string) => (
-    <div className="flex h-[300px] flex-col items-center justify-center text-center">
+  const renderError = (message: string) => <div className="flex h-[300px] flex-col items-center justify-center text-center">
       <p className="text-muted-foreground">Error loading data</p>
       <p className="text-sm text-destructive">{message}</p>
-    </div>
-  );
-
-  return (
-    <div className="h-full flex flex-col">
+    </div>;
+  return <div className="h-full flex flex-col">
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
@@ -64,11 +53,7 @@ const OverviewChart: React.FC = () => {
             </CardDescription>
           </div>
           <div className="mt-3 sm:mt-0">
-            <Tabs 
-              value={timeRange} 
-              onValueChange={(value) => setTimeRange(value as "6m" | "1y" | "all")}
-              className="w-[250px]"
-            >
+            <Tabs value={timeRange} onValueChange={value => setTimeRange(value as "6m" | "1y" | "all")} className="w-[250px]">
               <TabsList>
                 <TabsTrigger value="6m">6 Months</TabsTrigger>
                 <TabsTrigger value="1y">1 Year</TabsTrigger>
@@ -89,12 +74,7 @@ const OverviewChart: React.FC = () => {
           
           <div className="mt-4 h-[calc(100%-40px)]">
             <TabsContent value="enrollment" className="h-full">
-              {isEnrollmentLoading ? (
-                renderLoading()
-              ) : enrollmentError ? (
-                renderError((enrollmentError as Error).message)
-              ) : (
-                <div className="h-[300px]">
+              {isEnrollmentLoading ? renderLoading() : enrollmentError ? renderError((enrollmentError as Error).message) : <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={enrollmentData}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -102,58 +82,31 @@ const OverviewChart: React.FC = () => {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Area
-                        type="monotone"
-                        dataKey="count"
-                        name="New Enrollments"
-                        stroke="#8884d8"
-                        fill="#8884d8"
-                        fillOpacity={0.3}
-                      />
+                      <Area type="monotone" dataKey="count" name="New Enrollments" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
                     </AreaChart>
                   </ResponsiveContainer>
-                </div>
-              )}
+                </div>}
             </TabsContent>
             
             <TabsContent value="revenue" className="h-full">
-              {isRevenueLoading ? (
-                renderLoading()
-              ) : revenueError ? (
-                renderError((revenueError as Error).message)
-              ) : (
-                <div className="h-[300px]">
+              {isRevenueLoading ? renderLoading() : revenueError ? renderError((revenueError as Error).message) : <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={revenueData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
-                      <YAxis 
-                        tickFormatter={(value) => formatCurrency(value)}
-                      />
-                      <Tooltip 
-                        formatter={(value) => formatCurrency(value as number)}
-                      />
+                      <YAxis tickFormatter={value => formatCurrency(value)} />
+                      <Tooltip formatter={value => formatCurrency(value as number)} />
                       <Legend />
-                      <Line
-                        type="monotone"
-                        dataKey="amount"
-                        name="Revenue"
-                        stroke="#00C49F"
-                        activeDot={{ r: 8 }}
-                      />
+                      <Line type="monotone" dataKey="amount" name="Revenue" stroke="#00C49F" activeDot={{
+                    r: 8
+                  }} />
                     </LineChart>
                   </ResponsiveContainer>
-                </div>
-              )}
+                </div>}
             </TabsContent>
             
             <TabsContent value="completion" className="h-full">
-              {isCompletionLoading ? (
-                renderLoading()
-              ) : completionError ? (
-                renderError((completionError as Error).message)
-              ) : (
-                <div className="h-[300px]">
+              {isCompletionLoading ? renderLoading() : completionError ? renderError((completionError as Error).message) : <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={completionData}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -161,24 +114,14 @@ const OverviewChart: React.FC = () => {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar
-                        dataKey="count"
-                        name="Course Completions"
-                        fill="#FF8042"
-                      />
+                      <Bar dataKey="count" name="Course Completions" fill="#FF8042" />
                     </BarChart>
                   </ResponsiveContainer>
-                </div>
-              )}
+                </div>}
             </TabsContent>
             
             <TabsContent value="popularity" className="h-full">
-              {isPopularCoursesLoading ? (
-                renderLoading()
-              ) : popularCoursesError ? (
-                renderError((popularCoursesError as Error).message)
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[300px]">
+              {isPopularCoursesLoading ? renderLoading() : popularCoursesError ? renderError((popularCoursesError as Error).message) : <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 h-[300px]">
                   <div>
                     <h3 className="text-md font-medium mb-2 text-center">Top Courses by Enrollment</h3>
                     <div className="h-[250px]">
@@ -194,39 +137,12 @@ const OverviewChart: React.FC = () => {
                       </ResponsiveContainer>
                     </div>
                   </div>
-                  <div>
-                    <h3 className="text-md font-medium mb-2 text-center">Course Revenue Distribution</h3>
-                    <div className="h-[250px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={popularCoursesData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="revenue"
-                            nameKey="name"
-                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          >
-                            {popularCoursesData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                </div>
-              )}
+                  
+                </div>}
             </TabsContent>
           </div>
         </Tabs>
       </CardContent>
-    </div>
-  );
+    </div>;
 };
-
 export default OverviewChart;
